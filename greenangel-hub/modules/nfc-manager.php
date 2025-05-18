@@ -6,10 +6,14 @@ use Wlr\App\Models\Users;
 // 🔁 Save Card Assignment
 add_action('admin_post_greenangel_save_card_status', 'greenangel_save_card_status');
 function greenangel_save_card_status() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
+    check_admin_referer('greenangel_save_card_status', 'greenangel_nonce');
+
     if (
         isset($_POST['order_id']) &&
-        isset($_POST['card_issued']) &&
-        current_user_can('manage_woocommerce')
+        isset($_POST['card_issued'])
     ) {
         $order_id    = intval($_POST['order_id']);
         $card_issued = sanitize_text_field($_POST['card_issued']);
@@ -305,6 +309,7 @@ function greenangel_render_nfc_card_manager() {
                   <form method="POST" action="'.admin_url('admin-post.php').'" class="card-form">
                     <input type="hidden" name="action"   value="greenangel_save_card_status">
                     <input type="hidden" name="order_id" value="'.esc_attr($id).'">
+                    '.wp_nonce_field('greenangel_save_card_status','greenangel_nonce',true,false).'
                     <div class="angel-select">
                       <select name="card_issued" onchange="confirmAndSubmit(this)">
                         <option value="">Select card type…</option>
