@@ -6,6 +6,7 @@ require_once plugin_dir_path(__FILE__) . 'table-logs.php';
 require_once plugin_dir_path(__FILE__) . 'table-fails.php';
 require_once plugin_dir_path(__FILE__) . 'handle-registration.php';
 require_once plugin_dir_path(__FILE__) . 'registration-hooks.php';
+require_once plugin_dir_path(__FILE__) . 'manage-logs.php';
 
 function greenangel_render_angel_codes_tab() {
     echo '<div class="angel-codes-wrapper">';
