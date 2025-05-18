@@ -6,7 +6,8 @@ function greenangel_render_failed_code_log() {
     $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
     $logs = $wpdb->get_results("SELECT * FROM $table ORDER BY timestamp DESC LIMIT 50");
 
-    echo '<style>
+    echo '<div class="log-section">
+    <style>
       .fail-log-table {
         background-color: #222;
         border-radius: 14px;
@@ -77,7 +78,7 @@ function greenangel_render_failed_code_log() {
       }
     </style>';
 
-    echo '<h3 style="font-size:20px; margin-top:60px;">🚫 Failed Angel Code Attempts</h3>';
+    echo '<div class="title-bubble" style="margin-top:40px;">🚫 Failed Angel Code Attempts</div>';
     echo '<div class="log-controls">';
     echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
     echo '<input type="hidden" name="action" value="greenangel_clear_failed_log">';
@@ -114,4 +115,5 @@ function greenangel_render_failed_code_log() {
     }
 
     echo '</tbody></table>';
+    echo '</div>';
 }

@@ -4,8 +4,8 @@
 function greenangel_render_add_code_form() {
     $action = admin_url('admin-post.php');
 
-    echo '<div style="margin-top:40px;">';
-    echo '<h3 style="font-size:20px; margin-bottom:10px;">➕ Add New Angel Code</h3>';
+    echo '<div class="code-add-block" style="margin-top:40px;">';
+    echo '<div class="title-bubble" style="font-size:18px; margin-bottom:15px;">➕ Add New Angel Code</div>';
 
     echo '<form method="POST" action="'.$action.'" style="max-width:600px; background:#222; padding:30px; border-radius:16px; color:#fff;">';
 
