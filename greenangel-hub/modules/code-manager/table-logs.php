@@ -7,7 +7,8 @@ function greenangel_render_code_log_table() {
     $logs = $wpdb->get_results("SELECT * FROM $table ORDER BY timestamp DESC LIMIT 50");
 
     // ─── Styles ────────────────────────────────
-    echo '<style>
+    echo '<div class="log-section">
+    <style>
       .log-table {
         background-color: #222;
         border-radius: 14px;
@@ -79,7 +80,7 @@ function greenangel_render_code_log_table() {
     </style>';
 
     // ─── Output ────────────────────────────────
-    echo '<h3 style="font-size:20px; margin-top:60px;">📜 Angel Code Usage Log</h3>';
+    echo '<div class="title-bubble" style="margin-top:40px;">📜 Angel Code Usage Log</div>';
     echo '<div class="log-controls">';
     echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
     echo '<input type="hidden" name="action" value="greenangel_clear_usage_log">';
@@ -113,4 +114,5 @@ function greenangel_render_code_log_table() {
     }
 
     echo '</tbody></table>';
+    echo '</div>';
 }

@@ -10,12 +10,21 @@ require_once plugin_dir_path(__FILE__) . 'manage-logs.php';
 
 function greenangel_render_angel_codes_tab() {
     echo '<div class="angel-codes-wrapper">';
-    echo '<h2 style="margin-top:0; font-size:24px;">🪽 Angel Code Manager</h2>';
+    echo '<div class="title-bubble">🪽 Angel Code Manager</div>';
     echo '<p>Here you can manage your invite-only access system, view all active codes, and track usage logs.</p>';
     greenangel_render_code_table();
+
+    echo '<style>
+        .code-manager-flex { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+        .code-manager-flex > div { flex:1 1 300px; }
+        @media (max-width:900px) { .code-manager-flex { flex-direction:column; } }
+    </style>';
+
+    echo '<div class="code-manager-flex">';
     greenangel_render_add_code_form();
     greenangel_render_code_log_table(); // 👈 new log viewer
     greenangel_render_failed_code_log(); // 👈 failed attempts log
+    echo '</div>';
     echo '</div>';
 }
 
