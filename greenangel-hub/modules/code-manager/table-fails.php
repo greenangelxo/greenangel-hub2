@@ -42,6 +42,31 @@ function greenangel_render_failed_code_log() {
         font-size: 12px;
         white-space: nowrap;
       }
+      .log-controls {
+        display: flex;
+        gap: 12px;
+        margin-top: 15px;
+        align-items: center;
+      }
+      .log-bubble-button {
+        background: #222;
+        color: #ff6961;
+        border: none;
+        padding: 8px 16px;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: all 0.2s ease-in-out;
+        font-family: "Poppins", sans-serif !important;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .log-bubble-button:hover {
+        background: #333;
+        transform: translateY(-2px);
+      }
       .empty-log {
         text-align: center;
         padding: 30px;
@@ -53,6 +78,16 @@ function greenangel_render_failed_code_log() {
     </style>';
 
     echo '<h3 style="font-size:20px; margin-top:60px;">🚫 Failed Angel Code Attempts</h3>';
+    echo '<div class="log-controls">';
+    echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo '<input type="hidden" name="action" value="greenangel_clear_failed_log">';
+    echo '<button type="submit" class="log-bubble-button">🗑 Clear Log</button>';
+    echo '</form>';
+    echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo '<input type="hidden" name="action" value="greenangel_download_failed_log">';
+    echo '<button type="submit" class="log-bubble-button">📥 Download CSV</button>';
+    echo '</form>';
+    echo '</div>';
 
     if (!$logs) {
         echo '<div class="empty-log">';
