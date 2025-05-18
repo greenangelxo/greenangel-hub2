@@ -293,6 +293,9 @@ function greenangel_render_ship_today_tab() {
 
 // 🚚 AJAX: Run Ship Today
 add_action('wp_ajax_greenangel_ship_today_run', function() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
     $log = "[" . date('Y-m-d H:i:s') . "] 💚 Manual 'Ship Today' process started.\n";
     $updated = 0; $skipped = 0;
 
@@ -326,18 +329,27 @@ add_action('wp_ajax_greenangel_ship_today_run', function() {
 
 // 🔍 AJAX: Load Log
 add_action('wp_ajax_greenangel_ship_today_log', function() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
     echo file_exists(GREENANGEL_SHIP_TODAY_LOG) ? file_get_contents(GREENANGEL_SHIP_TODAY_LOG) : '';
     wp_die();
 });
 
 // 🧼 AJAX: Clear Log
 add_action('wp_ajax_greenangel_ship_today_clear', function() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
     file_put_contents(GREENANGEL_SHIP_TODAY_LOG, '');
     wp_die();
 });
 
 // 📥 AJAX: Download Log
 add_action('wp_ajax_greenangel_ship_today_download', function() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
     header('Content-Type: text/plain');
     header('Content-Disposition: attachment; filename="ship-today-log.txt"');
     readfile(GREENANGEL_SHIP_TODAY_LOG);

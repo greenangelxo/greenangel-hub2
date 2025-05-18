@@ -91,6 +91,7 @@ function greenangel_render_packing_slips_tab() {
     <!-- ─── Table & Form ─────────────────────────────────────────────────── -->
     <div class="pack-container">
       <form method="POST" id="pack-form">
+        <?php wp_nonce_field('greenangel_pack_action','greenangel_pack_nonce'); ?>
         <input type="hidden" name="print_type"    value="">
         <input type="hidden" name="labels_copies"  value="1">
         <input type="hidden" name="orders[]"       value="">
@@ -199,6 +200,7 @@ function greenangel_render_packing_slips_tab() {
 // ─── Print Handlers ────────────────────────────────────────────────────
 function greenangel_print_slips() {
   if (! current_user_can('manage_woocommerce')) wp_die('Permission denied');
+  check_admin_referer('greenangel_pack_action','greenangel_pack_nonce');
   $ids = isset($_POST['orders']) ? array_map('intval',(array)$_POST['orders']) : [];
   if (empty($ids)) wp_die('No orders selected.');
   require plugin_dir_path(__FILE__).'templates/print-slips.php';
@@ -207,6 +209,7 @@ function greenangel_print_slips() {
 
 function greenangel_print_labels() {
   if (! current_user_can('manage_woocommerce')) wp_die('Permission denied');
+  check_admin_referer('greenangel_pack_action','greenangel_pack_nonce');
 
   $original = isset($_POST['orders'])       ? array_map('intval',(array)$_POST['orders'])       : [];
   $copies   = isset($_POST['labels_copies'])? intval($_POST['labels_copies'])                  : 1;
