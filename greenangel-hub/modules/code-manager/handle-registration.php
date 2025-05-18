@@ -1,6 +1,8 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit;
+}
 // 🌿 Green Angel – Registration Handler via Angel Code
-add_action('admin_post_nopriv_greenangel_register_user', 'greenangel_handle_registration');
 function greenangel_handle_registration() {
     error_log("💥 Running registration handler...");
     
