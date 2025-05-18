@@ -124,12 +124,12 @@ function greenangel_render_packing_slips_tab() {
               <td>
                 <button type="button"
                         onclick="printSingleOrder(<?php echo $id; ?>,'slips')"
-                        class="action-btn">🖨️</button>
+                        class="action-btn">🖨</button>️</button>
               </td>
               <td>
                 <button type="button"
                         onclick="printSingleOrder(<?php echo $id; ?>,'labels')"
-                        class="action-btn">🏷️</button>
+                        class="action-btn">🏷</button>️</button>
               </td>
             </tr>
           <?php endforeach; ?>
