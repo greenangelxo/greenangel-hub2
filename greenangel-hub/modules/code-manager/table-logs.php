@@ -43,6 +43,31 @@ function greenangel_render_code_log_table() {
         font-size: 12px;
         white-space: nowrap;
       }
+      .log-controls {
+        display: flex;
+        gap: 12px;
+        margin-top: 15px;
+        align-items: center;
+      }
+      .log-bubble-button {
+        background: #aed604;
+        color: #222;
+        border: none;
+        padding: 8px 16px;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: all 0.2s ease-in-out;
+        font-family: "Poppins", sans-serif !important;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .log-bubble-button:hover {
+        background: #c5e915;
+        transform: translateY(-2px);
+      }
       .empty-log {
         text-align: center;
         padding: 30px;
@@ -55,6 +80,16 @@ function greenangel_render_code_log_table() {
 
     // ─── Output ────────────────────────────────
     echo '<h3 style="font-size:20px; margin-top:60px;">📜 Angel Code Usage Log</h3>';
+    echo '<div class="log-controls">';
+    echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo '<input type="hidden" name="action" value="greenangel_clear_usage_log">';
+    echo '<button type="submit" class="log-bubble-button">🗑 Clear Log</button>';
+    echo '</form>';
+    echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo '<input type="hidden" name="action" value="greenangel_download_usage_log">';
+    echo '<button type="submit" class="log-bubble-button">📥 Download CSV</button>';
+    echo '</form>';
+    echo '</div>';
     if (!$logs) {
         echo '<div class="empty-log">';
         echo '<p style="font-size:16px;">No registrations logged yet 🌙<br><span style="opacity:0.6;">This will populate once someone registers using a valid code.</span></p>';
