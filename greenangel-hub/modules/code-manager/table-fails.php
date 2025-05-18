@@ -34,8 +34,8 @@ function greenangel_render_failed_code_log() {
       }
       .header-bubble {
         display: inline-block;
-        background: #ff6961;
-        color: #fff;
+        background: #aed604;
+        color: #222;
         padding: 6px 12px;
         border-radius: 16px;
         font-weight: 500;
@@ -49,8 +49,8 @@ function greenangel_render_failed_code_log() {
         align-items: center;
       }
       .log-bubble-button {
-        background: #222;
-        color: #ff6961;
+        background: #aed604;
+        color: #222;
         border: none;
         padding: 8px 16px;
         font-weight: 500;
@@ -64,7 +64,7 @@ function greenangel_render_failed_code_log() {
         gap: 8px;
       }
       .log-bubble-button:hover {
-        background: #333;
+        background: #c5e915;
         transform: translateY(-2px);
       }
       .empty-log {
