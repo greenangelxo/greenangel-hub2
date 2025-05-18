@@ -15,6 +15,7 @@ require_once plugin_dir_path(__FILE__) . 'modules/ship-today.php';
 require_once plugin_dir_path(__FILE__) . 'modules/nfc-manager.php';
 require_once plugin_dir_path(__FILE__) . 'modules/packing-slips.php';
 require_once plugin_dir_path(__FILE__) . 'modules/code-manager/tab.php'; // 💫 Angel Code Manager tab
+require_once plugin_dir_path(__FILE__) . 'modules/tools.php'; // 🛠 Tools tab
 
 // ✅ Load DB installer
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
@@ -133,6 +134,7 @@ function greenangel_hub_page() {
     echo '<a href="?page=greenangel-hub&tab=nfc-manager" class="nav-tab ' . ($active_tab === 'nfc-manager' ? 'nav-tab-active' : '') . '">💳 NFC Manager</a>';
     echo '<a href="?page=greenangel-hub&tab=packing-slips" class="nav-tab ' . ($active_tab === 'packing-slips' ? 'nav-tab-active' : '') . '">📦 Packing Slips</a>';
     echo '<a href="?page=greenangel-hub&tab=angel-codes" class="nav-tab ' . ($active_tab === 'angel-codes' ? 'nav-tab-active' : '') . '">🪽 Angel Codes</a>';
+    echo '<a href="?page=greenangel-hub&tab=tools" class="nav-tab ' . ($active_tab === 'tools' ? 'nav-tab-active' : '') . '">🛠 Tools</a>';
     echo '</div>';
 
     // 🧠 Tab Renderer
@@ -144,6 +146,8 @@ function greenangel_hub_page() {
         greenangel_render_packing_slips_tab();
     } elseif ($active_tab === 'angel-codes') {
         greenangel_render_angel_codes_tab(); // ✅ NEW RENDER FUNCTION
+    } elseif ($active_tab === 'tools') {
+        greenangel_render_tools_tab();
     }
 
     echo '</div>';
