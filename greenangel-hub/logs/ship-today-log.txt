@@ -1,0 +1,15 @@
+[2025-05-16 00:02:45] 💚 Manual 'Ship Today' process started.
+[2025-05-16 00:02:45] Order #8158 updated to 'Ship Today'.
+[2025-05-16 00:02:45] Order #8155 updated to 'Ship Today'.
+[2025-05-16 00:02:46] Order #8154 updated to 'Ship Today'.
+[2025-05-16 00:02:46] Order #8152 updated to 'Ship Today'.
+[2025-05-16 00:02:46] Order #8145 updated to 'Ship Today'.
+[2025-05-16 00:02:46] ✨ Process completed. Updated: 5, Skipped: 0.
+[2025-05-16 10:21:56] 💚 Manual 'Ship Today' process started.
+[2025-05-16 10:21:57] Order #8159 updated to 'Ship Today'.
+[2025-05-16 10:21:57] ✨ Process completed. Updated: 1, Skipped: 0.
+[2025-05-17 20:07:49] 💚 Manual 'Ship Today' process started.
+[2025-05-17 20:07:49] Order #8166 remains 'Processing'. (Future Delivery: 2025-05-20)
+[2025-05-17 20:07:49] Order #8165 remains 'Processing'. (Future Delivery: 2025-05-20)
+[2025-05-17 20:07:49] Order #8161 remains 'Processing'. (Future Delivery: 2025-05-20)
+[2025-05-17 20:07:49] ✨ Process completed. Updated: 0, Skipped: 3.
