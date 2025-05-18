@@ -20,6 +20,12 @@ require_once plugin_dir_path(__FILE__) . 'modules/code-manager/tab.php'; // 💫
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
 add_action('plugins_loaded', 'greenangel_create_code_tables');
 
+function greenangel_register_user_actions() {
+    add_action('admin_post_nopriv_greenangel_register_user', 'greenangel_handle_registration');
+    add_action('admin_post_greenangel_register_user', 'greenangel_handle_registration');
+}
+add_action('init', 'greenangel_register_user_actions');
+
 // 🌈 Add to WP Admin
 add_action('admin_menu', 'greenangel_hub_menu');
 
