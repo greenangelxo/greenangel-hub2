@@ -71,6 +71,32 @@ function greenangel_render_code_table() {
         border: 1px solid rgba(255,0,0,0.4);
       }
       .status-toggle.inactive:hover { box-shadow: 0 0 8px rgba(255,0,0,0.6); }
+
+      /* Actions layout */
+      .actions-wrap {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .delete-btn {
+        background: #ff4444;
+        color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 13px;
+        font-family: "Poppins", sans-serif !important;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s ease-in-out;
+      }
+      .delete-btn:hover {
+        background: #e63737;
+        box-shadow: 0 0 8px rgba(255,68,68,0.6);
+        transform: translateY(-2px);
+      }
    </style>';
 
     // ─── Output ────────────────────────────────
@@ -130,15 +156,15 @@ function greenangel_render_code_table() {
         // Actions
         $toggle_url = admin_url("admin-post.php?action=greenangel_toggle_code&id={$code->id}");
         $delete_url = admin_url("admin-post.php?action=greenangel_delete_code&id={$code->id}");
-        echo '<td>';
+        echo '<td><div class="actions-wrap">';
         $active_class = $code->active ? 'status-toggle' : 'status-toggle inactive';
-        echo '<a href="'.esc_url($toggle_url).'" style="margin-right:8px;" class="'.$active_class.'" title="Toggle Active">';
+        echo '<a href="'.esc_url($toggle_url).'" class="'.$active_class.'" title="Toggle Active">';
         echo $code->active ? '🟢 Active' : '⚫ Inactive';
         echo '</a>';
-        echo '<a href="'.esc_url($delete_url).'" class="button" style="background:#e74c3c; color:#fff; border-radius:6px;" onclick="return confirm(\'Are you sure you want to delete this code?\')">';
+        echo '<a href="'.esc_url($delete_url).'" class="delete-btn" onclick="return confirm(\'Are you sure you want to delete this code?\')">';
         echo '🗑 Delete';
         echo '</a>';
-        echo '</td>';
+        echo '</div></td>';
 
         echo '</tr>';
     }
