@@ -6,8 +6,8 @@ function greenangel_create_code_tables() {
     $charset_collate = $wpdb->get_charset_collate();
 
     // ✅ Angel Codes Table
-    if (!get_option('greenangel_codes_created')) {
-        $table = $wpdb->prefix . 'greenangel_codes';
+    $table = $wpdb->prefix . 'greenangel_codes';
+    if (!get_option('greenangel_codes_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             code varchar(100) NOT NULL,
@@ -27,8 +27,8 @@ function greenangel_create_code_tables() {
     }
 
     // ✅ Usage Logs Table
-    if (!get_option('greenangel_code_logs_created')) {
-        $table = $wpdb->prefix . 'greenangel_code_logs';
+    $table = $wpdb->prefix . 'greenangel_code_logs';
+    if (!get_option('greenangel_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             user_id bigint(20) DEFAULT NULL,
@@ -43,8 +43,8 @@ function greenangel_create_code_tables() {
     }
 
     // ✅ Failed Attempts Table
-    if (!get_option('greenangel_failed_code_logs_created')) {
-        $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
+    $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
+    if (!get_option('greenangel_failed_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             email varchar(100) DEFAULT '',
