@@ -52,7 +52,26 @@ function greenangel_render_code_table() {
         margin-top: 20px;
         color: #fff;
       }
-    </style>';
+      .status-toggle {
+        background: #aed604;
+        color: #222;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 13px;
+        font-family: "Poppins", sans-serif !important;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s ease-in-out;
+      }
+      .status-toggle:hover { transform: translateY(-2px); box-shadow: 0 0 8px rgba(174,214,4,0.6); }
+      .status-toggle.inactive {
+        background: #222;
+        color: #ffffff;
+        border: 1px solid rgba(255,0,0,0.4);
+      }
+      .status-toggle.inactive:hover { box-shadow: 0 0 8px rgba(255,0,0,0.6); }
+   </style>';
 
     // ─── Output ────────────────────────────────
     if (!$codes) {
@@ -112,7 +131,8 @@ function greenangel_render_code_table() {
         $toggle_url = admin_url("admin-post.php?action=greenangel_toggle_code&id={$code->id}");
         $delete_url = admin_url("admin-post.php?action=greenangel_delete_code&id={$code->id}");
         echo '<td>';
-        echo '<a href="'.esc_url($toggle_url).'" style="margin-right:8px;" class="button" title="Toggle Active">';
+        $active_class = $code->active ? 'status-toggle' : 'status-toggle inactive';
+        echo '<a href="'.esc_url($toggle_url).'" style="margin-right:8px;" class="'.$active_class.'" title="Toggle Active">';
         echo $code->active ? '🟢 Active' : '⚫ Inactive';
         echo '</a>';
         echo '<a href="'.esc_url($delete_url).'" class="button" style="background:#e74c3c; color:#fff; border-radius:6px;" onclick="return confirm(\'Are you sure you want to delete this code?\')">';

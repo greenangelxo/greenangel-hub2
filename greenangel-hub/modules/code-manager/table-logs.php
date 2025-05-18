@@ -15,7 +15,7 @@ function greenangel_render_code_log_table() {
         overflow: hidden;
         border-collapse: separate;
         border-spacing: 0;
-        margin-top: 40px;
+        margin-top: 20px;
         width: 100%;
         font-family: "Poppins", sans-serif !important;
       }
@@ -47,14 +47,14 @@ function greenangel_render_code_log_table() {
       .log-controls {
         display: flex;
         gap: 12px;
-        margin-top: 15px;
+        margin-top: 10px;
         align-items: center;
       }
       .log-bubble-button {
-        background: #aed604;
-        color: #222;
+        background: #222;
+        color: #aed604;
         border: none;
-        padding: 8px 16px;
+        padding: 8px 18px;
         font-weight: 500;
         cursor: pointer;
         border-radius: 20px;
@@ -64,9 +64,10 @@ function greenangel_render_code_log_table() {
         display: flex;
         align-items: center;
         gap: 8px;
+        box-shadow: 0 0 0 rgba(174,214,4,0);
       }
       .log-bubble-button:hover {
-        background: #c5e915;
+        box-shadow: 0 0 8px rgba(174,214,4,0.7);
         transform: translateY(-2px);
       }
       .empty-log {
@@ -80,7 +81,7 @@ function greenangel_render_code_log_table() {
     </style>';
 
     // ─── Output ────────────────────────────────
-    echo '<div class="title-bubble" style="margin-top:40px;">📜 Angel Code Usage Log</div>';
+    echo '<div class="title-bubble" style="margin-top:30px; margin-bottom:12px;">📜 Angel Code Usage Log</div>';
     echo '<div class="log-controls">';
     echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
     echo '<input type="hidden" name="action" value="greenangel_clear_usage_log">';
