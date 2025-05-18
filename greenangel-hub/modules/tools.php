@@ -90,7 +90,7 @@ function greenangel_render_tools_tab() {
                     <button type="submit" class="angel-button">🔁 Restore Login Form</button>
                 </form>
                 <?php if ( $last_restored ) : ?>
-                    <p style="margin-top:10px;">✅ Last restored: <?php echo esc_html( $last_restored ); ?></p>
+                    <p style="margin-top:8px;">✅ Last restored: <?php echo esc_html( $last_restored ); ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -111,28 +111,111 @@ function greenangel_render_tools_tab() {
             </div>
             <div class="card-content">
                 <a class="angel-button secondary" href="<?php echo esc_url( $action . '?action=greenangel_download_login_form' ); ?>">💾 Download Current Version</a>
-                <form method="post" action="<?php echo esc_url( $action ); ?>" enctype="multipart/form-data" style="margin-top:15px;">
+                <form method="post" action="<?php echo esc_url( $action ); ?>" enctype="multipart/form-data" class="upload-form">
                     <input type="hidden" name="action" value="greenangel_upload_login_form">
                     <?php wp_nonce_field( 'greenangel_upload_login_form', 'greenangel_nonce_upload' ); ?>
                     <input type="file" name="login_file" accept=".php" required>
-                    <button type="submit" class="angel-button" style="margin-top:10px;">📤 Upload New Login Form Version</button>
+                    <button type="submit" class="angel-button">📤 Upload New Login Form Version</button>
                 </form>
             </div>
         </div>
     </div>
 
     <style>
-        .tools-wrapper { margin-top:20px; font-family:'Poppins',sans-serif!important; }
-        .angel-card { background:#222222; border-radius:14px; overflow:hidden; margin-bottom:25px; box-shadow:0 6px 12px rgba(0,0,0,0.1); }
-        .card-header { padding:16px 20px; background:#222222; }
-        .card-content { padding:25px; background:#222222; display:flex; flex-direction:column; gap:15px; }
-        .angel-button { background:#aed604; color:#222222; border:none; padding:12px 20px; font-weight:600; cursor:pointer; border-radius:20px; transition:all 0.2s ease-in-out; font-family:'Poppins',sans-serif!important; font-size:14px; display:flex; align-items:center; gap:8px; box-shadow:0 4px 8px rgba(0,0,0,0.15); justify-content:center; }
+        .tools-wrapper {
+            margin-top: 20px;
+            font-family: 'Poppins', sans-serif !important;
+            max-width: 800px;
+            margin-left: 0;
+        }
+        .angel-card {
+            background: #222222;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .card-header { padding: 16px 20px; background:#222222; }
+        .card-content {
+            padding: 20px;
+            background:#222222;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+        .angel-button {
+            background:#aed604;
+            color:#222222;
+            border:none;
+            padding:12px 20px;
+            font-weight:600;
+            cursor:pointer;
+            border-radius:20px;
+            transition:all 0.2s ease-in-out;
+            font-family:'Poppins',sans-serif!important;
+            font-size:14px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            box-shadow:0 4px 8px rgba(0,0,0,0.15);
+            justify-content:center;
+        }
         .angel-button.secondary { background:rgba(174,214,4,0.15); color:#aed604; }
         .header-bubble { display:inline-block; background-color:#aed604; color:#222222; padding:6px 12px; border-radius:16px; font-weight:500; font-size:12px; white-space:nowrap; }
-        .success-indicator { display:inline-block; background:#aed604; color:#222222; padding:8px 18px; border-radius:20px; font-weight:500; font-size:14px; }
-        .code-preview { width:100%; height:300px; background:#f5f5f5; color:#222222; border:1px solid rgba(174,214,4,0.3); border-radius:10px; padding:15px; font-family:'Courier New',monospace; font-size:13px; resize:vertical; line-height:1.6; }
-        .copy-btn { background:#222222; color:#aed604; border:none; padding:8px 16px; font-weight:500; cursor:pointer; border-radius:20px; transition:all 0.2s ease-in-out; font-family:'Poppins',sans-serif!important; font-size:13px; display:inline-flex; align-items:center; gap:8px; }
+        .success-indicator {
+            display:inline-block;
+            background:#aed604;
+            color:#222222;
+            padding:8px 18px;
+            border-radius:20px;
+            font-weight:500;
+            font-size:14px;
+        }
+        .code-preview {
+            width:100%;
+            height:200px;
+            background:#f5f5f5;
+            color:#222222;
+            border:1px solid rgba(174,214,4,0.3);
+            border-radius:10px;
+            padding:15px;
+            font-family:'Courier New',monospace;
+            font-size:13px;
+            resize:vertical;
+            line-height:1.6;
+        }
+        .copy-btn {
+            background:#222222;
+            color:#aed604;
+            border:none;
+            padding:8px 16px;
+            font-weight:500;
+            cursor:pointer;
+            border-radius:20px;
+            transition:all 0.2s ease-in-out;
+            font-family:'Poppins',sans-serif!important;
+            font-size:13px;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+        }
         .copy-btn:hover { background:#333333; }
+        .upload-form {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-top:12px;
+        }
+        .upload-form input[type="file"] {
+            flex:1 1 260px;
+            padding:8px 10px;
+            background:#f5f5f5;
+            color:#222;
+            border:1px solid rgba(174,214,4,0.3);
+            border-radius:10px;
+        }
+        .upload-form button { margin-top:0; }
     </style>
     <?php
 }
