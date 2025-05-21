@@ -1,15 +1,18 @@
 <?php
 // 🌿 Green Angel Hub – Affiliates Subpage
-
+y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
 // Register submenu page so it's accessible from the WP menu
 add_action('admin_menu', function () {
+
     add_submenu_page(
         'greenangel-hub',
         'Affiliates',
         'Affiliates',
         'manage_woocommerce',
         'greenangel-affiliates',
+        y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
         'greenangel_render_affiliates_page'
+        main
     );
 });
 
@@ -21,6 +24,7 @@ function greenangel_fetch_affiliates() {
     $table = $wpdb->prefix . 'slicewp_affiliates';
     return $wpdb->get_results("SELECT * FROM $table WHERE status = 'active'");
 }
+    y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
 
 function greenangel_render_affiliates_page() {
     if (!current_user_can('manage_woocommerce')) {
@@ -41,6 +45,7 @@ function greenangel_render_affiliates_page() {
         });
     }
 
+    y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
     echo '<div class="affiliate-wrap">';
     echo '<div class="title-bubble">💚 Affiliates</div>';
 
@@ -52,6 +57,7 @@ function greenangel_render_affiliates_page() {
     } else {
         echo '<input type="hidden" name="page" value="greenangel-affiliates">';
     }
+
     echo '<input type="text" name="s" value="' . esc_attr($search) . '" placeholder="Search affiliates...">';
     echo '<button type="submit">Search</button>';
     echo '</form>';

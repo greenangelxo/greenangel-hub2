@@ -151,6 +151,7 @@ function greenangel_hub_page() {
     } elseif ($active_tab === 'tools') {
         greenangel_render_tools_tab();
     } elseif ($active_tab === 'affiliates') {
+        y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
         greenangel_render_affiliates_page();
     }
 
