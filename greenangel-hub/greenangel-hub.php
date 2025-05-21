@@ -136,6 +136,7 @@ function greenangel_hub_page() {
     echo '<a href="?page=greenangel-hub&tab=packing-slips" class="nav-tab ' . ($active_tab === 'packing-slips' ? 'nav-tab-active' : '') . '">📦 Packing Slips</a>';
     echo '<a href="?page=greenangel-hub&tab=angel-codes" class="nav-tab ' . ($active_tab === 'angel-codes' ? 'nav-tab-active' : '') . '">🪽 Angel Codes</a>';
     echo '<a href="?page=greenangel-hub&tab=tools" class="nav-tab ' . ($active_tab === 'tools' ? 'nav-tab-active' : '') . '">🛠 Tools</a>';
+    echo '<a href="?page=greenangel-hub&tab=affiliates" class="nav-tab ' . ($active_tab === 'affiliates' ? 'nav-tab-active' : '') . '">🤝 Affiliates</a>';
     echo '</div>';
 
     // 🧠 Tab Renderer
@@ -149,6 +150,8 @@ function greenangel_hub_page() {
         greenangel_render_angel_codes_tab(); // ✅ NEW RENDER FUNCTION
     } elseif ($active_tab === 'tools') {
         greenangel_render_tools_tab();
+    } elseif ($active_tab === 'affiliates') {
+        greenangel_render_affiliates_tab();
     }
 
     echo '</div>';

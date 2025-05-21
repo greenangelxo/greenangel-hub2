@@ -9,7 +9,9 @@ add_action('admin_menu', function() {
         'Affiliates',
         'manage_woocommerce',
         'greenangel-affiliates',
-        'greenangel_render_affiliates_page'
+        5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+        'greenangel_render_affiliates_tab'
+
     );
 });
 
@@ -21,8 +23,8 @@ function greenangel_fetch_affiliates() {
     $table = $wpdb->prefix . 'slicewp_affiliates';
     return $wpdb->get_results("SELECT * FROM $table WHERE status = 'active'");
 }
-
-function greenangel_render_affiliates_page() {
+5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+function greenangel_render_affiliates_tab() {
     if (!current_user_can('manage_woocommerce')) {
         wp_die('Permission denied');
     }
@@ -44,8 +46,14 @@ function greenangel_render_affiliates_page() {
     echo '<div class="wrap affiliate-wrap">';
     echo '<div class="title-bubble">💚 Affiliates</div>';
 
+    5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+    $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'greenangel-affiliates';
     echo '<form method="get" class="search-bar">';
-    echo '<input type="hidden" name="page" value="greenangel-affiliates">';
+    echo '<input type="hidden" name="page" value="' . esc_attr($current_page) . '">';
+    if ($current_page === 'greenangel-hub') {
+        echo '<input type="hidden" name="tab" value="affiliates">';
+    }
+
     echo '<input type="text" name="s" value="' . esc_attr($search) . '" placeholder="Search affiliates...">';
     echo '<button type="submit">Search</button>';
     echo '</form>';
