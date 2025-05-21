@@ -13,3 +13,22 @@
 [2025-05-17 20:07:49] Order #8165 remains 'Processing'. (Future Delivery: 2025-05-20)
 [2025-05-17 20:07:49] Order #8161 remains 'Processing'. (Future Delivery: 2025-05-20)
 [2025-05-17 20:07:49] ✨ Process completed. Updated: 0, Skipped: 3.
+[2025-05-20 10:09:22] 💚 Manual 'Ship Today' process started.
+[2025-05-20 10:09:23] Order #8199 updated to 'Ship Today'.
+[2025-05-20 10:09:23] Order #8198 updated to 'Ship Today'.
+[2025-05-20 10:09:23] Order #8197 updated to 'Ship Today'.
+[2025-05-20 10:09:23] Order #8195 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-20 10:09:23] Order #8194 updated to 'Ship Today'.
+[2025-05-20 10:09:23] Order #8193 remains 'Processing'. (Future Delivery: 2025-05-22)
+[2025-05-20 10:09:24] Order #8190 updated to 'Ship Today'.
+[2025-05-20 10:09:24] Order #8186 updated to 'Ship Today'.
+[2025-05-20 10:09:24] Order #8185 updated to 'Ship Today'.
+[2025-05-20 10:09:24] ✨ Process completed. Updated: 7, Skipped: 2.
+[2025-05-21 20:23:31] 💚 Manual 'Ship Today' process started.
+[2025-05-21 20:23:31] Order #8439 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] Order #8427 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] Order #8416 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] Order #8409 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] Order #8402 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] Order #8195 remains 'Processing'. (Future Delivery: 2025-05-23)
+[2025-05-21 20:23:31] ✨ Process completed. Updated: 0, Skipped: 6.
