@@ -1,17 +1,18 @@
 <?php
 // 🌿 Green Angel Hub – Affiliates Subpage
+y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+// Register submenu page so it's accessible from the WP menu
+add_action('admin_menu', function () {
 
-// Register submenu page
-add_action('admin_menu', function() {
     add_submenu_page(
         'greenangel-hub',
         'Affiliates',
         'Affiliates',
         'manage_woocommerce',
         'greenangel-affiliates',
-        5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
-        'greenangel_render_affiliates_tab'
-
+        y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+        'greenangel_render_affiliates_page'
+        main
     );
 });
 
@@ -23,8 +24,9 @@ function greenangel_fetch_affiliates() {
     $table = $wpdb->prefix . 'slicewp_affiliates';
     return $wpdb->get_results("SELECT * FROM $table WHERE status = 'active'");
 }
-5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
-function greenangel_render_affiliates_tab() {
+    y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+
+function greenangel_render_affiliates_page() {
     if (!current_user_can('manage_woocommerce')) {
         wp_die('Permission denied');
     }
@@ -43,15 +45,17 @@ function greenangel_render_affiliates_tab() {
         });
     }
 
-    echo '<div class="wrap affiliate-wrap">';
+    y2ope8-codex/create-affiliates-admin-page-with-table-and-welcome-letter
+    echo '<div class="affiliate-wrap">';
     echo '<div class="title-bubble">💚 Affiliates</div>';
 
-    5txv02-codex/create-affiliates-admin-page-with-table-and-welcome-letter
-    $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'greenangel-affiliates';
+    $is_tab = (isset($_GET['page']) && $_GET['page'] === 'greenangel-hub');
     echo '<form method="get" class="search-bar">';
-    echo '<input type="hidden" name="page" value="' . esc_attr($current_page) . '">';
-    if ($current_page === 'greenangel-hub') {
+    if ($is_tab) {
+        echo '<input type="hidden" name="page" value="greenangel-hub">';
         echo '<input type="hidden" name="tab" value="affiliates">';
+    } else {
+        echo '<input type="hidden" name="page" value="greenangel-affiliates">';
     }
 
     echo '<input type="text" name="s" value="' . esc_attr($search) . '" placeholder="Search affiliates...">';
