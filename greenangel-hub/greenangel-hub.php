@@ -16,6 +16,7 @@ require_once plugin_dir_path(__FILE__) . 'modules/nfc-manager.php';
 require_once plugin_dir_path(__FILE__) . 'modules/packing-slips.php';
 require_once plugin_dir_path(__FILE__) . 'modules/code-manager/tab.php'; // 💫 Angel Code Manager tab
 require_once plugin_dir_path(__FILE__) . 'modules/tools.php'; // 🛠 Tools tab
+require_once plugin_dir_path(__FILE__) . 'modules/affiliates.php'; // 🤝 Affiliates page
 
 // ✅ Load DB installer
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
