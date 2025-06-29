@@ -5,6 +5,7 @@ define('GREENANGEL_SHIP_TODAY_LOG', plugin_dir_path(__FILE__) . '/../logs/ship-t
 
 // 🧠 UI Callback
 function greenangel_render_ship_today_tab() {
+    $nonce = wp_create_nonce('greenangel_ship_today');
     ?>
     <style>
         /* Module-specific styles that work WITH the dark wrapper */
@@ -226,9 +227,10 @@ function greenangel_render_ship_today_tab() {
     </div>
 
     <script>
+        const shipNonce = '<?php echo esc_js($nonce); ?>';
         // Load log on page load
         window.addEventListener('DOMContentLoaded', () => {
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_log')
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_log&nonce=' + shipNonce)
                 .then(res => res.text())
                 .then(data => document.getElementById('log-preview').value = data);
         });
@@ -245,7 +247,7 @@ function greenangel_render_ship_today_tab() {
             btn.innerHTML = '<span>⏳</span> Processing...';
             btn.disabled = true;
 
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_run')
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_run&nonce=' + shipNonce)
                 .then(res => res.text())
                 .then(data => {
                     document.getElementById('log-preview').value = data;
@@ -258,7 +260,7 @@ function greenangel_render_ship_today_tab() {
 
         document.getElementById('clear-log').onclick = () => {
             if (!confirm('Are you sure you want to clear the log?')) return;
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_clear')
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_clear&nonce=' + shipNonce)
                 .then(() => {
                     document.getElementById('log-preview').value = '';
                     showSuccess('clear-success');
@@ -266,7 +268,7 @@ function greenangel_render_ship_today_tab() {
         };
 
         document.getElementById('download-log').onclick = () => {
-            window.location.href = '<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_download';
+            window.location.href = '<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_download&nonce=' + shipNonce;
         };
     </script>
     <?php
@@ -275,6 +277,7 @@ function greenangel_render_ship_today_tab() {
 // 🚚 AJAX: Run Ship Today
 add_action('wp_ajax_greenangel_ship_today_run', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
+    check_ajax_referer('greenangel_ship_today', 'nonce');
     $log = "[" . current_time('mysql') . "] 💚 Manual 'Ship Today' process started.\n";
     $updated = 0; $skipped = 0;
     $orders = wc_get_orders(['status'=>'processing','limit'=>-1]);
@@ -294,6 +297,7 @@ add_action('wp_ajax_greenangel_ship_today_run', function() {
 // 🔍 AJAX: Load Log
 add_action('wp_ajax_greenangel_ship_today_log', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
+    check_ajax_referer('greenangel_ship_today', 'nonce');
     echo file_exists(GREENANGEL_SHIP_TODAY_LOG) ? file_get_contents(GREENANGEL_SHIP_TODAY_LOG) : '';
     wp_die();
 });
@@ -301,12 +305,14 @@ add_action('wp_ajax_greenangel_ship_today_log', function() {
 // 🧼 AJAX: Clear Log
 add_action('wp_ajax_greenangel_ship_today_clear', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
+    check_ajax_referer('greenangel_ship_today', 'nonce');
     file_put_contents(GREENANGEL_SHIP_TODAY_LOG, ''); wp_die();
 });
 
 // 📥 AJAX: Download Log
 add_action('wp_ajax_greenangel_ship_today_download', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
+    check_ajax_referer('greenangel_ship_today', 'nonce');
     header('Content-Type:text/plain'); header('Content-Disposition:attachment;filename="ship-today-log.txt"');
     readfile(GREENANGEL_SHIP_TODAY_LOG); exit;
 });
