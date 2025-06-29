@@ -218,4 +218,3 @@ function greenangel_validate_birthday_fields($errors, $user) {
 }
 
 // 🎂 Helper functions for birthday data
-}
