@@ -50,7 +50,7 @@ function greenangel_get_wp_loyalty_points_safe($user_id) {
     $table_name = $wpdb->prefix . 'wlr_users';
     
     // Check if table exists first
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
+    $table_exists = greenangel_table_exists($table_name);
     if (!$table_exists) {
         return ['available' => 0, 'redeemed' => 0];
     }
@@ -78,7 +78,7 @@ function greenangel_get_earning_campaigns() {
     $table_name = $wpdb->prefix . 'wlr_earn_campaign';
     
     // Check if table exists
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
+    $table_exists = greenangel_table_exists($table_name);
     if (!$table_exists) {
         return [];
     }
@@ -113,7 +113,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     $activity_ids = []; // Track unique activities to prevent duplicates
     
     // Let's try a DIRECT query to get EVERYTHING from logs first
-    if ($wpdb->get_var("SHOW TABLES LIKE '$logs_table'") == $logs_table) {
+    if (greenangel_table_exists($logs_table)) {
         // Get ALL columns to see what we're missing
         $test_query = $wpdb->get_results($wpdb->prepare("
             SELECT * FROM $logs_table 
@@ -155,7 +155,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     }
     
     // 2. Get from earn campaign transactions (for any missing activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$transaction_table'") == $transaction_table) {
+    if (greenangel_table_exists($transaction_table)) {
         $earn_activities = $wpdb->get_results($wpdb->prepare("
             SELECT 
                 'earn' as source,
@@ -201,7 +201,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     }
     
     // 3. Get from reward transactions (redemptions)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$reward_trans_table'") == $reward_trans_table) {
+    if (greenangel_table_exists($reward_trans_table)) {
         $reward_activities = $wpdb->get_results($wpdb->prepare("
             SELECT 
                 'redeem' as source,
@@ -245,7 +245,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     }
     
     // 4. Get from points ledger (for any additional activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$points_ledger_table'") == $points_ledger_table) {
+    if (greenangel_table_exists($points_ledger_table)) {
         $ledger_activities = $wpdb->get_results($wpdb->prepare("
             SELECT 
                 'ledger' as source,
