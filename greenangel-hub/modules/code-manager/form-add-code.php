@@ -5,6 +5,7 @@ function greenangel_render_add_code_form() {
     ?>
     <form method="POST" action="<?php echo esc_url($action); ?>" class="angel-code-form">
         <input type="hidden" name="action" value="greenangel_add_angel_code">
+        <?php wp_nonce_field('greenangel_add_code'); ?>
         
         <div class="angel-form-group">
             <label>Code</label>
