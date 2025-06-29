@@ -82,10 +82,12 @@ function greenangel_render_failed_code_log() {
     echo '<div class="title-bubble" style="margin-top:30px; margin-bottom:12px;">🚫 Failed Angel Code Attempts</div>';
     echo '<div class="log-controls">';
     echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo wp_nonce_field('greenangel_clear_failed_log', '_wpnonce', true, false);
     echo '<input type="hidden" name="action" value="greenangel_clear_failed_log">';
     echo '<button type="submit" class="log-bubble-button">🗑 Clear Log</button>';
     echo '</form>';
     echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'">';
+    echo wp_nonce_field('greenangel_download_failed_log', '_wpnonce', true, false);
     echo '<input type="hidden" name="action" value="greenangel_download_failed_log">';
     echo '<button type="submit" class="log-bubble-button">📥 Download CSV</button>';
     echo '</form>';
