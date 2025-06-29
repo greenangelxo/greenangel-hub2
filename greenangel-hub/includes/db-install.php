@@ -3,13 +3,39 @@
  * 🌿 Green Angel — Database Table Installer
  * Creates all required tables for the Angel Code system
  */
+
+/**
+ * Check if a database table exists (cached via static + transient).
+ */
+function greenangel_table_exists($table) {
+    static $checked = [];
+
+    if (isset($checked[$table])) {
+        return $checked[$table];
+    }
+
+    $transient_key = 'greenangel_table_' . md5($table);
+    $cached        = get_transient($transient_key);
+    if ($cached !== false) {
+        $checked[$table] = (bool) $cached;
+        return $checked[$table];
+    }
+
+    global $wpdb;
+    $exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) == $table;
+    set_transient($transient_key, $exists ? 1 : 0, DAY_IN_SECONDS);
+
+    $checked[$table] = $exists;
+    return $exists;
+}
+
 function greenangel_create_code_tables() {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
     
     // ✅ Angel Codes Table
     $table = $wpdb->prefix . 'greenangel_codes';
-    if (!get_option('greenangel_codes_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
+    if (!get_option('greenangel_codes_created') || !greenangel_table_exists($table)) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             code varchar(100) NOT NULL,
@@ -30,7 +56,7 @@ function greenangel_create_code_tables() {
     
     // ✅ Usage Logs Table
     $table = $wpdb->prefix . 'greenangel_code_logs';
-    if (!get_option('greenangel_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
+    if (!get_option('greenangel_code_logs_created') || !greenangel_table_exists($table)) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             user_id bigint(20) DEFAULT NULL,
@@ -46,7 +72,7 @@ function greenangel_create_code_tables() {
     
     // ✅ Failed Attempts Table
     $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
-    if (!get_option('greenangel_failed_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
+    if (!get_option('greenangel_failed_code_logs_created') || !greenangel_table_exists($table)) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             email varchar(100) DEFAULT '',
@@ -62,7 +88,7 @@ function greenangel_create_code_tables() {
     
     // ✅ NEW: Postcode Rules Table
     $table = $wpdb->prefix . 'greenangel_postcode_rules';
-    if (!get_option('greenangel_postcode_rules_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
+    if (!get_option('greenangel_postcode_rules_created') || !greenangel_table_exists($table)) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
             id INT AUTO_INCREMENT PRIMARY KEY,
             type VARCHAR(20) NOT NULL,
