@@ -129,9 +129,13 @@ function greenangel_count_orders_by_date($date) {
 
 // AJAX endpoint for checking delivery date availability
 add_action('wp_ajax_greenangel_check_delivery_availability', 'greenangel_check_delivery_availability');
-add_action('wp_ajax_nopriv_greenangel_check_delivery_availability', 'greenangel_check_delivery_availability');
 
 function greenangel_check_delivery_availability() {
+    check_ajax_referer('greenangel_delivery', 'security');
+
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error('Unauthorized', 401);
+    }
     $dates = isset($_POST['dates']) ? (array) $_POST['dates'] : [];
     $daily_limit = get_option('greenangel_daily_delivery_limit', 20);
     
@@ -170,6 +174,11 @@ add_action('wp_enqueue_scripts', function() {
     if (!is_checkout()) return;
     wp_enqueue_script('flatpickr', 'https://cdn.jsdelivr.net/npm/flatpickr', [], null, true);
     wp_enqueue_style('flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css');
+
+    $nonce = wp_create_nonce('greenangel_delivery');
+    wp_localize_script('flatpickr', 'greenAngelDeliveryVars', [
+        'delivery_nonce' => $nonce
+    ]);
     
     // Pass admin settings to frontend
     $settings = [
@@ -193,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     const { days, blackout, cutoff, max_days, daily_limit, ajax_url } = window.greenAngelDelivery;
+    const { delivery_nonce } = window.greenAngelDeliveryVars || {};
     
     console.log('Delivery settings received:', {
         days: days,
@@ -270,6 +280,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const formData = new FormData();
             formData.append('action', 'greenangel_check_delivery_availability');
             formData.append('dates', JSON.stringify(dates));
+            formData.append('security', delivery_nonce);
             
             const response = await fetch(ajax_url, {
                 method: 'POST',
