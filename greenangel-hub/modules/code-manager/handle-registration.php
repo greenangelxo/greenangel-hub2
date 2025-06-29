@@ -7,6 +7,12 @@ function greenangel_handle_registration() {
     error_log("💥 Running registration handler...");
     
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+
+    if (!check_admin_referer('woocommerce-register', 'woocommerce-register-nonce', false)) {
+        wp_safe_redirect(add_query_arg('greenangel_error', 'invalid_nonce', wc_get_page_permalink('myaccount')));
+        exit;
+    }
+
     global $wpdb;
     
     // 🧼 Sanitize inputs
@@ -145,6 +151,9 @@ function greenangel_show_popup_messages() {
                 break;
             case 'failed':
                 $message = 'Sorry, we couldn\'t create your account. Please try again.';
+                break;
+            case 'invalid_nonce':
+                $message = 'Security check failed. Please try again.';
                 break;
             default:
                 $message = 'Something unexpected happened. Please try again.';
