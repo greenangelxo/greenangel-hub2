@@ -217,26 +217,4 @@ function greenangel_validate_birthday_fields($errors, $user) {
 }
 
 // 🎂 Helper functions for birthday data
-function greenangel_get_user_age($user_id) {
-    $birth_year = get_user_meta($user_id, 'birth_year', true);
-    if ($birth_year) {
-        return date('Y') - $birth_year;
-    }
-    return null;
-}
-
-function greenangel_user_has_birthday($user_id) {
-    $month = get_user_meta($user_id, 'birth_month', true);
-    $year = get_user_meta($user_id, 'birth_year', true);
-    return ($month && $year);
-}
-
-function greenangel_get_formatted_birthday($user_id) {
-    $month = get_user_meta($user_id, 'birth_month', true);
-    $year = get_user_meta($user_id, 'birth_year', true);
-    
-    if ($month && $year) {
-        return date('F Y', mktime(0, 0, 0, $month, 1, $year));
-    }
-    return null;
 }
