@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Angel Code Usage Log
 function greenangel_render_code_log_table() {
     global $wpdb;

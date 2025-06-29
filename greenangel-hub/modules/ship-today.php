@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌱 Green Angel Hub – Ship Today Module
 
 define('GREENANGEL_SHIP_TODAY_LOG', plugin_dir_path(__FILE__) . '/../logs/ship-today-log.txt');

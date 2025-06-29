@@ -1,7 +1,5 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Registration Handler via Angel Code
 function greenangel_handle_registration() {
     error_log("💥 Running registration handler...");

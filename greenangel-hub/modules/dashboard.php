@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 function greenangel_render_dashboard_tab() {
     ?>
     <style>

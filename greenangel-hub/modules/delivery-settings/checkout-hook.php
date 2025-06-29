@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // Show delivery date field at checkout
 add_action('woocommerce_after_order_notes', function($checkout) {
     echo '<div id="greenangel_delivery_date_wrap">';

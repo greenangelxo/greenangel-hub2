@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel — Toggle & Delete Angel Codes
 
 add_action('admin_post_greenangel_toggle_code', function () {
