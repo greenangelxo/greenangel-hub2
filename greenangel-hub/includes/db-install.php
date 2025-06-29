@@ -1,10 +1,12 @@
 <?php
-// 🌿 Green Angel — DB Table Installer (Future-Proof Version)
-
+/**
+ * 🌿 Green Angel — Database Table Installer
+ * Creates all required tables for the Angel Code system
+ */
 function greenangel_create_code_tables() {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
-
+    
     // ✅ Angel Codes Table
     $table = $wpdb->prefix . 'greenangel_codes';
     if (!get_option('greenangel_codes_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
@@ -25,7 +27,7 @@ function greenangel_create_code_tables() {
         dbDelta($sql);
         update_option('greenangel_codes_created', 'yes');
     }
-
+    
     // ✅ Usage Logs Table
     $table = $wpdb->prefix . 'greenangel_code_logs';
     if (!get_option('greenangel_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
@@ -41,7 +43,7 @@ function greenangel_create_code_tables() {
         dbDelta($sql);
         update_option('greenangel_code_logs_created', 'yes');
     }
-
+    
     // ✅ Failed Attempts Table
     $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
     if (!get_option('greenangel_failed_code_logs_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
@@ -57,4 +59,43 @@ function greenangel_create_code_tables() {
         dbDelta($sql);
         update_option('greenangel_failed_code_logs_created', 'yes');
     }
+    
+    // ✅ NEW: Postcode Rules Table
+    $table = $wpdb->prefix . 'greenangel_postcode_rules';
+    if (!get_option('greenangel_postcode_rules_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
+        $sql = "CREATE TABLE IF NOT EXISTS $table (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            type VARCHAR(20) NOT NULL,
+            postcode_prefix VARCHAR(10) NOT NULL,
+            value DECIMAL(10,2) DEFAULT 0.00,
+            message TEXT NOT NULL,
+            active ENUM('yes','no') NOT NULL DEFAULT 'yes'
+        ) $charset_collate;";
+        
+        dbDelta($sql);
+        update_option('greenangel_postcode_rules_created', 'yes');
+    }
+    
+    // Fix any existing NULL values in the active column
+    $wpdb->query("UPDATE {$table} SET active = 'yes' WHERE active IS NULL");
+}
+
+// 🚀 ACTIVATION HOOK NOTE:
+// This hook should be called from your main plugin file (greenangel-hub.php)
+// NOT from this include file! Add this line to your main file:
+// register_activation_hook(__FILE__, 'greenangel_create_code_tables');
+
+// Also run on admin_init to catch any missed tables
+add_action('admin_init', 'greenangel_ensure_tables_exist');
+
+function greenangel_ensure_tables_exist() {
+    // Only run if we haven't checked recently
+    if (get_transient('greenangel_tables_checked')) {
+        return;
+    }
+    
+    greenangel_create_code_tables();
+    
+    // Set transient to avoid checking every page load
+    set_transient('greenangel_tables_checked', true, DAY_IN_SECONDS);
 }

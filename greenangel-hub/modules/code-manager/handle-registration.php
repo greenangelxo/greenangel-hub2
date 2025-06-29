@@ -13,14 +13,26 @@ function greenangel_handle_registration() {
     $email       = sanitize_email($_POST['email'] ?? '');
     $password    = $_POST['password'] ?? '';
     $angel_code  = sanitize_text_field($_POST['angel_code'] ?? '');
+    $birth_month = sanitize_text_field($_POST['birth_month'] ?? '');
+    $birth_year  = absint($_POST['birth_year'] ?? 0);
+    $first_name  = sanitize_text_field($_POST['first_name'] ?? '');
+    $last_name   = sanitize_text_field($_POST['last_name'] ?? '');
     
     // Store the email to persist across redirect
     setcookie('greenangel_reg_email', $email, time() + 300, '/');
     
     // ✅ Validate inputs
-    if (!$email || !$password || !$angel_code) {
-        error_log("❌ Missing fields: email=" . ($email ? 'yes' : 'no') . ", password=" . ($password ? 'yes' : 'no') . ", code=" . ($angel_code ? 'yes' : 'no'));
+    if (!$email || !$password || !$angel_code || !$birth_month || !$birth_year || !$first_name || !$last_name) {
+        error_log("❌ Missing fields: email=" . ($email ? 'yes' : 'no') . ", password=" . ($password ? 'yes' : 'no') . ", code=" . ($angel_code ? 'yes' : 'no') . ", birth_month=" . ($birth_month ? 'yes' : 'no') . ", birth_year=" . ($birth_year ? 'yes' : 'no') . ", first_name=" . ($first_name ? 'yes' : 'no') . ", last_name=" . ($last_name ? 'yes' : 'no'));
         wp_safe_redirect(add_query_arg('greenangel_error', 'missing_fields', wc_get_page_permalink('myaccount')));
+        exit;
+    }
+    
+    // Validate birth year (18-100 years old)
+    $current_year = date('Y');
+    if ($birth_year < ($current_year - 100) || $birth_year > ($current_year - 18)) {
+        error_log("❌ Invalid birth year: $birth_year");
+        wp_safe_redirect(add_query_arg('greenangel_error', 'invalid_birthdate', wc_get_page_permalink('myaccount')));
         exit;
     }
     
@@ -62,6 +74,20 @@ function greenangel_handle_registration() {
         exit;
     }
     
+    // 👤 Update user details
+    wp_update_user([
+        'ID' => $user_id,
+        'first_name' => $first_name,
+        'last_name' => $last_name,
+        'display_name' => $first_name . ' ' . $last_name
+    ]);
+    
+    // Also save as user meta for WooCommerce
+    update_user_meta($user_id, 'billing_first_name', $first_name);
+    update_user_meta($user_id, 'billing_last_name', $last_name);
+    update_user_meta($user_id, 'shipping_first_name', $first_name);
+    update_user_meta($user_id, 'shipping_last_name', $last_name);
+    
     // 📜 Log Angel Code usage
     $wpdb->insert($wpdb->prefix . 'greenangel_code_logs', [
         'user_id'    => $user_id,
@@ -69,6 +95,11 @@ function greenangel_handle_registration() {
         'code_used'  => $angel_code,
         'timestamp'  => current_time('mysql')
     ]);
+    
+    // 🎂 Save birthday data (one-time only)
+    update_user_meta($user_id, 'birth_month', $birth_month);
+    update_user_meta($user_id, 'birth_year', $birth_year);
+    error_log("✅ Birthday saved: Month $birth_month, Year $birth_year");
     
     // 🔐 Auto-login
     wp_set_current_user($user_id);
@@ -105,6 +136,9 @@ function greenangel_show_popup_messages() {
                 break;
             case 'invalid_code':
                 $message = 'Oops! The Angel Code you entered is invalid or expired. Please check and try again.';
+                break;
+            case 'invalid_birthdate':
+                $message = 'Please enter a valid birth year. You must be at least 18 years old to register.';
                 break;
             case 'exists':
                 $message = 'An account with this email already exists. Please log in instead.';

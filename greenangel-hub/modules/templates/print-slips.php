@@ -3,11 +3,23 @@
  * Green Angel Packing Slip Template
  * Matches the Photoshop design with FLY HIGH ANGEL header - CLEAN PRINT VERSION
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
+// Only allow shop managers/admins
+if ( ! current_user_can( 'manage_woocommerce' ) ) {
+    wp_die( esc_html__( 'Unauthorized access', 'green-angel' ) );
+}
+
+// Sanitize and validate IDs
+$ids = isset( $ids ) && is_array( $ids ) ? array_map( 'intval', $ids ) : [];
 ?><!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Packing Slips</title>
+  <title><?php echo esc_html__( 'Packing Slips', 'green-angel' ); ?></title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* Super aggressive print CSS to remove ALL headers and footers */
@@ -15,34 +27,20 @@
       size: A4;
       margin: 0;
     }
-    
     @media print {
-      /* Hide all browser headers/footers */
-      head, header, footer {
-        display: none !important;
-      }
-      
-      /* Reset body margins for print */
+      head, header, footer { display: none !important; }
       body {
         margin: 2cm !important;
         padding: 0 !important;
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
-      
-      /* Hide absolutely everything that might be added by WordPress */
-      #adminmenumain, #wpadminbar, #wpfooter, .update-nag, .updated, 
+      #adminmenumain, #wpadminbar, #wpfooter, .update-nag, .updated,
       .error, .is-dismissible, header, footer, .no-print {
         display: none !important;
       }
     }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: "Poppins", sans-serif;
       background: #fff;
@@ -52,33 +50,21 @@
       page-break-after: always;
       max-width: 100%;
       overflow: hidden;
-      padding-top: 1cm; /* Add padding at top to push content down */
+      padding-top: 1cm;
     }
-    
-    /* Logo and header styles */
     .logo-section {
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
     }
-    .logo {
-      width: 180px;
-    }
-    .ship-to {
-      text-align: right;
-      font-size: 13px;
-    }
+    .logo { width: 180px; }
+    .ship-to { text-align: right; font-size: 13px; }
     .ship-to h3 {
       font-weight: 600;
       margin-bottom: 4px;
       text-transform: uppercase;
     }
-    .ship-to p {
-      margin: 0;
-      line-height: 1.4;
-    }
-    
-    /* Header title */
+    .ship-to p { margin: 0; line-height: 1.4; }
     .header-title {
       font-size: 20px;
       font-weight: 700;
@@ -87,16 +73,12 @@
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
     }
-    
-    /* Order details */
     .order-details {
       float: right;
       text-align: right;
       font-size: 13px;
       margin-top: -50px;
     }
-    
-    /* Rounded table styles */
     .items {
       width: 100%;
       border-collapse: separate;
@@ -113,61 +95,26 @@
       font-weight: 600;
       text-align: left;
     }
-    
-    /* Add rounded corners to the table */
-    .items tr:first-child th:first-child {
-      border-top-left-radius: 8px;
-    }
-    .items tr:first-child th:last-child {
-      border-top-right-radius: 8px;
-    }
-    .items tr:last-child td:first-child {
-      border-bottom-left-radius: 8px;
-    }
-    .items tr:last-child td:last-child {
-      border-bottom-right-radius: 8px;
-    }
-    
-    /* Fix borders for rounded corners */
-    .items tr:first-child th {
-      border-top: 1px solid #ddd;
-    }
-    .items tr th:first-child, .items tr td:first-child {
-      border-left: 1px solid #ddd;
-    }
-    .items tr th:last-child, .items tr td:last-child {
-      border-right: 1px solid #ddd;
-    }
-    .items tr:last-child td {
-      border-bottom: 1px solid #ddd;
-    }
-    
-    /* Check column */
-    .check-col {
-      width: 40px;
-      text-align: center;
-    }
-    
-    /* Card styles - bold instead of green */
-    .card-item { 
-      font-weight: 700; 
+    .items tr:first-child th:first-child { border-top-left-radius: 8px; }
+    .items tr:first-child th:last-child  { border-top-right-radius: 8px; }
+    .items tr:last-child td:first-child  { border-bottom-left-radius: 8px; }
+    .items tr:last-child td:last-child   { border-bottom-right-radius: 8px; }
+    .check-col { width: 40px; text-align: center; }
+    .card-item {
+      font-weight: 700;
     }
     .card-desc {
       display: block;
       font-size: 11px;
       color: #555;
-      font-weight: normal;
-      margin-top: 3px;
       font-style: italic;
+      margin-top: 3px;
     }
-    
-    /* Footer */
     .footer {
       text-align: center;
       font-size: 14px;
       font-weight: 600;
-      margin-top: 60px;
-      margin-bottom: 60px; /* Add space at bottom to ensure footer isn't cut off */
+      margin: 60px 0;
       text-transform: uppercase;
     }
     .thank-you {
@@ -180,89 +127,104 @@
 </head>
 <body>
 
-<?php if (empty($ids) || !is_array($ids)): ?>
-  <p><strong>No orders selected.</strong></p>
-<?php else: foreach ($ids as $id):
-    $order = wc_get_order($id);
-    if (! $order) continue;
+<?php if ( empty( $ids ) ) : ?>
+  <p><strong><?php echo esc_html__( 'No orders selected.', 'green-angel' ); ?></strong></p>
+<?php else : foreach ( $ids as $order_id ) :
 
-    // Pull this order's card meta
-    $card_type = get_post_meta($id, '_greenangel_card_issued', true);
+    $order = wc_get_order( $order_id );
+    if ( ! $order ) {
+        continue;
+    }
 
-    // (We no longer act on $card_needed here; only explicit assignments)
-    
-    // Get shipping address components
-    $shipping_first_name = $order->get_shipping_first_name();
-    $shipping_last_name  = $order->get_shipping_last_name();
-    $shipping_address_1  = $order->get_shipping_address_1();
-    $shipping_address_2  = $order->get_shipping_address_2();
-    $shipping_city       = $order->get_shipping_city();
-    $shipping_state      = $order->get_shipping_state();
-    $shipping_postcode   = $order->get_shipping_postcode();
+    // Ensure meta is safe
+    $card_type = sanitize_text_field( get_post_meta( $order_id, '_greenangel_card_issued', true ) );
+
+    // Shipping address
+    $first   = esc_html( $order->get_shipping_first_name() );
+    $last    = esc_html( $order->get_shipping_last_name() );
+    $addr1   = esc_html( $order->get_shipping_address_1() );
+    $addr2   = esc_html( $order->get_shipping_address_2() );
+    $city    = esc_html( $order->get_shipping_city() );
+    $state   = esc_html( $order->get_shipping_state() );
+    $postcode= esc_html( $order->get_shipping_postcode() );
 ?>
-  <div class="slip">    
+  <div class="slip">
     <div class="logo-section">
       <div class="logo">
-        <img src="<?php echo esc_url( plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'modules/assets/logo-packing-slip.png' ); ?>" alt="Green Angel" width="180">
+        <img src="<?php echo esc_url( plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'modules/assets/logo-packing-slip.png' ); ?>"
+             alt="<?php echo esc_attr__( 'Green Angel Logo', 'green-angel' ); ?>" width="180">
       </div>
       <div class="ship-to">
-        <h3>SHIP TO:</h3>
+        <h3><?php echo esc_html__( 'SHIP TO:', 'green-angel' ); ?></h3>
         <p>
-          <?php echo esc_html("$shipping_first_name $shipping_last_name"); ?><br>
-          <?php echo esc_html($shipping_address_1); ?><br>
-          <?php if ($shipping_address_2) echo esc_html("$shipping_address_2<br>"); ?>
-          <?php echo esc_html($shipping_city); ?><br>
-          <?php if ($shipping_state) echo esc_html("$shipping_state<br>"); ?>
-          <?php echo esc_html($shipping_postcode); ?>
+          <?php echo $first . ' ' . $last; ?><br>
+          <?php echo $addr1; ?><br>
+          <?php if ( $addr2 ) echo $addr2 . '<br>'; ?>
+          <?php echo $city; ?><br>
+          <?php if ( $state ) echo $state . '<br>'; ?>
+          <?php echo $postcode; ?>
         </p>
       </div>
     </div>
 
     <div class="header-title">
-      FLY HIGH ANGEL - YOUR PACKING SLIP
+      <?php echo esc_html__( 'FLY HIGH ANGEL - YOUR PACKING SLIP', 'green-angel' ); ?>
     </div>
 
     <div class="order-details">
-      <p><strong>ORDER NUMBER:</strong> #<?php echo $order->get_id(); ?></p>
-      <p><strong>ORDER DATE:</strong> <?php echo $order->get_date_created()->date('d/m/y'); ?></p>
+      <p><strong><?php echo esc_html__( 'ORDER NUMBER:', 'green-angel' ); ?></strong> #<?php echo esc_html( $order->get_id() ); ?></p>
+      <p><strong><?php echo esc_html__( 'ORDER DATE:', 'green-angel' ); ?></strong>
+         <?php
+         $created = $order->get_date_created();
+         if ( $created ) {
+             echo esc_html( date_i18n( 'd/m/y', $created->getTimestamp() ) );
+         }
+         ?>
+      </p>
+      <?php if ( $order->get_meta( '_delivery_date' ) ) : 
+          $dd = sanitize_text_field( $order->get_meta( '_delivery_date' ) );
+      ?>
+      <p><strong><?php echo esc_html__( 'DELIVERY DATE:', 'green-angel' ); ?></strong>
+         <?php echo esc_html( date_i18n( 'd/m/y', strtotime( $dd ) ) ); ?>
+      </p>
+      <?php endif; ?>
     </div>
 
     <table class="items">
       <thead>
         <tr>
           <th>#</th>
-          <th>Product</th>
-          <th>Qty</th>
+          <th><?php echo esc_html__( 'Product', 'green-angel' ); ?></th>
+          <th><?php echo esc_html__( 'Qty', 'green-angel' ); ?></th>
           <th class="check-col">✓</th>
         </tr>
       </thead>
       <tbody>
-        <?php $i = 1; foreach ($order->get_items() as $item): ?>
+        <?php $i = 1; foreach ( $order->get_items() as $item ) : ?>
         <tr>
-          <td><?php echo $i++; ?></td>
-          <td><?php echo esc_html($item->get_name()); ?></td>
-          <td><?php echo esc_html($item->get_quantity()); ?></td>
+          <td><?php echo esc_html( $i++ ); ?></td>
+          <td><?php echo esc_html( $item->get_name() ); ?></td>
+          <td><?php echo esc_html( $item->get_quantity() ); ?></td>
           <td class="check-col"></td>
         </tr>
         <?php endforeach; ?>
 
-        <!-- ONLY show a card row if one was explicitly assigned -->
-        <?php if ($card_type === 'angel'): ?>
+        <?php if ( 'angel' === $card_type ) : ?>
         <tr>
-          <td><?php echo $i++; ?></td>
+          <td><?php echo esc_html( $i++ ); ?></td>
           <td>
-            <span class="card-item">Angel Card</span>
-            <span class="card-desc">NFC loyalty card - tap on friends phone to load our store with your personal referral code. Earns ££ off future orders.</span>
+            <span class="card-item"><?php echo esc_html__( 'Angel Card', 'green-angel' ); ?></span>
+            <span class="card-desc"><?php echo esc_html__( 'NFC loyalty card - tap on friends phone to load our store with your personal referral code. Earns ££ off future orders.', 'green-angel' ); ?></span>
           </td>
           <td>1</td>
           <td class="check-col"></td>
         </tr>
-        <?php elseif ($card_type === 'affiliate'): ?>
+        <?php elseif ( 'affiliate' === $card_type ) : ?>
         <tr>
-          <td><?php echo $i++; ?></td>
+          <td><?php echo esc_html( $i++ ); ?></td>
           <td>
-            <span class="card-item">Angel Affiliate Card</span>
-            <span class="card-desc">NFC referral card - tap on phone to load our store with your unique referral code. Earns commission!</span>
+            <span class="card-item"><?php echo esc_html__( 'Angel Affiliate Card', 'green-angel' ); ?></span>
+            <span class="card-desc"><?php echo esc_html__( 'NFC referral card - tap on phone to load our store with your unique referral code. Earns commission!', 'green-angel' ); ?></span>
           </td>
           <td>1</td>
           <td class="check-col"></td>
@@ -272,8 +234,8 @@
     </table>
 
     <div class="footer">
-      GREENANGELSHOP.COM
-      <span class="thank-you">THANK YOU FOR YOUR ORDER.</span>
+      <?php echo esc_html__( 'GREENANGELSHOP.COM', 'green-angel' ); ?>
+      <span class="thank-you"><?php echo esc_html__( 'THANK YOU FOR YOUR ORDER.', 'green-angel' ); ?></span>
     </div>
   </div>
 <?php endforeach; endif; ?>
@@ -281,25 +243,15 @@
 <script>
 // Enhanced print script with additional cleanup
 window.onload = function() {
-  // Remove any default headers/footers Chrome might add
   var style = document.createElement('style');
   style.innerHTML = `
     @media print {
-      @page { 
-        margin: 0; 
-        size: A4;
-      }
+      @page { margin: 0; size: A4; }
       body { margin: 2cm !important; }
-      
-      /* Hide all headers and footers */
-      head, header, footer, .header-date, .header-packing-slips {
-        display: none !important;
-      }
+      head, header, footer, .header-date, .header-packing-slips { display: none !important; }
     }
   `;
   document.head.appendChild(style);
-  
-  // Short timeout to ensure everything is loaded
   setTimeout(function() {
     window.print();
   }, 500);
