@@ -91,36 +91,24 @@
 }
 
 /* 💌 Hero Message Box Styles */
+.ga-hero-message-wrapper {
+    margin: 1rem 0;
+}
+
 .ga-hero-message {
-    background: rgba(26, 26, 26, 0.9);
+    background: #1a1a1a;
     border: 1px solid #333;
-    color: #ffffff;
-    padding: 1rem;
+    padding: 1.25rem 1.5rem;
     border-radius: 16px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
     font-size: 0.85rem;
-    line-height: 1.3;
-    height: 100%;
-    min-height: 80px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Custom scrollbar for message box */
-.ga-hero-message::-webkit-scrollbar {
-    width: 6px;
-}
-
-.ga-hero-message::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-}
-
-.ga-hero-message::-webkit-scrollbar-thumb {
-    background: #aed604;
-    border-radius: 3px;
+    line-height: 1.4;
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+    color: #ffffff;
 }
 
 .ga-message-icon {
@@ -131,20 +119,36 @@
 }
 
 .ga-message-text {
-    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
     color: #ffffff;
     font-weight: 500;
+    text-align: center;
+    width: 100%;
 }
 
-/* Mobile styles for message box */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
+
     .ga-hero-message {
-        background: #1a1a1a;
-        border: 1px solid #333;
-        padding: 1rem;
-        margin: 1rem 0;
-        height: 100px;
+        background: rgba(26, 26, 26, 0.9);
+        padding: 1rem 1.25rem;
+        min-height: 80px;
         overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .ga-hero-message::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .ga-hero-message::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .ga-hero-message::-webkit-scrollbar-thumb {
+        background: #aed604;
+        border-radius: 3px;
     }
 }
 
@@ -237,74 +241,6 @@
     align-items: stretch;
 }
 
-/* Hero message wrapper for desktop layout */
-.ga-hero-message-wrapper {
-    flex: 1;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-/* 💌 Hero Message Box Styles */
-.ga-hero-message {
-    background: rgba(26, 26, 26, 0.9);
-    border: 1px solid #333;
-    color: #ffffff;
-    padding: 1rem 1.25rem;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    height: 100%;
-    min-height: 80px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Custom scrollbar for message box on desktop only */
-@media (min-width: 768px) {
-    .ga-hero-message::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .ga-hero-message::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-    }
-
-    .ga-hero-message::-webkit-scrollbar-thumb {
-        background: #aed604;
-        border-radius: 3px;
-    }
-}
-
-.ga-message-text {
-    color: #ffffff;
-    font-weight: 500;
-    text-align: center;
-    width: 100%;
-}
-
-/* Mobile styles for message box */
-@media (max-width: 767px) {
-    .ga-hero-message-wrapper {
-        margin: 1rem 0;
-    }
-    
-    .ga-hero-message {
-        background: #1a1a1a;
-        border: 1px solid #333;
-        padding: 1.25rem 1.5rem;
-        height: auto;
-        min-height: auto;
-        overflow: visible;
-    }
-    
-    .ga-message-text {
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-}
 
 .ga-halo-points {
     background: linear-gradient(135deg, #aed604 0%, #c6f731 100%);
@@ -1240,11 +1176,6 @@
         flex: 0 0 auto;
     }
     
-    .ga-hero-message-wrapper {
-        flex: 1;
-        max-width: 400px;
-        margin: 0 auto;
-    }
     
     .ga-points-section {
         flex: 0 0 auto;
