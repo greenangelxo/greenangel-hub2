@@ -24,14 +24,16 @@ function greenangel_enqueue_account_dashboard_styles() {
 }
 
 // 🌿 BACKUP: Always load (debug)
-add_action('wp_enqueue_scripts', 'greenangel_force_enqueue_account_dashboard_styles', 20);
-function greenangel_force_enqueue_account_dashboard_styles() {
-    wp_enqueue_style(
-        'greenangel-account-dashboard-force',
-        plugin_dir_url(__FILE__) . 'account-dashboard.css',
-        [],
-        time()
-    );
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+    add_action( 'wp_enqueue_scripts', 'greenangel_force_enqueue_account_dashboard_styles', 20 );
+    function greenangel_force_enqueue_account_dashboard_styles() {
+        wp_enqueue_style(
+            'greenangel-account-dashboard-force',
+            plugin_dir_url( __FILE__ ) . 'account-dashboard.css',
+            [],
+            time()
+        );
+    }
 }
 
 // 🌿 WP LOYALTY POINTS - FIXED COLUMN NAMES!
@@ -98,7 +100,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     
     // First, let's check if WP Loyalty has its own function we can use
     if (class_exists('Wlr\App\Helpers\EarnCampaign')) {
-        error_log('DEBUG: WP Loyalty class exists - checking for built-in methods');
+        // Future: utilise built-in methods if available.
     }
     
     // Define all possible activity tables
@@ -120,12 +122,6 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
             LIMIT 10
         ", $email));
         
-        error_log('DEBUG: Sample log entry structure:');
-        if (!empty($test_query)) {
-            foreach ($test_query[0] as $key => $value) {
-                error_log("  $key => $value");
-            }
-        }
         
         // Now get the actual data
         $log_activities = $wpdb->get_results($wpdb->prepare("
@@ -155,7 +151,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
             }
         }
         
-        error_log('DEBUG: Log activities found: ' . count($log_activities));
+        // Debug: log count of activities retrieved if needed.
     }
     
     // 2. Get from earn campaign transactions (for any missing activities)
@@ -201,7 +197,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
             }
         }
         
-        error_log('Earn transactions found: ' . count($earn_activities) . ' (added: ' . (count($all_activities) - count($log_activities)) . ')');
+        // Debug: log earn transaction count here if needed.
     }
     
     // 3. Get from reward transactions (redemptions)
@@ -245,7 +241,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
             }
         }
         
-        error_log('Reward transactions found: ' . count($reward_activities));
+        // Debug: log reward transaction count if needed.
     }
     
     // 4. Get from points ledger (for any additional activities)
@@ -291,7 +287,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
             }
         }
         
-        error_log('Points ledger found: ' . count($ledger_activities));
+        // Debug: log ledger activity count if needed.
     }
     
     // Sort all activities by date (newest first)
@@ -304,7 +300,7 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     // Limit results
     $all_activities = array_slice($all_activities, 0, $limit);
     
-    error_log('Total unique activities returned: ' . count($all_activities));
+    // Debug: log overall activity count if needed.
     
     return $all_activities;
 }
@@ -361,12 +357,7 @@ function greenangel_account_dashboard() {
     // 🌟 GET RECENT ACTIVITIES - NOW WITH MORE DATA!
     $recent_activities = greenangel_get_recent_activities($user_id, 200); // Increased limit to ensure we get all
     
-    // DEBUG: Let's see what we're getting
-    error_log('DEBUG: Total activities fetched: ' . count($recent_activities));
-    error_log('DEBUG: Activities breakdown:');
-    foreach ($recent_activities as $idx => $act) {
-        error_log("Activity $idx: Type={$act->activity_type}, Points={$act->points}, Date={$act->created_at}, Source={$act->source}");
-    }
+    // Debug: inspect $recent_activities here if needed.
 
     // First order date
     $first_order_date = 'Not yet placed';
