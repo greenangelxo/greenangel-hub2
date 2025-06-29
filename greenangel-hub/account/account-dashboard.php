@@ -89,222 +89,72 @@ function greenangel_get_earning_campaigns() {
     return $campaigns ?: [];
 }
 
-// 🌟 GET ALL ACTIVITIES - FIXED TO SHOW ALL ACTIVITIES!
+
+// 🌟 GET ALL ACTIVITIES - combined from WP Loyalty tables
 function greenangel_get_recent_activities($user_id, $limit = 100) {
     global $wpdb;
-    
-    $user = get_userdata($user_id);
-    if (!$user) return [];
-    
-    $email = $user->user_email;
-    
-    // First, let's check if WP Loyalty has its own function we can use
-    if (class_exists('Wlr\App\Helpers\EarnCampaign')) {
-        // Future: utilise built-in methods if available.
-    }
-    
-    // Define all possible activity tables
-    $logs_table = $wpdb->prefix . 'wlr_logs';
-    $transaction_table = $wpdb->prefix . 'wlr_earn_campaign_transaction';
-    $reward_trans_table = $wpdb->prefix . 'wlr_reward_transactions';
-    $points_ledger_table = $wpdb->prefix . 'wlr_points_ledger';
-    
-    $all_activities = [];
-    $activity_ids = []; // Track unique activities to prevent duplicates
-    
-    // Let's try a DIRECT query to get EVERYTHING from logs first
-    if ($wpdb->get_var("SHOW TABLES LIKE '$logs_table'") == $logs_table) {
-        // Get ALL columns to see what we're missing
-        $test_query = $wpdb->get_results($wpdb->prepare("
-            SELECT * FROM $logs_table 
-            WHERE user_email = %s 
-            ORDER BY created_at DESC 
-            LIMIT 10
-        ", $email));
-        
-        
-        // Now get the actual data
-        $log_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'log' as source,
-                id,
-                user_email,
-                action_type as activity_type,
-                points,
-                order_id,
-                created_at,
-                note,
-                action_process_type,
-                reward_display_name,
-                discount_code
-            FROM $logs_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($log_activities as $activity) {
-            $unique_key = $activity->source . '_' . $activity->id;
-            if (!isset($activity_ids[$unique_key])) {
-                $activity_ids[$unique_key] = true;
-                $all_activities[] = $activity;
-            }
-        }
-        
-        // Debug: log count of activities retrieved if needed.
-    }
-    
-    // 2. Get from earn campaign transactions (for any missing activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$transaction_table'") == $transaction_table) {
-        $earn_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'earn' as source,
-                id,
-                user_email,
-                action_type,
-                campaign_type,
-                points,
-                order_id,
-                created_at,
-                display_name as note
-            FROM $transaction_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($earn_activities as $activity) {
-            $activity->activity_type = $activity->campaign_type ?: $activity->action_type;
-            
-            // Check if this activity might already exist in logs
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if ($existing->source == 'log' && 
-                    $existing->points == $activity->points && 
-                    $existing->order_id == $activity->order_id &&
-                    abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 60) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
-                $unique_key = $activity->source . '_' . $activity->id;
-                if (!isset($activity_ids[$unique_key])) {
-                    $activity_ids[$unique_key] = true;
-                    $all_activities[] = $activity;
-                }
-            }
-        }
-        
-        // Debug: log earn transaction count here if needed.
-    }
-    
-    // 3. Get from reward transactions (redemptions)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$reward_trans_table'") == $reward_trans_table) {
-        $reward_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'redeem' as source,
-                id,
-                user_email,
-                'coupon_redeem' as activity_type,
-                -1 * reward_amount as points,
-                order_id,
-                created_at,
-                CONCAT('Redeemed ', discount_code) as note,
-                'redeem' as action_process_type,
-                discount_code
-            FROM $reward_trans_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($reward_activities as $activity) {
-            // Check if redemption already exists in logs
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if ($existing->source == 'log' && 
-                    $existing->action_process_type == 'redeem' &&
-                    $existing->discount_code == $activity->discount_code) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
-                $unique_key = $activity->source . '_' . $activity->id;
-                if (!isset($activity_ids[$unique_key])) {
-                    $activity_ids[$unique_key] = true;
-                    $all_activities[] = $activity;
-                }
-            }
-        }
-        
-        // Debug: log reward transaction count if needed.
-    }
-    
-    // 4. Get from points ledger (for any additional activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$points_ledger_table'") == $points_ledger_table) {
-        $ledger_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'ledger' as source,
-                id,
-                user_email,
-                action_type as activity_type,
-                CASE 
-                    WHEN credit_points > 0 THEN credit_points
-                    WHEN debit_points > 0 THEN -1 * debit_points
-                    ELSE 0
-                END as points,
-                0 as order_id,
-                created_at,
-                note,
-                action_process_type
-            FROM $points_ledger_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($ledger_activities as $activity) {
-            // Check if this ledger entry is unique
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if (abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 5 &&
-                    $existing->points == $activity->points) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
-                $unique_key = $activity->source . '_' . $activity->id;
-                if (!isset($activity_ids[$unique_key])) {
-                    $activity_ids[$unique_key] = true;
-                    $all_activities[] = $activity;
-                }
-            }
-        }
-        
-        // Debug: log ledger activity count if needed.
-    }
-    
-    // Sort all activities by date (newest first)
-    usort($all_activities, function($a, $b) {
-        $date_a = is_numeric($a->created_at) ? $a->created_at : strtotime($a->created_at);
-        $date_b = is_numeric($b->created_at) ? $b->created_at : strtotime($b->created_at);
-        return $date_b - $date_a;
-    });
-    
-    // Limit results
-    $all_activities = array_slice($all_activities, 0, $limit);
-    
-    // Debug: log overall activity count if needed.
-    
-    return $all_activities;
-}
 
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return [];
+    }
+
+    $email = $user->user_email;
+
+    $tables = [
+        'logs'   => $wpdb->prefix . 'wlr_logs',
+        'earn'   => $wpdb->prefix . 'wlr_earn_campaign_transaction',
+        'reward' => $wpdb->prefix . 'wlr_reward_transactions',
+        'ledger' => $wpdb->prefix . 'wlr_points_ledger',
+    ];
+
+    foreach ($tables as $key => $table) {
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+            unset($tables[$key]);
+        }
+    }
+
+    if (empty($tables)) {
+        return [];
+    }
+
+    $parts = [];
+
+    if (isset($tables['logs'])) {
+        $parts[] = $wpdb->prepare(
+            "SELECT 'log' AS source, id, user_email, action_type AS activity_type, points, order_id, created_at, note, action_process_type, reward_display_name, discount_code, customer_note FROM {$tables['logs']} WHERE user_email = %s",
+            $email
+        );
+    }
+
+    if (isset($tables['earn'])) {
+        $parts[] = $wpdb->prepare(
+            "SELECT 'earn' AS source, id, user_email, COALESCE(campaign_type, action_type) AS activity_type, points, order_id, created_at, display_name AS note, NULL AS action_process_type, NULL AS reward_display_name, NULL AS discount_code, NULL AS customer_note FROM {$tables['earn']} WHERE user_email = %s",
+            $email
+        );
+    }
+
+    if (isset($tables['reward'])) {
+        $parts[] = $wpdb->prepare(
+            "SELECT 'redeem' AS source, id, user_email, 'coupon_redeem' AS activity_type, -1 * reward_amount AS points, order_id, created_at, CONCAT('Redeemed ', discount_code) AS note, 'redeem' AS action_process_type, NULL AS reward_display_name, discount_code, NULL AS customer_note FROM {$tables['reward']} WHERE user_email = %s",
+            $email
+        );
+    }
+
+    if (isset($tables['ledger'])) {
+        $parts[] = $wpdb->prepare(
+            "SELECT 'ledger' AS source, id, user_email, action_type AS activity_type, CASE WHEN credit_points > 0 THEN credit_points WHEN debit_points > 0 THEN -1 * debit_points ELSE 0 END AS points, 0 AS order_id, created_at, note, action_process_type, NULL AS reward_display_name, NULL AS discount_code, NULL AS customer_note FROM {$tables['ledger']} WHERE user_email = %s",
+            $email
+        );
+    }
+
+    $sql = implode(' UNION ALL ', $parts) . ' ORDER BY created_at DESC, id DESC LIMIT %d';
+    $sql = $wpdb->prepare($sql, $limit);
+
+    $activities = $wpdb->get_results($sql);
+
+    return $activities ?: [];
+}
 // 🌿 Custom My Account Dashboard
 /**
  * Get Active Main Angel Code
