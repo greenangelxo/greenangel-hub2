@@ -50,7 +50,7 @@ function greenangel_get_wp_loyalty_points_safe($user_id) {
     $table_name = $wpdb->prefix . 'wlr_users';
     
     // Check if table exists first
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
+    $table_exists = greenangel_table_exists($table_name);
     if (!$table_exists) {
         return ['available' => 0, 'redeemed' => 0];
     }
@@ -78,7 +78,7 @@ function greenangel_get_earning_campaigns() {
     $table_name = $wpdb->prefix . 'wlr_earn_campaign';
     
     // Check if table exists
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
+    $table_exists = greenangel_table_exists($table_name);
     if (!$table_exists) {
         return [];
     }

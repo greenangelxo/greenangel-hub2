@@ -10,6 +10,10 @@ Author URI: https://greenangelshop.com
 
 use Wlr\App\Models\Users;
 
+// ✅ Load DB installer early for shared helpers
+require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
+add_action('plugins_loaded', 'greenangel_create_code_tables');
+
 // 🌿 Load modules
 require_once plugin_dir_path(__FILE__) . 'modules/dashboard.php';
 require_once plugin_dir_path(__FILE__) . 'modules/ship-today.php';
@@ -23,10 +27,6 @@ require_once plugin_dir_path(__FILE__) . 'modules/code-manager/tab.php';
 require_once plugin_dir_path(__FILE__) . 'modules/tools.php';
 require_once plugin_dir_path(__FILE__) . 'modules/delivery-settings/delivery-settings.php';
 require_once plugin_dir_path(__FILE__) . 'modules/postcode-rules/enforce-checkout.php';
-
-// ✅ Load DB installer
-require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
-add_action('plugins_loaded', 'greenangel_create_code_tables');
 
 // ➕ Register frontend user actions
 function greenangel_register_user_actions() {
