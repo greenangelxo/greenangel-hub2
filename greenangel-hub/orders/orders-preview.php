@@ -2,38 +2,36 @@
 // 🌿 Enqueue orders preview styles
 add_action('wp_enqueue_scripts', 'greenangel_enqueue_orders_preview_styles');
 function greenangel_enqueue_orders_preview_styles() {
-    if (!is_singular()) return; // Only load on pages/posts
+    if ( ! is_singular() ) {
+        return; // Only load on pages/posts
+    }
+
     global $post;
-    
-    // 🔍 DEBUG: Let's see what's happening
-    error_log('🌿 DEBUG: Checking for shortcode on page: ' . $post->post_title);
-    error_log('🌿 DEBUG: Post content preview: ' . substr($post->post_content, 0, 200));
-    
-    if (has_shortcode($post->post_content, 'greenangel_orders_preview')) {
-        error_log('🌿 DEBUG: Shortcode found! Enqueueing CSS...');
+
+    // Debug helper: inspect page context if needed.
+
+    if ( has_shortcode( $post->post_content, 'greenangel_orders_preview' ) ) {
         wp_enqueue_style(
             'greenangel-orders-preview',
-            plugin_dir_url(__FILE__) . 'orders-preview.css',
+            plugin_dir_url( __FILE__ ) . 'orders-preview.css',
             [],
             '1.0'
         );
-        error_log('🌿 DEBUG: CSS URL: ' . plugin_dir_url(__FILE__) . 'orders-preview.css');
-    } else {
-        error_log('🌿 DEBUG: Shortcode NOT found!');
+        // Debug: check CSS URL when troubleshooting
     }
 }
 
-// 🌿 BACKUP: Always load on specific pages (temporary debug)
-add_action('wp_enqueue_scripts', 'greenangel_force_enqueue_orders_styles', 20);
-function greenangel_force_enqueue_orders_styles() {
-    // Force load CSS on any page containing our shortcode output
-    wp_enqueue_style(
-        'greenangel-orders-preview-force',
-        plugin_dir_url(__FILE__) . 'orders-preview.css',
-        [],
-        time() // Cache busting
-    );
-    error_log('🌿 DEBUG: Force-enqueued CSS with timestamp: ' . time());
+// 🌿 Optional debug loader
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+    add_action( 'wp_enqueue_scripts', 'greenangel_force_enqueue_orders_styles', 20 );
+    function greenangel_force_enqueue_orders_styles() {
+        wp_enqueue_style(
+            'greenangel-orders-preview-force',
+            plugin_dir_url( __FILE__ ) . 'orders-preview.css',
+            [],
+            time() // Cache busting
+        );
+    }
 }
 
 // 🌿 Green Angel Hub – Orders Preview
