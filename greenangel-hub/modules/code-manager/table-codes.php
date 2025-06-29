@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Angel Code Table
 require_once plugin_dir_path(__FILE__) . 'manage-code.php';
 

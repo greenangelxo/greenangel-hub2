@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Fully replace Woo view order endpoint with style overrides
 
 // First, remove ALL possible Woo view-order hooks

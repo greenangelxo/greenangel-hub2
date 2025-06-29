@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel Hub – Tracking Numbers Module
 
 // 🔁 Save Individual Tracking Number

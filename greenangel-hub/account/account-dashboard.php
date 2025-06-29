@@ -1,8 +1,5 @@
 <?php
-// 🌿 Prevent direct access
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 // 🌿 Enqueue account dashboard styles
 add_action('wp_enqueue_scripts', 'greenangel_enqueue_account_dashboard_styles');

@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Failed Code Attempt Log
 
 function greenangel_render_failed_code_log() {

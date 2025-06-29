@@ -1,12 +1,10 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Angel Hub Login/Register Form
  * Matches the new dashboard design aesthetic
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 $show_reg_form = ( ! is_checkout() && 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) ? true : false;
 

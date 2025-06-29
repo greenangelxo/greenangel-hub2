@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Green Angel Shipping Labels - FIXED with Style Options
  * 63.5×38.1mm labels, 21 per sheet (3×7)
@@ -6,9 +7,6 @@
  * NEW: Dynamic font styles for variety and stealth
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit; // exit if accessed directly
-}
 
 // Only allow admins / shop managers
 if ( ! current_user_can( 'manage_woocommerce' ) ) {
