@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Enqueue orders preview styles
 add_action('wp_enqueue_scripts', 'greenangel_enqueue_orders_preview_styles');
 function greenangel_enqueue_orders_preview_styles() {
@@ -35,7 +36,6 @@ if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 }
 
 // 🌿 Green Angel Hub – Orders Preview
-if (!defined('ABSPATH')) exit;
 
 function greenangel_render_orders_list() {
     if (!is_user_logged_in()) return '<p style="color: #fff;">Please log in to view your orders.</p>';

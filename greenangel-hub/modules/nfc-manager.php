@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel Hub – NFC Card Manager Module
 
 use Wlr\App\Models\Users;

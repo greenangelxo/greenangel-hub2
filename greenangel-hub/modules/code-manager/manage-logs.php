@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel — Log Management for Angel Codes
 
 function esc_csv($value) {

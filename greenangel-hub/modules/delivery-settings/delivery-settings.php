@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 
 // 🌿 Green Angel – Delivery Settings Module
 

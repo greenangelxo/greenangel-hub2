@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Angel Code Manager Tab
 require_once plugin_dir_path(__FILE__) . 'table-codes.php';
 require_once plugin_dir_path(__FILE__) . 'form-add-code.php';

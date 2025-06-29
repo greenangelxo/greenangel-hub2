@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Enforce postcode rules at checkout
 
 add_action('woocommerce_after_checkout_validation', 'greenangel_enforce_postcode_rules', 10, 2);

@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /*
 Plugin Name: Angel Hub ❤️
 Plugin URI: https://greenangelshop.com

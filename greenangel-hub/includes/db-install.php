@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * 🌿 Green Angel — Database Table Installer
  * Creates all required tables for the Angel Code system
