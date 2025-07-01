@@ -99,7 +99,7 @@ class GreenAngelLogin {
             // Localize script for AJAX
             wp_localize_script('angel-login-js', 'angel_ajax', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('angel_nonce')
+                'nonce' => wp_create_nonce('angel_login_nonce_action')
             ));
         }
     }
@@ -149,7 +149,7 @@ class GreenAngelLogin {
     }
     
     public function validate_angel_code() {
-        check_ajax_referer('angel_nonce', 'nonce');
+        check_ajax_referer('angel_login_nonce_action', 'nonce');
         
         $code = sanitize_text_field($_POST['code']);
         
@@ -162,14 +162,14 @@ class GreenAngelLogin {
         ));
         
         if ($result) {
-            wp_send_json_success(array('message' => 'Valid angel code!'));
+            wp_send_json_success(array('message' => esc_html__('Valid angel code!', 'greenangel-login')));
         } else {
-            wp_send_json_error(array('message' => 'Invalid or already used angel code.'));
+            wp_send_json_error(array('message' => esc_html__('Invalid or already used angel code.', 'greenangel-login')));
         }
     }
     
     public function handle_registration() {
-        check_ajax_referer('angel_nonce', 'nonce');
+        check_ajax_referer('angel_login_nonce_action', 'nonce');
         
         $first_name = sanitize_text_field($_POST['first_name']);
         $last_name = sanitize_text_field($_POST['last_name']);
@@ -189,13 +189,13 @@ class GreenAngelLogin {
         ));
         
         if (!$code_result) {
-            wp_send_json_error(array('message' => 'Invalid angel code.'));
+            wp_send_json_error(array('message' => esc_html__('Invalid angel code.', 'greenangel-login')));
             return;
         }
         
         // Check if user already exists
         if (email_exists($email)) {
-            wp_send_json_error(array('message' => 'An account with this email already exists.'));
+            wp_send_json_error(array('message' => esc_html__('An account with this email already exists.', 'greenangel-login')));
             return;
         }
         
@@ -203,7 +203,7 @@ class GreenAngelLogin {
         $user_id = wp_create_user($email, $password, $email);
         
         if (is_wp_error($user_id)) {
-            wp_send_json_error(array('message' => $user_id->get_error_message()));
+            wp_send_json_error(array('message' => esc_html($user_id->get_error_message())));
             return;
         }
         
@@ -286,13 +286,13 @@ class GreenAngelLogin {
         }
         
         wp_send_json_success(array(
-            'message' => 'Registration successful!',
+            'message' => esc_html__('Registration successful!', 'greenangel-login'),
             'redirect' => $redirect_url
         ));
     }
     
     public function handle_login() {
-        check_ajax_referer('angel_nonce', 'nonce');
+        check_ajax_referer('angel_login_nonce_action', 'nonce');
         
         $email = sanitize_email($_POST['email']);
         $password = $_POST['password'];
@@ -301,7 +301,7 @@ class GreenAngelLogin {
         $user = wp_authenticate($email, $password);
         
         if (is_wp_error($user)) {
-            wp_send_json_error(array('message' => 'Invalid email or password.'));
+            wp_send_json_error(array('message' => esc_html__('Invalid email or password.', 'greenangel-login')));
             return;
         }
         
@@ -321,18 +321,18 @@ class GreenAngelLogin {
         }
         
         wp_send_json_success(array(
-            'message' => 'Login successful!',
+            'message' => esc_html__('Login successful!', 'greenangel-login'),
             'redirect' => $redirect_url
         ));
     }
     
     public function handle_forgot_password() {
-        check_ajax_referer('angel_nonce', 'nonce');
+        check_ajax_referer('angel_login_nonce_action', 'nonce');
         
         $email = sanitize_email($_POST['email']);
         
         if (empty($email)) {
-            wp_send_json_error(array('message' => 'Please enter your email address.'));
+            wp_send_json_error(array('message' => esc_html__('Please enter your email address.', 'greenangel-login')));
             return;
         }
         
@@ -342,7 +342,7 @@ class GreenAngelLogin {
         if (!$user) {
             // Don't reveal if email exists for security
             wp_send_json_success(array(
-                'message' => 'If an account exists with this email, you will receive password reset instructions shortly. ✨'
+                'message' => esc_html__('If an account exists with this email, you will receive password reset instructions shortly. ✨', 'greenangel-login')
             ));
             return;
         }
@@ -351,7 +351,7 @@ class GreenAngelLogin {
         $key = get_password_reset_key($user);
         
         if (is_wp_error($key)) {
-            wp_send_json_error(array('message' => 'Unable to generate reset link. Please try again.'));
+            wp_send_json_error(array('message' => esc_html__('Unable to generate reset link. Please try again.', 'greenangel-login')));
             return;
         }
         
@@ -381,15 +381,15 @@ class GreenAngelLogin {
         
         if ($sent) {
             wp_send_json_success(array(
-                'message' => 'Password reset link sent! Check your email (and spam folder just in case). ✨'
+                'message' => esc_html__('Password reset link sent! Check your email (and spam folder just in case). ✨', 'greenangel-login')
             ));
         } else {
-            wp_send_json_error(array('message' => 'Error sending email. Please contact support.'));
+            wp_send_json_error(array('message' => esc_html__('Error sending email. Please contact support.', 'greenangel-login')));
         }
     }
     
     public function handle_reset_password() {
-        check_ajax_referer('angel_nonce', 'nonce');
+        check_ajax_referer('angel_login_nonce_action', 'nonce');
         
         $key = sanitize_text_field($_POST['key']);
         $login = sanitize_text_field($_POST['login']);
@@ -397,18 +397,18 @@ class GreenAngelLogin {
         $password_confirm = $_POST['password_confirm'];
         
         if (empty($password) || empty($password_confirm)) {
-            wp_send_json_error(array('message' => 'Please enter a new password.'));
+            wp_send_json_error(array('message' => esc_html__('Please enter a new password.', 'greenangel-login')));
             return;
         }
         
         if ($password !== $password_confirm) {
-            wp_send_json_error(array('message' => 'Passwords do not match.'));
+            wp_send_json_error(array('message' => esc_html__('Passwords do not match.', 'greenangel-login')));
             return;
         }
         
         // Check password strength
         if (strlen($password) < 8) {
-            wp_send_json_error(array('message' => 'Password must be at least 8 characters long.'));
+            wp_send_json_error(array('message' => esc_html__('Password must be at least 8 characters long.', 'greenangel-login')));
             return;
         }
         
@@ -417,9 +417,9 @@ class GreenAngelLogin {
         
         if (is_wp_error($user)) {
             if ($user->get_error_code() === 'expired_key') {
-                wp_send_json_error(array('message' => 'This reset link has expired. Please request a new one.'));
+                wp_send_json_error(array('message' => esc_html__('This reset link has expired. Please request a new one.', 'greenangel-login')));
             } else {
-                wp_send_json_error(array('message' => 'Invalid reset link. Please request a new one.'));
+                wp_send_json_error(array('message' => esc_html__('Invalid reset link. Please request a new one.', 'greenangel-login')));
             }
             return;
         }
@@ -442,7 +442,7 @@ class GreenAngelLogin {
         }
         
         wp_send_json_success(array(
-            'message' => 'Password reset successful! Welcome back, angel! ✨',
+            'message' => esc_html__('Password reset successful! Welcome back, angel! ✨', 'greenangel-login'),
             'redirect' => $redirect_url
         ));
     }

@@ -1,5 +1,10 @@
 jQuery(document).ready(function($) {
-    
+
+    // Nonces from forms
+    const loginNonce = $('#angel-login-form input[name="angel_login_nonce"]').val() || angel_ajax.nonce;
+    const registerNonce = $('#angel-register-form input[name="angel_login_nonce"]').val() || angel_ajax.nonce;
+    const resetNonce = $('#angel-reset-password-form input[name="angel_login_nonce"]').val() || loginNonce;
+
     // Get user's IP address and check for VPN
     let userIP = '';
     let isVPN = false;
@@ -193,7 +198,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'angel_validate_code',
                 code: code,
-                nonce: angel_ajax.nonce
+                nonce: registerNonce
             },
             beforeSend: function() {
                 validationDiv.removeClass('valid invalid').text('Checking...');
@@ -235,7 +240,7 @@ jQuery(document).ready(function($) {
             email: form.find('[name="email"]').val(),
             password: form.find('[name="password"]').val(),
             remember: form.find('[name="remember"]').is(':checked'),
-            nonce: angel_ajax.nonce
+            nonce: loginNonce
         };
         
         // Show loading state
@@ -293,7 +298,7 @@ jQuery(document).ready(function($) {
             birth_month: form.find('[name="birth_month"]').val(),
             birth_year: birthYear,
             newsletter_signup: form.find('[name="newsletter_signup"]').val(),
-            nonce: angel_ajax.nonce
+            nonce: registerNonce
         };
         
         // Show loading state
@@ -342,8 +347,9 @@ jQuery(document).ready(function($) {
                     <h1 class="angel-title">Reset Your Password</h1>
                     <p class="angel-subtitle">We'll send you a magic link ✨</p>
                 </div>
-                
+
                 <form id="angel-forgot-password-form" class="angel-form">
+                    <input type="hidden" name="angel_login_nonce" value="${loginNonce}">
                     <div class="angel-field-group">
                         <label class="angel-label" for="forgot-email">Email</label>
                         <input type="email" id="forgot-email" name="email" class="angel-input" placeholder="your@email.com" required>
@@ -399,7 +405,7 @@ jQuery(document).ready(function($) {
         const formData = {
             action: 'angel_forgot_password',
             email: form.find('[name="email"]').val(),
-            nonce: angel_ajax.nonce
+            nonce: form.find('[name="angel_login_nonce"]').val()
         };
         
         // Show loading state
@@ -461,7 +467,7 @@ jQuery(document).ready(function($) {
                 login: urlParams.get('login'),
                 password: form.find('[name="password"]').val(),
                 password_confirm: form.find('[name="password_confirm"]').val(),
-                nonce: angel_ajax.nonce
+                nonce: resetNonce
             };
             
             // Show loading state

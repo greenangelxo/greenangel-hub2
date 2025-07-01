@@ -27,6 +27,7 @@ $key_valid = !is_wp_error($user);
         <?php if ($key_valid): ?>
             <div class="angel-form-container" id="reset-password-form">
                 <form id="angel-reset-password-form" class="angel-form">
+                    <?php wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce'); ?>
                     <div class="angel-field-group">
                         <label class="angel-label" for="reset-password">New Password</label>
                         <div class="angel-password-wrapper">
