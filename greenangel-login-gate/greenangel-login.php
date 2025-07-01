@@ -158,7 +158,7 @@ class GreenAngelLogin {
         $table_name = $wpdb->prefix . 'greenangel_codes';
         
         $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table_name WHERE UPPER(code) = %s AND is_active = 1 AND used_by IS NULL",
+            "SELECT * FROM $table_name WHERE UPPER(code) = %s AND is_active = 1",
             $code
         ));
         error_log("Validation result: " . print_r($result, true));
@@ -166,7 +166,7 @@ class GreenAngelLogin {
         if ($result) {
             wp_send_json_success(array('message' => esc_html__('Valid angel code!', 'greenangel-login')));
         } else {
-            wp_send_json_error(array('message' => esc_html__('Invalid or already used angel code.', 'greenangel-login')));
+            wp_send_json_error(array('message' => esc_html__('Invalid angel code.', 'greenangel-login')));
         }
     }
     
@@ -186,7 +186,7 @@ class GreenAngelLogin {
         $table_name = $wpdb->prefix . 'greenangel_codes';
         
         $code_result = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table_name WHERE code = %s AND is_active = 1 AND used_by IS NULL",
+            "SELECT * FROM $table_name WHERE code = %s AND is_active = 1",
             $angel_code
         ));
         
@@ -221,17 +221,7 @@ class GreenAngelLogin {
         update_user_meta($user_id, 'birth_month', $birth_month);
         update_user_meta($user_id, 'birth_year', $birth_year);
         update_user_meta($user_id, 'angel_code_used', $angel_code);
-        
-        // Mark the angel code as used
-        $wpdb->update(
-            $table_name,
-            array(
-                'used_by' => $user_id,
-                'used_date' => current_time('mysql')
-            ),
-            array('code' => $angel_code)
-        );
-        
+
         // Create WooCommerce customer if WooCommerce is active
         if (class_exists('WooCommerce')) {
             $customer = new WC_Customer($user_id);
