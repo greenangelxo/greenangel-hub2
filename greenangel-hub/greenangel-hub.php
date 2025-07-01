@@ -10,7 +10,7 @@ Author URI: https://greenangelshop.com
 
 use Wlr\App\Models\Users;
 
-// 🌿 Load modules
+// 🌿 Load plugin modules
 require_once plugin_dir_path(__FILE__) . 'modules/dashboard.php';
 require_once plugin_dir_path(__FILE__) . 'modules/ship-today.php';
 require_once plugin_dir_path(__FILE__) . 'orders/orders-preview.php';
@@ -25,11 +25,11 @@ require_once plugin_dir_path(__FILE__) . 'modules/delivery-settings/delivery-set
 require_once plugin_dir_path(__FILE__) . 'modules/postcode-rules/enforce-checkout.php';
 require_once plugin_dir_path(__FILE__) . 'modules/stock-check.php';
 
-// ✅ Load DB installer
+// ✅ Load database installer
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
 add_action('plugins_loaded', 'greenangel_create_code_tables');
 
-// 🪄 Automatically create the custom account page if not exists
+// 🪄 Create the custom account page if it does not exist
 register_activation_hook(__FILE__, 'greenangel_create_account_page');
 function greenangel_create_account_page() {
     $slug = 'angel-hub';
@@ -44,7 +44,7 @@ function greenangel_create_account_page() {
     }
 }
 
-// 🔁 SAFE Redirect - only redirect logged-in users to existing Angel Hub page
+// 🔁 Safe redirect to the existing Angel Hub page for logged-in users
 add_action('template_redirect', function () {
     // Only run on account pages for logged-in users
     if (!is_user_logged_in() || !is_account_page()) {
@@ -77,7 +77,7 @@ add_action('template_redirect', function () {
     }
 });
 
-// 🌈 Add to WP Admin menu
+// 🌈 Register the WP Admin menu
 add_action('admin_menu', 'greenangel_hub_menu');
 function greenangel_hub_menu() {
     add_menu_page(
@@ -91,7 +91,7 @@ function greenangel_hub_menu() {
     );
 }
 
-// 💅 Admin styling + hide notices
+// 💅 Admin styling and hide notices
 add_action('admin_head','greenangel_admin_styles');
 function greenangel_admin_styles() { ?>
     <style>
@@ -108,12 +108,14 @@ function greenangel_admin_styles() { ?>
     </style>
 <?php }
 
-// 🌌 Main Admin Page Renderer
+// 🌌 Render the main admin page
 function greenangel_hub_page(){
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'dashboard';
     
     // Unified dark theme wrapper for all other tabs
     echo '<div class="wrap greenangel-dark-wrap">';
+    echo '<form method="post">';
+    wp_nonce_field( 'greenangel_admin_nonce_action', 'greenangel_admin_nonce' );
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';  
     echo '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
@@ -355,7 +357,7 @@ function greenangel_hub_page(){
         }
     </style>';
 
-    // Header with title and powered badge
+    // Header with page title and badge
     echo '<div class="angel-dark-header">';
     echo '<div class="header-left-dark">';
     echo '<h1 class="title-dark">Welcome, Angel 💫</h1>';
@@ -364,7 +366,7 @@ function greenangel_hub_page(){
     echo '<div class="diamond-power-dark">Powered by diamonds</div>';
     echo '</div>';
     
-    // Navigation tabs - only show if NOT on dashboard
+    // Navigation tabs, hidden on the dashboard
     if ($active_tab !== 'dashboard') {
         echo '<div class="nav-tabs-dark">';
         $tabs = [
@@ -386,7 +388,7 @@ function greenangel_hub_page(){
         echo '</div>';
     }
     
-    // Content area with dark theme
+    // Dark theme content area
     echo '<div class="angel-content-dark">';
     switch($active_tab){
         case 'dashboard':
@@ -418,6 +420,7 @@ function greenangel_hub_page(){
             break;
     }
     echo '</div>';
+    echo '</form>';
     echo '</div>';
 }
 ?>
