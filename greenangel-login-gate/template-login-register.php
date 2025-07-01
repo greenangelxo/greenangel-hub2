@@ -17,7 +17,11 @@
         <!-- Login Form -->
         <div class="angel-form-container" id="login-form">
             <form class="angel-form" id="angel-login-form">
-                <?php wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce'); ?>
+                <?php
+                    // Generate the login nonce with a unique ID while keeping the same name
+                    $login_nonce_field = wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce', true, false);
+                    echo str_replace('id="angel_login_nonce"', 'id="angel_login_nonce_login"', $login_nonce_field);
+                ?>
                 
                 <div class="angel-field-group">
                     <label for="login-email" class="angel-label">Email</label>
@@ -69,7 +73,11 @@
             </div>
             
             <form class="angel-form" id="angel-register-form">
-                <?php wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce'); ?>
+                <?php
+                    // Generate the register nonce with a unique ID while keeping the same name
+                    $register_nonce_field = wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce', true, false);
+                    echo str_replace('id="angel_login_nonce"', 'id="angel_login_nonce_register"', $register_nonce_field);
+                ?>
                 
                 <div class="angel-field-row">
                     <div class="angel-field-group">

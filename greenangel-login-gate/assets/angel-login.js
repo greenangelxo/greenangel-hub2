@@ -448,7 +448,7 @@ jQuery(document).ready(function($) {
     }
     
     // Handle password reset form (when user clicks the reset link)
-    if (window.location.search.includes('action=rp')) {
+    if (typeof window !== 'undefined' && window.location && window.location.search.includes('action=rp')) {
         // Password reset form submission
         $('#angel-reset-password-form').on('submit', function(e) {
             e.preventDefault();
