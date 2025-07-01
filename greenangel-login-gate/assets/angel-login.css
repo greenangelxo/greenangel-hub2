@@ -1,0 +1,480 @@
+/* Reset and base styles */
+.angel-login-body,
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #151515 !important;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.angel-login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Main auth wrapper */
+.angel-auth-wrapper {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.angel-auth-container {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.angel-auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    pointer-events: none;
+}
+
+/* Brand section */
+.angel-brand {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.angel-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+
+.angel-subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+/* Tab navigation */
+.angel-tabs {
+    display: flex;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 32px;
+    border: 1px solid #404040;
+}
+
+.angel-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.angel-tab.active {
+    background: #aed604;
+    color: #000000;
+    box-shadow: none;
+}
+
+.angel-tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Form containers */
+.angel-form-container {
+    transition: all 0.3s ease;
+}
+
+.angel-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Field groups */
+.angel-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.angel-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.angel-field-row .angel-field-group {
+    min-width: 0;
+}
+
+.angel-field-row .angel-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.angel-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+/* Input styling */
+.angel-input,
+.angel-select {
+    background: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: #888888;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.angel-input::placeholder,
+.angel-select option {
+    color: #666666;
+}
+
+.angel-input:focus,
+.angel-select:focus {
+    border-color: #aed604;
+    background: #1a1a1a;
+    box-shadow: none;
+    color: #cccccc;
+}
+
+/* Password field with toggle */
+.angel-password-wrapper {
+    position: relative;
+}
+
+.angel-password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.angel-password-toggle:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Checkbox styling */
+.angel-checkbox-group {
+    margin: 8px 0;
+}
+
+.angel-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+}
+
+.angel-checkbox {
+    display: none;
+}
+
+.angel-checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.angel-checkbox:checked + .angel-checkbox-custom {
+    background: #aed604;
+    border-color: #aed604;
+}
+
+.angel-checkbox:checked + .angel-checkbox-custom::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #000000;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Button styling */
+.angel-button {
+    background: #aed604;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.angel-button:hover {
+    transform: translateY(-2px);
+    box-shadow: none;
+    background: #c4f505;
+}
+
+.angel-button:active {
+    transform: translateY(0);
+}
+
+.angel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.button-loader {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Links */
+.angel-links {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.angel-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.angel-link:hover {
+    color: #aed604;
+}
+
+/* Invitation notice */
+.angel-invitation-notice {
+    background: linear-gradient(135deg, #aed604 0%, #9bc604 100%);
+    color: #000000;
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.angel-invitation-notice::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.angel-invitation-notice h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #000000;
+}
+
+.angel-invitation-notice p {
+    font-size: 13px;
+    margin: 0 0 12px 0;
+    opacity: 0.8;
+}
+
+.ip-display {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    display: inline-block;
+}
+
+.ip-label {
+    opacity: 0.7;
+    margin-right: 6px;
+}
+
+.ip-address {
+    font-weight: 600;
+}
+
+/* VPN Warning */
+.angel-vpn-warning {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.vpn-warning-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.angel-vpn-warning h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #ffffff;
+}
+
+.angel-vpn-warning p {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Field hints */
+.angel-field-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 4px;
+}
+
+/* Code validation */
+.angel-code-validation {
+    font-size: 12px;
+    margin-top: 4px;
+    min-height: 16px;
+}
+
+.angel-code-validation.valid {
+    color: #aed604;
+}
+
+.angel-code-validation.invalid {
+    color: #f87171;
+}
+
+/* Messages */
+.angel-messages {
+    margin-top: 24px;
+    padding: 0;
+}
+
+.angel-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.angel-message.success {
+    background: rgba(174, 214, 4, 0.1);
+    border: 1px solid rgba(174, 214, 4, 0.3);
+    color: #aed604;
+}
+
+.angel-message.error {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    color: #f87171;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .angel-login-container {
+        padding: 16px;
+    }
+    
+    .angel-auth-container {
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+    
+    .angel-title {
+        font-size: 24px;
+    }
+    
+    .angel-field-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .angel-input,
+    .angel-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+@media (max-width: 480px) {
+    .angel-auth-container {
+        padding: 24px 20px;
+    }
+}
+
+/* Fade in animation */
+.angel-auth-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
