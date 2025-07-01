@@ -1,3 +1,4 @@
+<?php defined('ABSPATH') || exit; ?>
 <div class="angel-auth-wrapper">
     <div class="angel-auth-container">
         
