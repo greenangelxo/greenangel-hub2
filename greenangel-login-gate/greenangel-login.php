@@ -3,7 +3,7 @@
  * Plugin Name: Green Angel Login
  * Description: Custom branded login and registration system with full-screen experience
  * Version: 1.0.0
- * Author: Your Beautiful Self
+ * Author: Green Angel XO Team
  */
 
 // Prevent direct access
