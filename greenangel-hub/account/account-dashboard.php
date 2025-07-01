@@ -1,5 +1,8 @@
 <?php
-defined( 'ABSPATH' ) || exit;
+// 🌿 Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 // 🌿 Enqueue account dashboard styles
 add_action('wp_enqueue_scripts', 'greenangel_enqueue_account_dashboard_styles');
@@ -21,16 +24,14 @@ function greenangel_enqueue_account_dashboard_styles() {
 }
 
 // 🌿 BACKUP: Always load (debug)
-if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-    add_action( 'wp_enqueue_scripts', 'greenangel_force_enqueue_account_dashboard_styles', 20 );
-    function greenangel_force_enqueue_account_dashboard_styles() {
-        wp_enqueue_style(
-            'greenangel-account-dashboard-force',
-            plugin_dir_url( __FILE__ ) . 'account-dashboard.css',
-            [],
-            time()
-        );
-    }
+add_action('wp_enqueue_scripts', 'greenangel_force_enqueue_account_dashboard_styles', 20);
+function greenangel_force_enqueue_account_dashboard_styles() {
+    wp_enqueue_style(
+        'greenangel-account-dashboard-force',
+        plugin_dir_url(__FILE__) . 'account-dashboard.css',
+        [],
+        time()
+    );
 }
 
 // 🌿 WP LOYALTY POINTS - FIXED COLUMN NAMES!
@@ -47,7 +48,7 @@ function greenangel_get_wp_loyalty_points_safe($user_id) {
     $table_name = $wpdb->prefix . 'wlr_users';
     
     // Check if table exists first
-    $table_exists = greenangel_table_exists($table_name);
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
     if (!$table_exists) {
         return ['available' => 0, 'redeemed' => 0];
     }
@@ -75,7 +76,7 @@ function greenangel_get_earning_campaigns() {
     $table_name = $wpdb->prefix . 'wlr_earn_campaign';
     
     // Check if table exists
-    $table_exists = greenangel_table_exists($table_name);
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
     if (!$table_exists) {
         return [];
     }
@@ -86,72 +87,228 @@ function greenangel_get_earning_campaigns() {
     return $campaigns ?: [];
 }
 
-
-// 🌟 GET ALL ACTIVITIES - combined from WP Loyalty tables
+// 🌟 GET ALL ACTIVITIES - FIXED TO SHOW ALL ACTIVITIES!
 function greenangel_get_recent_activities($user_id, $limit = 100) {
     global $wpdb;
-
+    
     $user = get_userdata($user_id);
-    if (!$user) {
-        return [];
-    }
-
+    if (!$user) return [];
+    
     $email = $user->user_email;
-
-    $tables = [
-        'logs'   => $wpdb->prefix . 'wlr_logs',
-        'earn'   => $wpdb->prefix . 'wlr_earn_campaign_transaction',
-        'reward' => $wpdb->prefix . 'wlr_reward_transactions',
-        'ledger' => $wpdb->prefix . 'wlr_points_ledger',
-    ];
-
-    foreach ($tables as $key => $table) {
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
-            unset($tables[$key]);
+    
+    // First, let's check if WP Loyalty has its own function we can use
+    if (class_exists('Wlr\App\Helpers\EarnCampaign')) {
+        error_log('DEBUG: WP Loyalty class exists - checking for built-in methods');
+    }
+    
+    // Define all possible activity tables
+    $logs_table = $wpdb->prefix . 'wlr_logs';
+    $transaction_table = $wpdb->prefix . 'wlr_earn_campaign_transaction';
+    $reward_trans_table = $wpdb->prefix . 'wlr_reward_transactions';
+    $points_ledger_table = $wpdb->prefix . 'wlr_points_ledger';
+    
+    $all_activities = [];
+    $activity_ids = []; // Track unique activities to prevent duplicates
+    
+    // Let's try a DIRECT query to get EVERYTHING from logs first
+    if ($wpdb->get_var("SHOW TABLES LIKE '$logs_table'") == $logs_table) {
+        // Get ALL columns to see what we're missing
+        $test_query = $wpdb->get_results($wpdb->prepare("
+            SELECT * FROM $logs_table 
+            WHERE user_email = %s 
+            ORDER BY created_at DESC 
+            LIMIT 10
+        ", $email));
+        
+        error_log('DEBUG: Sample log entry structure:');
+        if (!empty($test_query)) {
+            foreach ($test_query[0] as $key => $value) {
+                error_log("  $key => $value");
+            }
         }
+        
+        // Now get the actual data
+        $log_activities = $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                'log' as source,
+                id,
+                user_email,
+                action_type as activity_type,
+                points,
+                order_id,
+                created_at,
+                note,
+                action_process_type,
+                reward_display_name,
+                discount_code
+            FROM $logs_table
+            WHERE user_email = %s
+            ORDER BY created_at DESC, id DESC
+            LIMIT %d
+        ", $email, $limit));
+        
+        foreach ($log_activities as $activity) {
+            $unique_key = $activity->source . '_' . $activity->id;
+            if (!isset($activity_ids[$unique_key])) {
+                $activity_ids[$unique_key] = true;
+                $all_activities[] = $activity;
+            }
+        }
+        
+        error_log('DEBUG: Log activities found: ' . count($log_activities));
     }
-
-    if (empty($tables)) {
-        return [];
+    
+    // 2. Get from earn campaign transactions (for any missing activities)
+    if ($wpdb->get_var("SHOW TABLES LIKE '$transaction_table'") == $transaction_table) {
+        $earn_activities = $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                'earn' as source,
+                id,
+                user_email,
+                action_type,
+                campaign_type,
+                points,
+                order_id,
+                created_at,
+                display_name as note
+            FROM $transaction_table
+            WHERE user_email = %s
+            ORDER BY created_at DESC, id DESC
+            LIMIT %d
+        ", $email, $limit));
+        
+        foreach ($earn_activities as $activity) {
+            $activity->activity_type = $activity->campaign_type ?: $activity->action_type;
+            
+            // Check if this activity might already exist in logs
+            $is_duplicate = false;
+            foreach ($all_activities as $existing) {
+                if ($existing->source == 'log' && 
+                    $existing->points == $activity->points && 
+                    $existing->order_id == $activity->order_id &&
+                    abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 60) {
+                    $is_duplicate = true;
+                    break;
+                }
+            }
+            
+            if (!$is_duplicate) {
+                $unique_key = $activity->source . '_' . $activity->id;
+                if (!isset($activity_ids[$unique_key])) {
+                    $activity_ids[$unique_key] = true;
+                    $all_activities[] = $activity;
+                }
+            }
+        }
+        
+        error_log('Earn transactions found: ' . count($earn_activities) . ' (added: ' . (count($all_activities) - count($log_activities)) . ')');
     }
-
-    $parts = [];
-
-    if (isset($tables['logs'])) {
-        $parts[] = $wpdb->prepare(
-            "SELECT 'log' AS source, id, user_email, action_type AS activity_type, points, order_id, created_at, note, action_process_type, reward_display_name, discount_code, customer_note FROM {$tables['logs']} WHERE user_email = %s",
-            $email
-        );
+    
+    // 3. Get from reward transactions (redemptions)
+    if ($wpdb->get_var("SHOW TABLES LIKE '$reward_trans_table'") == $reward_trans_table) {
+        $reward_activities = $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                'redeem' as source,
+                id,
+                user_email,
+                'coupon_redeem' as activity_type,
+                -1 * reward_amount as points,
+                order_id,
+                created_at,
+                CONCAT('Redeemed ', discount_code) as note,
+                'redeem' as action_process_type,
+                discount_code
+            FROM $reward_trans_table
+            WHERE user_email = %s
+            ORDER BY created_at DESC, id DESC
+            LIMIT %d
+        ", $email, $limit));
+        
+        foreach ($reward_activities as $activity) {
+            // Check if redemption already exists in logs
+            $is_duplicate = false;
+            foreach ($all_activities as $existing) {
+                if ($existing->source == 'log' && 
+                    $existing->action_process_type == 'redeem' &&
+                    $existing->discount_code == $activity->discount_code) {
+                    $is_duplicate = true;
+                    break;
+                }
+            }
+            
+            if (!$is_duplicate) {
+                $unique_key = $activity->source . '_' . $activity->id;
+                if (!isset($activity_ids[$unique_key])) {
+                    $activity_ids[$unique_key] = true;
+                    $all_activities[] = $activity;
+                }
+            }
+        }
+        
+        error_log('Reward transactions found: ' . count($reward_activities));
     }
-
-    if (isset($tables['earn'])) {
-        $parts[] = $wpdb->prepare(
-            "SELECT 'earn' AS source, id, user_email, COALESCE(campaign_type, action_type) AS activity_type, points, order_id, created_at, display_name AS note, NULL AS action_process_type, NULL AS reward_display_name, NULL AS discount_code, NULL AS customer_note FROM {$tables['earn']} WHERE user_email = %s",
-            $email
-        );
+    
+    // 4. Get from points ledger (for any additional activities)
+    if ($wpdb->get_var("SHOW TABLES LIKE '$points_ledger_table'") == $points_ledger_table) {
+        $ledger_activities = $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                'ledger' as source,
+                id,
+                user_email,
+                action_type as activity_type,
+                CASE 
+                    WHEN credit_points > 0 THEN credit_points
+                    WHEN debit_points > 0 THEN -1 * debit_points
+                    ELSE 0
+                END as points,
+                0 as order_id,
+                created_at,
+                note,
+                action_process_type
+            FROM $points_ledger_table
+            WHERE user_email = %s
+            ORDER BY created_at DESC, id DESC
+            LIMIT %d
+        ", $email, $limit));
+        
+        foreach ($ledger_activities as $activity) {
+            // Check if this ledger entry is unique
+            $is_duplicate = false;
+            foreach ($all_activities as $existing) {
+                if (abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 5 &&
+                    $existing->points == $activity->points) {
+                    $is_duplicate = true;
+                    break;
+                }
+            }
+            
+            if (!$is_duplicate) {
+                $unique_key = $activity->source . '_' . $activity->id;
+                if (!isset($activity_ids[$unique_key])) {
+                    $activity_ids[$unique_key] = true;
+                    $all_activities[] = $activity;
+                }
+            }
+        }
+        
+        error_log('Points ledger found: ' . count($ledger_activities));
     }
-
-    if (isset($tables['reward'])) {
-        $parts[] = $wpdb->prepare(
-            "SELECT 'redeem' AS source, id, user_email, 'coupon_redeem' AS activity_type, -1 * reward_amount AS points, order_id, created_at, CONCAT('Redeemed ', discount_code) AS note, 'redeem' AS action_process_type, NULL AS reward_display_name, discount_code, NULL AS customer_note FROM {$tables['reward']} WHERE user_email = %s",
-            $email
-        );
-    }
-
-    if (isset($tables['ledger'])) {
-        $parts[] = $wpdb->prepare(
-            "SELECT 'ledger' AS source, id, user_email, action_type AS activity_type, CASE WHEN credit_points > 0 THEN credit_points WHEN debit_points > 0 THEN -1 * debit_points ELSE 0 END AS points, 0 AS order_id, created_at, note, action_process_type, NULL AS reward_display_name, NULL AS discount_code, NULL AS customer_note FROM {$tables['ledger']} WHERE user_email = %s",
-            $email
-        );
-    }
-
-    $sql = implode(' UNION ALL ', $parts) . ' ORDER BY created_at DESC, id DESC LIMIT %d';
-    $sql = $wpdb->prepare($sql, $limit);
-
-    $activities = $wpdb->get_results($sql);
-
-    return $activities ?: [];
+    
+    // Sort all activities by date (newest first)
+    usort($all_activities, function($a, $b) {
+        $date_a = is_numeric($a->created_at) ? $a->created_at : strtotime($a->created_at);
+        $date_b = is_numeric($b->created_at) ? $b->created_at : strtotime($b->created_at);
+        return $date_b - $date_a;
+    });
+    
+    // Limit results
+    $all_activities = array_slice($all_activities, 0, $limit);
+    
+    error_log('Total unique activities returned: ' . count($all_activities));
+    
+    return $all_activities;
 }
+
 // 🌿 Custom My Account Dashboard
 /**
  * Get Active Main Angel Code
@@ -189,8 +346,14 @@ function greenangel_account_dashboard() {
 
     // WooCommerce data
     $customer    = new WC_Customer($user_id);
-    $orders      = wc_get_orders(['customer' => $user_id, 'limit' => -1]);
-    $order_count = count($orders);
+    $all_orders  = wc_get_orders(['customer' => $user_id, 'limit' => -1]);
+    
+    // Filter for completed orders only for the count
+    $completed_orders = array_filter($all_orders, function($order) {
+        return $order->get_status() === 'completed';
+    });
+    $order_count = count($completed_orders);
+    
     $total_spent = $customer->get_total_spent();
 
     // 🌟 GET LOYALTY POINTS - SAFE METHOD
@@ -204,12 +367,17 @@ function greenangel_account_dashboard() {
     // 🌟 GET RECENT ACTIVITIES - NOW WITH MORE DATA!
     $recent_activities = greenangel_get_recent_activities($user_id, 200); // Increased limit to ensure we get all
     
-    // Debug: inspect $recent_activities here if needed.
+    // DEBUG: Let's see what we're getting
+    error_log('DEBUG: Total activities fetched: ' . count($recent_activities));
+    error_log('DEBUG: Activities breakdown:');
+    foreach ($recent_activities as $idx => $act) {
+        error_log("Activity $idx: Type={$act->activity_type}, Points={$act->points}, Date={$act->created_at}, Source={$act->source}");
+    }
 
     // First order date
     $first_order_date = 'Not yet placed';
-    if (!empty($orders)) {
-        $first = end($orders);
+    if (!empty($completed_orders)) {
+        $first = end($completed_orders);
         $first_order_date = $first->get_date_created()->format('M Y');
     }
 
@@ -417,7 +585,7 @@ function greenangel_account_dashboard() {
         </div>
 
         <!-- Order Activity -->
-        <?php if (!empty($orders)): ?>
+        <?php if (!empty($all_orders)): ?>
         <div class="ga-panel ga-collapsible">
             <h3 class="ga-panel-title ga-panel-toggle" onclick="togglePanel(this)">
                 <span class="ga-title-pill" style="background: #02a8d1;">Order Activity</span>
@@ -427,7 +595,7 @@ function greenangel_account_dashboard() {
                 <div class="ga-orders-grid" id="ordersGrid">
                     <?php 
                     $order_counter = 0;
-                    foreach ($orders as $order): 
+                    foreach ($all_orders as $order): 
                         $order_counter++;
                         $hidden_class = $order_counter > 4 ? 'ga-order-hidden' : '';
                         
@@ -794,6 +962,14 @@ function greenangel_account_dashboard_wrapper() {
 
     // Check if a WooCommerce endpoint is active
     if (WC()->query->get_current_endpoint()) {
+        // 🌟 ADD THE GORGEOUS BACK BUTTON HERE!
+        ?>
+        <a href="<?php echo esc_url( wc_get_account_endpoint_url( '' ) ); ?>" class="ga-back-button">
+            <span class="ga-back-icon">←</span>
+            <span class="ga-back-text">Back to Dashboard</span>
+        </a>
+        <?php
+        
         // 💫 Inject WooCommerce native endpoint content (edit-account, orders, etc.)
         woocommerce_account_content();
     } else {
@@ -806,3 +982,96 @@ function greenangel_account_dashboard_wrapper() {
     return ob_get_clean();
 }
 add_shortcode('greenangel_account_dashboard', 'greenangel_account_dashboard_wrapper');
+
+// 🌟 UNIVERSAL BACK BUTTON FOR ALL WOOCOMMERCE ACCOUNT PAGES
+add_action('woocommerce_before_account_navigation', 'greenangel_add_universal_back_button');
+
+function greenangel_add_universal_back_button() {
+    // Only show on WooCommerce account pages
+    if (!is_account_page()) {
+        return;
+    }
+    
+    // Don't show on main Angel Hub page
+    if (is_page('angel-hub')) {
+        return;
+    }
+    
+    // Check if we have an Angel Hub page to go back to
+    $angel_hub_page = get_page_by_path('angel-hub');
+    if (!$angel_hub_page) {
+        return;
+    }
+    
+    $back_url = get_permalink($angel_hub_page->ID);
+    ?>
+    <style>
+    /* Angel Hub Back Button - At top of content */
+    .angel-back-button {
+        display: inline-flex !important;
+        background: linear-gradient(135deg, #aed604 0%, #c6f731 100%) !important;
+        color: #222222 !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 12px 20px !important;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        text-decoration: none !important;
+        align-items: center !important;
+        gap: 8px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        cursor: pointer !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .angel-back-button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+        text-decoration: none !important;
+        color: #222222 !important;
+    }
+    
+    .angel-back-button:active {
+        transform: scale(0.98) !important;
+    }
+    
+    .angel-back-arrow {
+        font-size: 16px !important;
+        line-height: 1 !important;
+    }
+    
+    /* Container to center the button */
+    .angel-back-container {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin-bottom: 20px !important;
+        margin-top: 5px !important;
+    }
+    
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        .angel-back-button {
+            padding: 10px 16px !important;
+            font-size: 13px !important;
+        }
+        
+        .angel-back-arrow {
+            font-size: 14px !important;
+        }
+    }
+    </style>
+    
+    <div class="angel-back-container">
+        <a href="<?php echo esc_url($back_url); ?>" class="angel-back-button">
+            <span class="angel-back-arrow">←</span>
+            <span>Angel Hub</span>
+        </a>
+    </div>
+    <?php
+}
+?>

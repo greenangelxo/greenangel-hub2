@@ -1,12 +1,10 @@
 <?php
-defined( 'ABSPATH' ) || exit;
-// 🌱 Green Angel Hub – Ship Today Module
+// 🌱 Green Angel Hub – Ship Today Module (Updated for Format Crossover)
 
 define('GREENANGEL_SHIP_TODAY_LOG', plugin_dir_path(__FILE__) . '/../logs/ship-today-log.txt');
 
 // 🧠 UI Callback
 function greenangel_render_ship_today_tab() {
-    $nonce = wp_create_nonce('greenangel_ship_today');
     ?>
     <style>
         /* Module-specific styles that work WITH the dark wrapper */
@@ -228,10 +226,9 @@ function greenangel_render_ship_today_tab() {
     </div>
 
     <script>
-        const shipNonce = '<?php echo esc_js($nonce); ?>';
         // Load log on page load
         window.addEventListener('DOMContentLoaded', () => {
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_log&nonce=' + shipNonce)
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_log')
                 .then(res => res.text())
                 .then(data => document.getElementById('log-preview').value = data);
         });
@@ -248,7 +245,7 @@ function greenangel_render_ship_today_tab() {
             btn.innerHTML = '<span>⏳</span> Processing...';
             btn.disabled = true;
 
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_run&nonce=' + shipNonce)
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_run')
                 .then(res => res.text())
                 .then(data => {
                     document.getElementById('log-preview').value = data;
@@ -261,7 +258,7 @@ function greenangel_render_ship_today_tab() {
 
         document.getElementById('clear-log').onclick = () => {
             if (!confirm('Are you sure you want to clear the log?')) return;
-            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_clear&nonce=' + shipNonce)
+            fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_clear')
                 .then(() => {
                     document.getElementById('log-preview').value = '';
                     showSuccess('clear-success');
@@ -269,7 +266,7 @@ function greenangel_render_ship_today_tab() {
         };
 
         document.getElementById('download-log').onclick = () => {
-            window.location.href = '<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_download&nonce=' + shipNonce;
+            window.location.href = '<?php echo admin_url('admin-ajax.php'); ?>?action=greenangel_ship_today_download';
         };
     </script>
     <?php
@@ -278,27 +275,53 @@ function greenangel_render_ship_today_tab() {
 // 🚚 AJAX: Run Ship Today
 add_action('wp_ajax_greenangel_ship_today_run', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_ajax_referer('greenangel_ship_today', 'nonce');
+    
     $log = "[" . current_time('mysql') . "] 💚 Manual 'Ship Today' process started.\n";
-    $updated = 0; $skipped = 0;
-    $orders = wc_get_orders(['status'=>'processing','limit'=>-1]);
+    $updated = 0; 
+    $skipped = 0;
+    $orders = wc_get_orders(['status' => 'processing', 'limit' => -1]);
     $tomorrow = date('Y-m-d', strtotime('+1 day'));
+    
     foreach ($orders as $o) {
-        $delivery = $o->get_meta('_delivery_date');
-        if (!$delivery) { $log .= "[".current_time('mysql')."] Order #{$o->get_id()} skipped (no delivery date).\n"; $skipped++; continue; }
-        $d      = date('Y-m-d', strtotime($delivery));
-        if ($d==$tomorrow) { $o->update_status('ship-today'); $log .= "[".current_time('mysql')."] Order #{$o->get_id()} updated to 'Ship Today' (Delivery: $d).\n"; $updated++; }
-        else { $log .= "[".current_time('mysql')."] Order #{$o->get_id()} remains 'Processing' (Delivery: $d).\n"; $skipped++; }
+        $order_id = $o->get_id();
+        
+        // Check BOTH old and new delivery date formats
+        $delivery = $o->get_meta('_delivery_date'); // NEW format with underscore
+        if (!$delivery) {
+            $delivery = $o->get_meta('delivery_date'); // OLD format without underscore
+        }
+        
+        if (!$delivery) {
+            $log .= "[" . current_time('mysql') . "] Order #{$order_id} skipped (no delivery date found).\n";
+            $skipped++;
+            continue;
+        }
+        
+        // Parse the date - handle different possible formats
+        $d = date('Y-m-d', strtotime($delivery));
+        
+        // Debug: Show what we're comparing
+        $log .= "[DEBUG] Order #{$order_id} - Raw delivery: '$delivery', Parsed: '$d', Tomorrow: '$tomorrow'\n";
+        
+        if ($d == $tomorrow) {
+            $o->update_status('ship-today');
+            $log .= "[" . current_time('mysql') . "] Order #{$order_id} updated to 'Ship Today' (Delivery: $d)\n";
+            $updated++;
+        } else {
+            $log .= "[" . current_time('mysql') . "] Order #{$order_id} remains 'Processing' (Delivery: $d)\n";
+            $skipped++;
+        }
     }
-    $log .= "[".current_time('mysql')."] ✨ Process completed. Updated: $updated, Skipped: $skipped.\n";
+    
+    $log .= "[" . current_time('mysql') . "] ✨ Process completed. Updated: $updated, Skipped: $skipped.\n";
     file_put_contents(GREENANGEL_SHIP_TODAY_LOG, $log, FILE_APPEND);
-    echo $log; wp_die();
+    echo $log;
+    wp_die();
 });
 
 // 🔍 AJAX: Load Log
 add_action('wp_ajax_greenangel_ship_today_log', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_ajax_referer('greenangel_ship_today', 'nonce');
     echo file_exists(GREENANGEL_SHIP_TODAY_LOG) ? file_get_contents(GREENANGEL_SHIP_TODAY_LOG) : '';
     wp_die();
 });
@@ -306,14 +329,15 @@ add_action('wp_ajax_greenangel_ship_today_log', function() {
 // 🧼 AJAX: Clear Log
 add_action('wp_ajax_greenangel_ship_today_clear', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_ajax_referer('greenangel_ship_today', 'nonce');
-    file_put_contents(GREENANGEL_SHIP_TODAY_LOG, ''); wp_die();
+    file_put_contents(GREENANGEL_SHIP_TODAY_LOG, '');
+    wp_die();
 });
 
 // 📥 AJAX: Download Log
 add_action('wp_ajax_greenangel_ship_today_download', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_ajax_referer('greenangel_ship_today', 'nonce');
-    header('Content-Type:text/plain'); header('Content-Disposition:attachment;filename="ship-today-log.txt"');
-    readfile(GREENANGEL_SHIP_TODAY_LOG); exit;
+    header('Content-Type: text/plain');
+    header('Content-Disposition: attachment; filename="ship-today-log.txt"');
+    readfile(GREENANGEL_SHIP_TODAY_LOG);
+    exit;
 });

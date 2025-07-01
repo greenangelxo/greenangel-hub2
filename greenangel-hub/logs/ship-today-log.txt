@@ -16,3 +16,48 @@
 [2025-06-28 06:55:15] ✨ Process completed. Updated: 0, Skipped: 1.
 [2025-06-28 19:13:31] 💚 Manual 'Ship Today' process started.
 [2025-06-28 19:13:31] ✨ Process completed. Updated: 0, Skipped: 0.
+[2025-06-30 20:33:23] 💚 Manual 'Ship Today' process started.
+[2025-06-30 20:33:23] Order #9439 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9438 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9437 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9436 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9435 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9433 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9431 skipped (no delivery date).
+[2025-06-30 20:33:23] Order #9430 skipped (no delivery date).
+[2025-06-30 20:33:23] ✨ Process completed. Updated: 0, Skipped: 8.
+[2025-07-01 05:34:23] 💚 Manual 'Ship Today' process started.
+[2025-07-01 05:34:23] Order #9445 remains 'Processing' (Delivery: 2025-07-03).
+[2025-07-01 05:34:23] Order #9439 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9438 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9437 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9436 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9435 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9433 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9431 skipped (no delivery date).
+[2025-07-01 05:34:23] Order #9430 skipped (no delivery date).
+[2025-07-01 05:34:23] ✨ Process completed. Updated: 0, Skipped: 9.
+[2025-07-01 07:27:05] 💚 Manual 'Ship Today' process started.
+[DEBUG] Order #9450 - Raw delivery: '2025-07-03', Parsed: '2025-07-03', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:05] Order #9450 remains 'Processing' (Delivery: 2025-07-03)
+[DEBUG] Order #9448 - Raw delivery: '2025-07-03', Parsed: '2025-07-03', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:05] Order #9448 remains 'Processing' (Delivery: 2025-07-03)
+[DEBUG] Order #9445 - Raw delivery: '2025-07-03', Parsed: '2025-07-03', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:05] Order #9445 remains 'Processing' (Delivery: 2025-07-03)
+[DEBUG] Order #9439 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9439 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9438 - Raw delivery: '2025-07-03', Parsed: '2025-07-03', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9438 remains 'Processing' (Delivery: 2025-07-03)
+[DEBUG] Order #9437 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9437 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9436 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9436 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9435 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9435 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9433 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:06] Order #9433 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9431 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:07] Order #9431 updated to 'Ship Today' (Delivery: 2025-07-02)
+[DEBUG] Order #9430 - Raw delivery: '2025-07-02', Parsed: '2025-07-02', Tomorrow: '2025-07-02'
+[2025-07-01 07:27:07] Order #9430 updated to 'Ship Today' (Delivery: 2025-07-02)
+[2025-07-01 07:27:07] ✨ Process completed. Updated: 7, Skipped: 4.

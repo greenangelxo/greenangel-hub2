@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel Hub – NFC Card Manager Module
 
 use Wlr\App\Models\Users;
@@ -480,36 +479,27 @@ function greenangel_render_nfc_card_manager() {
     }
 
     // Process orders data
-    $orders_data          = [];
-    $email_orders_cache   = [];
-    $referral_code_cache  = [];
-
+    $orders_data = [];
     foreach ($orders as $order) {
         $id = $order->get_id();
         $name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
         $email = $order->get_billing_email();
         $total = floatval($order->get_total());
         $spend = 0;
-
+        
         // Get customer history
-        if ( ! isset( $email_orders_cache[ $email ] ) ) {
-            $email_orders_cache[ $email ] = wc_get_orders([
-                'billing_email' => $email,
-                'status'       => ['completed', 'processing', 'on-hold', 'ship-today'],
-                'limit'        => -1,
-            ]);
-        }
-        $customer_orders = $email_orders_cache[ $email ];
+        $customer_orders = wc_get_orders([
+            'billing_email' => $email,
+            'status' => ['completed', 'processing', 'on-hold', 'ship-today'],
+            'limit' => -1,
+        ]);
         
         foreach ($customer_orders as $co) {
             $spend += floatval($co->get_total());
         }
         
         // Get referral code
-        if ( ! isset( $referral_code_cache[ $email ] ) ) {
-            $referral_code_cache[ $email ] = greenangel_get_loyalty_referral_code( $email );
-        }
-        $referral_code = $referral_code_cache[ $email ];
+        $referral_code = greenangel_get_loyalty_referral_code($email);
         $referral_url = $referral_code ? "https://greenangelshop.com?wlr_ref={$referral_code}" : null;
         
         // Card status

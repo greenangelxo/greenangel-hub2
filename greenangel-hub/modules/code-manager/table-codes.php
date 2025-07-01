@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Angel Code Table
 require_once plugin_dir_path(__FILE__) . 'manage-code.php';
 
@@ -155,14 +154,8 @@ function greenangel_render_code_table() {
         echo '<td>' . esc_html(date('Y-m-d', strtotime($code->created_at))) . '</td>';
 
         // Actions
-        $toggle_url = wp_nonce_url(
-            admin_url("admin-post.php?action=greenangel_toggle_code&id={$code->id}"),
-            'greenangel_toggle_code'
-        );
-        $delete_url = wp_nonce_url(
-            admin_url("admin-post.php?action=greenangel_delete_code&id={$code->id}"),
-            'greenangel_delete_code'
-        );
+        $toggle_url = admin_url("admin-post.php?action=greenangel_toggle_code&id={$code->id}");
+        $delete_url = admin_url("admin-post.php?action=greenangel_delete_code&id={$code->id}");
         echo '<td><div class="actions-wrap">';
         $active_class = $code->active ? 'status-toggle' : 'status-toggle inactive';
         echo '<a href="'.esc_url($toggle_url).'" class="'.$active_class.'" title="Toggle Active">';

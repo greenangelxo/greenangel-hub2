@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // Show delivery date field at checkout
 add_action('woocommerce_after_order_notes', function($checkout) {
     echo '<div id="greenangel_delivery_date_wrap">';
@@ -7,7 +6,7 @@ add_action('woocommerce_after_order_notes', function($checkout) {
         'type' => 'text',
         'class' => ['form-row-wide'],
         'label' => 'Preferred Delivery Date',
-        'placeholder' => 'Select your delivery date',
+        'placeholder' => 'Click to select delivery date',
         'required' => true,
     ], $checkout->get_value('delivery_date'));
     echo '</div>';
@@ -30,15 +29,23 @@ add_action('woocommerce_checkout_create_order', function($order, $data) {
 
 // Show the delivery date in the admin panel
 add_action('woocommerce_admin_order_data_after_shipping_address', function($order) {
-    $date = $order->get_meta('_delivery_date');
+    $date = $order->get_meta('_delivery_date'); // new system
+    if (empty($date)) {
+        $date = $order->get_meta('delivery_date'); // ✅ legacy fallback confirmed
+    }
     if ($date) {
         echo '<p><strong>📦 Delivery Date:</strong> ' . esc_html($date) . '</p>';
+    } else {
+        echo '<p><strong>📦 Delivery Date:</strong> <em>Not set</em></p>';
     }
 });
 
 // Add editable field in the admin order page
 add_action('woocommerce_admin_order_data_after_order_details', function($order){
     $date = $order->get_meta('_delivery_date');
+    if (empty($date)) {
+        $date = $order->get_meta('delivery_date'); // ✅ legacy fallback in edit field too
+    }
     echo '<div class="order_data_column">';
     echo '<h4>📦 Delivery Date</h4>';
     echo '<input type="date" name="greenangel_admin_delivery_date" value="' . esc_attr($date) . '" style="width: 100%; margin-bottom: 10px;">';
@@ -102,6 +109,9 @@ add_filter('woocommerce_shop_order_list_table_columns', function($columns) {
 add_action('woocommerce_shop_order_list_table_custom_column', function($column, $order) {
     if ($column === 'delivery_date') {
         $date = $order->get_meta('_delivery_date');
+        if (empty($date)) {
+            $date = $order->get_meta('delivery_date'); // ✅ legacy fallback for the column too!
+        }
         if ($date) {
             echo '<strong style="color: #2271b1;">' . date('j M Y', strtotime($date)) . '</strong>';
         } else {
@@ -130,13 +140,9 @@ function greenangel_count_orders_by_date($date) {
 
 // AJAX endpoint for checking delivery date availability
 add_action('wp_ajax_greenangel_check_delivery_availability', 'greenangel_check_delivery_availability');
+add_action('wp_ajax_nopriv_greenangel_check_delivery_availability', 'greenangel_check_delivery_availability');
 
 function greenangel_check_delivery_availability() {
-    check_ajax_referer('greenangel_delivery', 'security');
-
-    if ( ! is_user_logged_in() ) {
-        wp_send_json_error('Unauthorized', 401);
-    }
     $dates = isset($_POST['dates']) ? (array) $_POST['dates'] : [];
     $daily_limit = get_option('greenangel_daily_delivery_limit', 20);
     
@@ -159,6 +165,9 @@ function greenangel_check_delivery_availability() {
 // Inject delivery date into ALL WooCommerce emails with beautiful styling
 add_filter('woocommerce_email_order_meta_fields', function($fields, $sent_to_admin, $order) {
     $delivery_date = $order->get_meta('_delivery_date');
+    if (empty($delivery_date)) {
+        $delivery_date = $order->get_meta('delivery_date'); // ✅ legacy fallback for emails
+    }
     if ($delivery_date) {
         $fields['greenangel_delivery_date'] = [
             'label' => '<span style="font-size: 16px; font-weight: bold; color: #2271b1;">📦 Delivery Date:</span>',
@@ -175,11 +184,6 @@ add_action('wp_enqueue_scripts', function() {
     if (!is_checkout()) return;
     wp_enqueue_script('flatpickr', 'https://cdn.jsdelivr.net/npm/flatpickr', [], null, true);
     wp_enqueue_style('flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css');
-
-    $nonce = wp_create_nonce('greenangel_delivery');
-    wp_localize_script('flatpickr', 'greenAngelDeliveryVars', [
-        'delivery_nonce' => $nonce
-    ]);
     
     // Pass admin settings to frontend
     $settings = [
@@ -195,7 +199,7 @@ add_action('wp_enqueue_scripts', function() {
     // Initialise Flatpickr with delivery limit checking
     wp_add_inline_script('flatpickr', <<<JS
 document.addEventListener("DOMContentLoaded", function() {
-    console.log('=== GREEN ANGEL DELIVERY DEBUG ===');
+    console.log('=== GREEN ANGEL DELIVERY SETUP ===');
     
     if (!window.greenAngelDelivery) {
         console.error('greenAngelDelivery data not found!');
@@ -203,15 +207,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     const { days, blackout, cutoff, max_days, daily_limit, ajax_url } = window.greenAngelDelivery;
-    const { delivery_nonce } = window.greenAngelDeliveryVars || {};
-    
-    console.log('Delivery settings received:', {
-        days: days,
-        blackout: blackout,
-        cutoff: cutoff,
-        max_days: max_days,
-        daily_limit: daily_limit
-    });
     
     const allowedWeekdays = {
         'tue': 2,
@@ -224,19 +219,21 @@ document.addEventListener("DOMContentLoaded", function() {
     const now = new Date();
     const cutoffParts = cutoff.split(':');
     const cutoffDate = new Date();
-    cutoffDate.setHours(parseInt(cutoffParts[0]), parseInt(cutoffParts[1]), 0);
+    cutoffDate.setHours(parseInt(cutoffParts[0]), parseInt(cutoffParts[1]), 0, 0);
     
     // Calculate proper earliest delivery date
     function calculateEarliestDelivery() {
-        // Determine shipping date
         let shippingDate = new Date();
-        if (now >= cutoffDate) {
-            // After cutoff - ships next day
+        
+        // Before cutoff = ships today, After cutoff = ships tomorrow
+        if (now < cutoffDate) {
+            console.log('✅ Before cutoff - order ships TODAY');
+        } else {
+            console.log('⏰ After cutoff - order ships TOMORROW');
             shippingDate.setDate(shippingDate.getDate() + 1);
         }
-        // Before cutoff - ships today
         
-        // Calculate earliest delivery date (day after shipping)
+        // Delivery is day after shipping
         let earliestDelivery = new Date(shippingDate);
         earliestDelivery.setDate(earliestDelivery.getDate() + 1);
         
@@ -244,44 +241,35 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Find next valid delivery day
         let attempts = 0;
-        while (attempts < 14) { // Prevent infinite loop
+        while (attempts < 14) {
             const weekday = earliestDelivery.getDay();
             const dateStr = earliestDelivery.toISOString().split('T')[0];
             
-            // Check if this day is valid and not blacked out
             if (validWeekdays.includes(weekday) && !blackout.includes(dateStr)) {
                 return earliestDelivery;
             }
             
-            // Move to next day
             earliestDelivery.setDate(earliestDelivery.getDate() + 1);
             attempts++;
         }
         
-        return earliestDelivery; // fallback
+        return earliestDelivery;
     }
     
     const earliestDelivery = calculateEarliestDelivery();
     const validWeekdays = days.map(day => allowedWeekdays[day]);
     
-    console.log('Current time:', now.toISOString());
-    console.log('Cutoff time today:', cutoffDate.toISOString());
-    console.log('After cutoff?', now >= cutoffDate);
-    console.log('Earliest delivery date calculated:', earliestDelivery.toISOString().split('T')[0]);
-    console.log('Valid weekdays (0=Sun, 6=Sat):', validWeekdays);
-    console.log('Blackout dates to block:', blackout);
-    console.log('Daily delivery limit:', daily_limit);
+    console.log('Earliest delivery date:', earliestDelivery.toISOString().split('T')[0]);
     
     // Store capacity data
     let capacityData = {};
     
-    // Function to check delivery capacity via AJAX
+    // Check delivery capacity
     async function checkDeliveryCapacity(dates) {
         try {
             const formData = new FormData();
             formData.append('action', 'greenangel_check_delivery_availability');
-            formData.append('dates', JSON.stringify(dates));
-            formData.append('security', delivery_nonce);
+            dates.forEach(date => formData.append('dates[]', date));
             
             const response = await fetch(ajax_url, {
                 method: 'POST',
@@ -290,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function() {
             
             const data = await response.json();
             capacityData = { ...capacityData, ...data };
-            console.log('Capacity check results:', data);
             return data;
         } catch (error) {
             console.error('Error checking delivery capacity:', error);
@@ -298,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
-    // Generate date range for initial capacity check
+    // Generate dates to check capacity
     const datesToCheck = [];
     const checkStart = new Date(earliestDelivery);
     const checkEnd = new Date();
@@ -311,104 +298,46 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
-    // Set the default date IMMEDIATELY and aggressively, before any async operations
-    const defaultDateStr = earliestDelivery.toISOString().split('T')[0];
-    const deliveryInput = document.querySelector("input[name='delivery_date']");
-    
-    console.log('🎯 FORCING DEFAULT DATE:', defaultDateStr);
-    
-    // Force set the value right now, aggressively
-    if (deliveryInput) {
-        deliveryInput.value = defaultDateStr;
-        deliveryInput.setAttribute('value', defaultDateStr);
-        console.log('✅ Set input value to:', deliveryInput.value);
-        
-        // Trigger change event so any listeners know about it
-        deliveryInput.dispatchEvent(new Event('change', { bubbles: true }));
-        deliveryInput.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    
-    // Initial capacity check - wait for it to complete before initializing Flatpickr
+    // Initialize Flatpickr with proper settings
     checkDeliveryCapacity(datesToCheck).then(() => {
-        initializeFlatpickr();
-        
-        // FORCE the value again after Flatpickr loads, just to be extra sure
-        setTimeout(() => {
-            const input = document.querySelector("input[name='delivery_date']");
-            if (input && !input.value) {
-                console.log('🔥 EMERGENCY FALLBACK: Setting date after timeout');
-                input.value = defaultDateStr;
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-        }, 500);
-    });
-    
-    function initializeFlatpickr() {
         const fp = flatpickr("input[name='delivery_date']", {
-        dateFormat: "Y-m-d", // Keep backend format for processing
-        altInput: true,
-        altFormat: "l, j F Y", // Beautiful text format: "Wednesday, 25 June 2025"
-        defaultDate: defaultDateStr,
-        minDate: earliestDelivery, // Use calculated earliest delivery date
-        maxDate: new Date().fp_incr(max_days),
-        disable: [
-            // Add blackout dates as static entries
-            ...blackout,
-            function(date) {
-                const weekday = date.getDay();
-                const ymd = date.toISOString().split('T')[0];
-                
-                // Check if weekday is disabled
-                const weekdayDisabled = !validWeekdays.includes(weekday);
-                
-                // Check if date is in blackout list
-                const blackoutDisabled = blackout.includes(ymd);
-                
-                // Check if delivery limit reached
-                const capacityInfo = capacityData[ymd];
-                const capacityDisabled = capacityInfo && !capacityInfo.available;
-                
-                const shouldDisable = weekdayDisabled || blackoutDisabled || capacityDisabled;
-                
-                // Force console log for debugging
-                console.log('DISABLE CHECK:', ymd, {
-                    weekday: weekdayDisabled ? 'invalid day' : 'ok',
-                    blackout: blackoutDisabled ? 'blackout' : 'ok', 
-                    capacity: capacityDisabled ? 'full' : 'ok',
-                    FINAL_RESULT: shouldDisable ? 'BLOCKED' : 'ALLOWED',
-                    RETURN_VALUE: shouldDisable
-                });
-                
-                // Flatpickr expects true to DISABLE the date
-                return shouldDisable;
-            }
-        ],
-        onOpen: function() {
-            // Refresh capacity data when calendar opens
-            checkDeliveryCapacity(datesToCheck);
-        },
-        onReady: function() {
-            // AFTER Flatpickr is ready, IMMEDIATELY set the default date 
-            console.log('✅ Flatpickr ready! FORCE setting default date:', defaultDateStr);
-            
-            // Use a tiny delay to ensure Flatpickr has fully rendered
-            setTimeout(() => {
-                fp.setDate(defaultDateStr, true); // Set the date properly
-                console.log('🎯 Default date FORCED through Flatpickr API');
-                
-                // Extra aggressive - manually set the alt input if it exists
-                const altInput = fp.altInput;
-                if (altInput) {
-                    const formattedDate = fp.formatDate(new Date(defaultDateStr), "l, j F Y");
-                    altInput.value = formattedDate;
-                    console.log('💪 MANUALLY set alt input to:', formattedDate);
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "l, j F Y",
+            minDate: earliestDelivery,
+            maxDate: new Date().fp_incr(max_days),
+            disable: [
+                ...blackout,
+                function(date) {
+                    const weekday = date.getDay();
+                    const ymd = date.toISOString().split('T')[0];
+                    
+                    // Check all disable conditions
+                    const weekdayDisabled = !validWeekdays.includes(weekday);
+                    const blackoutDisabled = blackout.includes(ymd);
+                    const capacityInfo = capacityData[ymd];
+                    const capacityDisabled = capacityInfo && !capacityInfo.available;
+                    
+                    // Compare dates properly (strip time)
+                    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    const earliestOnly = new Date(earliestDelivery.getFullYear(), earliestDelivery.getMonth(), earliestDelivery.getDate());
+                    const tooSoon = dateOnly < earliestOnly;
+                    
+                    return weekdayDisabled || blackoutDisabled || capacityDisabled || tooSoon;
                 }
-            }, 50); // Tiny delay to let Flatpickr finish setup
-        }
+            ],
+            onOpen: function(selectedDates, dateStr, instance) {
+                // Jump to earliest delivery month when opened
+                if (!selectedDates.length) {
+                    instance.jumpToDate(earliestDelivery);
+                }
+                // Refresh capacity when calendar opens
+                checkDeliveryCapacity(datesToCheck);
+            }
         });
-    }
-    
-    console.log('=== END GREEN ANGEL DEBUG ===');
+        
+        console.log('✅ Delivery date picker initialized successfully');
+    });
 });
 JS);
 });

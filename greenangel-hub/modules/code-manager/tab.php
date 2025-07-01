@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Angel Code Manager Tab
 require_once plugin_dir_path(__FILE__) . 'table-codes.php';
 require_once plugin_dir_path(__FILE__) . 'form-add-code.php';
@@ -672,7 +671,6 @@ function greenangel_render_angel_codes_tab() {
 // ✅ Handle Angel Code form submission
 add_action('admin_post_greenangel_add_angel_code', function () {
     if (!current_user_can('manage_woocommerce')) return;
-    check_admin_referer('greenangel_add_code');
     global $wpdb;
     $table = $wpdb->prefix . 'greenangel_codes';
     

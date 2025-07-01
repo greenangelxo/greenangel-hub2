@@ -1,6 +1,125 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel Hub – Tracking Numbers Module
+
+// 🚚 TRACKING COLUMN TAKEOVER - Using same pattern as delivery date column!
+// Add Tracking column to orders list (USING MODERN WOOCOMMERCE HOOK)
+add_filter('woocommerce_shop_order_list_table_columns', function($columns) {
+    // Insert after order_total column (or wherever you want it)
+    $new = [];
+    foreach ($columns as $key => $value) {
+        $new[$key] = $value;
+        if ($key === 'order_total') {
+            $new['ga_tracking'] = '📦 Tracking';
+        }
+    }
+    return $new;
+});
+
+// Display tracking info in column (USING MODERN WOOCOMMERCE HOOK)
+add_action('woocommerce_shop_order_list_table_custom_column', function($column, $order) {
+    if ($column === 'ga_tracking') {
+        $order_id = $order->get_id();
+        
+        // Check ALL possible locations for tracking
+        $ga_tracking = $order->get_meta('_greenangel_tracking_number');
+        if (!$ga_tracking) $ga_tracking = $order->get_meta('greenangel_tracking_number');
+        if (!$ga_tracking) $ga_tracking = get_post_meta($order_id, '_greenangel_tracking_number', true);
+        if (!$ga_tracking) $ga_tracking = get_post_meta($order_id, 'greenangel_tracking_number', true);
+        
+        // Also check AST tracking
+        $ast_tracking_items = $order->get_meta('_wc_shipment_tracking_items');
+        
+        // For completed orders without tracking found, show what we checked
+        if ($order->get_status() === 'completed' && !$ga_tracking && empty($ast_tracking_items)) {
+            echo '<small style="color: #666;">No tracking found</small>';
+            return;
+        }
+        
+        // Display AST tracking if found
+        if (!empty($ast_tracking_items) && is_array($ast_tracking_items) && !$ga_tracking) {
+            try {
+                $first_item = reset($ast_tracking_items);
+                if (!empty($first_item['tracking_number'])) {
+                    $tracking_number = $first_item['tracking_number'];
+                    $date_shipped = isset($first_item['date_shipped']) ? date('j M', $first_item['date_shipped']) : '';
+                    
+                    echo '<div style="font-size: 13px;">';
+                    echo '<a href="https://www.royalmail.com/track-your-item?trackNumber=' . esc_attr($tracking_number) . '" ';
+                    echo 'target="_blank" style="color: #2271b1; text-decoration: none; font-weight: 600;">';
+                    echo esc_html($tracking_number);
+                    echo '</a>';
+                    if ($date_shipped) {
+                        echo '<div style="color: #666; font-size: 11px; margin-top: 2px;">🚚 Shipped ' . esc_html($date_shipped) . '</div>';
+                    }
+                    echo '</div>';
+                    return;
+                }
+            } catch (Exception $e) {
+                // Continue
+            }
+        }
+        
+        // Display Green Angel tracking if found
+        if ($ga_tracking) {
+            $tracking_date = $order->get_meta('_greenangel_tracking_completed_date');
+            if (!$tracking_date) $tracking_date = $order->get_meta('greenangel_tracking_completed_date');
+            if (!$tracking_date) $tracking_date = get_post_meta($order_id, '_greenangel_tracking_completed_date', true);
+            if (!$tracking_date) $tracking_date = get_post_meta($order_id, 'greenangel_tracking_completed_date', true);
+            
+            $date_str = $tracking_date ? date('j M', strtotime($tracking_date)) : date('j M');
+            
+            echo '<div style="font-size: 13px;">';
+            echo '<a href="https://www.royalmail.com/track-your-item?trackNumber=' . esc_attr($ga_tracking) . '" ';
+            echo 'target="_blank" style="color: #2271b1; text-decoration: none; font-weight: 600;">';
+            echo esc_html($ga_tracking);
+            echo '</a>';
+            echo '<div style="color: #666; font-size: 11px; margin-top: 2px;">🚚 Shipped ' . esc_html($date_str) . '</div>';
+            echo '</div>';
+        } else {
+            echo '<span style="color: #999;">—</span>';
+        }
+    }
+}, 10, 2);
+
+// Enhanced process function that also updates old plugin format
+function greenangel_process_tracking_submission_enhanced($order_id, $tracking_number) {
+    $order = wc_get_order($order_id);
+    if (!$order) return;
+    
+    // Save tracking number - USE BOTH update_post_meta AND order meta
+    update_post_meta($order_id, '_greenangel_tracking_number', $tracking_number);
+    update_post_meta($order_id, 'greenangel_tracking_number', $tracking_number); // Without underscore too
+    
+    // ALSO save using order object method
+    $order->update_meta_data('_greenangel_tracking_number', $tracking_number);
+    $order->update_meta_data('greenangel_tracking_number', $tracking_number);
+    $order->save(); // CRITICAL - must save!
+    
+    // Save completion date
+    update_post_meta($order_id, '_greenangel_tracking_completed_date', current_time('Y-m-d'));
+    $order->update_meta_data('_greenangel_tracking_completed_date', current_time('Y-m-d'));
+    $order->save();
+    
+    // Also update old plugin's format for compatibility
+    update_post_meta($order_id, '_wcast_tracking_number', $tracking_number);
+    
+    // Create the HTML format the old plugin uses
+    $date_str = date('j M');
+    $html = sprintf(
+        '<div class="tracking_meta_date">
+            <a href="https://www.royalmail.com/track-your-item?trackNumber=%s" target="_blank" style="color: #2271b1;">%s</a>
+            <div style="font-size: 12px; color: #666; margin-top: 2px;">Royal Mail<br>Shipped %s</div>
+        </div>',
+        esc_attr($tracking_number),
+        esc_html($tracking_number),
+        esc_html($date_str)
+    );
+    update_post_meta($order_id, 'tracking_meta_date', $html);
+    
+    // Update order status to completed
+    $order->update_status('completed', 'Tracking number added: ' . $tracking_number);
+}
+// END OF TRACKING COLUMN TAKEOVER CODE
 
 // 🔁 Save Individual Tracking Number
 add_action('admin_post_greenangel_save_tracking', 'greenangel_save_tracking');
@@ -15,7 +134,7 @@ function greenangel_save_tracking() {
         $tracking_number = sanitize_text_field($_POST['tracking_number']);
         
         if (!empty($tracking_number)) {
-            greenangel_process_tracking_submission($order_id, $tracking_number);
+            greenangel_process_tracking_submission_enhanced($order_id, $tracking_number);
         }
     }
 
@@ -37,7 +156,7 @@ function greenangel_bulk_save_tracking() {
             $tracking_number = sanitize_text_field($tracking_number);
             
             if (!empty($tracking_number)) {
-                greenangel_process_tracking_submission($order_id, $tracking_number);
+                greenangel_process_tracking_submission_enhanced($order_id, $tracking_number);
             }
         }
     }
@@ -46,29 +165,9 @@ function greenangel_bulk_save_tracking() {
     exit;
 }
 
-// 🧠 Process Tracking Submission
+// 🧠 Process Tracking Submission (Original - kept for compatibility)
 function greenangel_process_tracking_submission($order_id, $tracking_number) {
-    $order = wc_get_order($order_id);
-    if (!$order) return;
-    
-    // Save tracking number
-    update_post_meta($order_id, '_greenangel_tracking_number', $tracking_number);
-    
-    // Save completion date
-    update_post_meta($order_id, '_greenangel_tracking_completed_date', current_time('Y-m-d'));
-    
-    // Log the action (following Ship Today pattern)
-    $log_message = "[" . current_time('mysql') . "] 📮 Order #{$order_id} tracking added: {$tracking_number}\n";
-    
-    // Update order status to completed - this triggers the completed email automatically
-    $order->update_status('completed', 'Tracking number added: ' . $tracking_number);
-    
-    // Add another log entry for status change
-    $log_message .= "[" . current_time('mysql') . "] ✅ Order #{$order_id} marked as completed\n";
-    
-    // Optional: Write to a tracking log file if you want
-    // $log_file = plugin_dir_path(__FILE__) . '/../logs/tracking-log.txt';
-    // file_put_contents($log_file, $log_message, FILE_APPEND);
+    greenangel_process_tracking_submission_enhanced($order_id, $tracking_number);
 }
 
 // 📧 Inject Tracking into Emails

@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel Hub – Tools Module
 
 function greenangel_copy_login_form() {

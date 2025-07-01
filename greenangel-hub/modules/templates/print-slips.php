@@ -1,10 +1,12 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 /**
  * Green Angel Packing Slip Template
  * Matches the Photoshop design with FLY HIGH ANGEL header - CLEAN PRINT VERSION
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 
 // Only allow shop managers/admins
 if ( ! current_user_can( 'manage_woocommerce' ) ) {

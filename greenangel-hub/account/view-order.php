@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel – Fully replace Woo view order endpoint with style overrides
 
 // First, remove ALL possible Woo view-order hooks
@@ -158,7 +157,7 @@ function greenangel_hide_woo_order_elements() {
             color: white !important;
             text-decoration: none !important;
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 50px;
             font-weight: 600;
             display: inline-block;
             margin-bottom: 1.5rem;

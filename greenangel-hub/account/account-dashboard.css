@@ -1,14 +1,141 @@
 /* 🌿 Green Angel Hub – Account Dashboard MOBILE-FIRST Styling */
 
 .greenangel-dashboard-wrapper {
-    background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+    background: transparent !important; /* Force remove any background */
+    background-image: none !important;
+    background-color: transparent !important;
     padding: 1rem;
     border-radius: 16px;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
     max-width: 100%;
     margin: 0;
-    /* REMOVED: box-shadow and any glow effects */
+    box-shadow: none !important; /* Remove any shadow */
+}
+
+/* 🌟 GORGEOUS BACK TO DASHBOARD BUTTON - PERFECT PILL STYLE */
+.ga-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #aed604 0%, #c6f731 100%);
+    color: #222222;
+    padding: 0.5rem 1.5rem; /* Reduced padding for less height */
+    border-radius: 50px; /* Full pill shape */
+    text-decoration: none;
+    font-weight: 700;
+    margin: 0 auto 1.5rem auto; /* Center it! */
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem; /* Slightly smaller */
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.3px;
+    border: none;
+    outline: none;
+    display: flex; /* Changed from inline-flex for centering */
+    width: fit-content; /* Only as wide as content */
+    /* NO GLOW - REMOVED ALL BOX-SHADOWS */
+}
+
+/* Center the button in its container */
+.greenangel-dashboard-wrapper > .ga-back-button:first-child {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* NUCLEAR OPTION - FORCE REMOVE ALL GLOWS */
+.ga-back-button,
+.ga-back-button:hover,
+.ga-back-button:active,
+.ga-back-button:focus,
+.ga-back-button:visited,
+.ga-back-button::before,
+.ga-back-button::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.ga-back-button:hover {
+    background: linear-gradient(135deg, #c6f731 0%, #d8ff41 100%);
+    transform: translateY(-2px);
+    color: #222222;
+    text-decoration: none;
+    /* NO GLOW ON HOVER EITHER */
+}
+
+.ga-back-button:active {
+    transform: translateY(0);
+    /* NO GLOW ON CLICK */
+}
+
+.ga-back-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ga-back-button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.ga-back-icon {
+    font-size: 1.1rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.ga-back-button:hover .ga-back-icon {
+    transform: translateX(-3px);
+}
+
+.ga-back-text {
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+/* Mobile optimization for back button */
+@media (max-width: 767px) {
+    .ga-back-button {
+        padding: 0.5rem 1.25rem; /* Even smaller on mobile */
+        font-size: 0.8rem;
+        margin-bottom: 1.25rem;
+        border-radius: 50px; /* Keep pill shape */
+    }
+    
+    .ga-back-icon {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet and desktop enhancement */
+@media (min-width: 768px) {
+    .ga-back-button {
+        padding: 0.5rem 1.5rem; /* Consistent smaller padding */
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+        border-radius: 50px; /* Keep pill shape */
+    }
+    
+    .ga-back-button:hover {
+        transform: translateY(-3px);
+        /* STILL NO GLOW */
+    }
 }
 
 /* 💌 Angel Notification Styles */
@@ -91,24 +218,36 @@
 }
 
 /* 💌 Hero Message Box Styles */
-.ga-hero-message-wrapper {
-    margin: 1rem 0;
-}
-
 .ga-hero-message {
-    background: #1a1a1a;
+    background: rgba(26, 26, 26, 0.9);
     border: 1px solid #333;
-    padding: 1.25rem 1.5rem;
+    color: #ffffff;
+    padding: 1rem;
     border-radius: 16px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
     font-size: 0.85rem;
-    line-height: 1.4;
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-    color: #ffffff;
+    line-height: 1.3;
+    height: 100%;
+    min-height: 80px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar for message box */
+.ga-hero-message::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ga-hero-message::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.ga-hero-message::-webkit-scrollbar-thumb {
+    background: #aed604;
+    border-radius: 3px;
 }
 
 .ga-message-icon {
@@ -119,40 +258,32 @@
 }
 
 .ga-message-text {
-    font-size: 0.9rem;
-    line-height: 1.5;
+    flex: 1;
     color: #ffffff;
     font-weight: 500;
-    text-align: center;
-    width: 100%;
 }
 
-@media (min-width: 768px) {
-
+/* Mobile styles for message box */
+@media (max-width: 767px) {
     .ga-hero-message {
-        background: rgba(26, 26, 26, 0.9);
-        padding: 1rem 1.25rem;
-        min-height: 80px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        padding: 1rem;
+        margin: 1rem 0;
+        height: 100px;
         overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .ga-hero-message::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .ga-hero-message::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-    }
-
-    .ga-hero-message::-webkit-scrollbar-thumb {
-        background: #aed604;
-        border-radius: 3px;
     }
 }
 
 /* Mobile-First Hero Section */
+.ga-hero-section {
+    background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #444;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
 .ga-hero-section {
     background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
     padding: 1.5rem;
@@ -241,6 +372,74 @@
     align-items: stretch;
 }
 
+/* Hero message wrapper for desktop layout */
+.ga-hero-message-wrapper {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* 💌 Hero Message Box Styles */
+.ga-hero-message {
+    background: rgba(26, 26, 26, 0.9);
+    border: 1px solid #333;
+    color: #ffffff;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    height: 100%;
+    min-height: 80px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar for message box on desktop only */
+@media (min-width: 768px) {
+    .ga-hero-message::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .ga-hero-message::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .ga-hero-message::-webkit-scrollbar-thumb {
+        background: #aed604;
+        border-radius: 3px;
+    }
+}
+
+.ga-message-text {
+    color: #ffffff;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+}
+
+/* Mobile styles for message box */
+@media (max-width: 767px) {
+    .ga-hero-message-wrapper {
+        margin: 1rem 0;
+    }
+    
+    .ga-hero-message {
+        background: #1a1a1a;
+        border: 1px solid #333;
+        padding: 1.25rem 1.5rem;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+    
+    .ga-message-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+}
 
 .ga-halo-points {
     background: linear-gradient(135deg, #aed604 0%, #c6f731 100%);
@@ -742,7 +941,8 @@
 }
 
 /* Status Colors matching your brand guide */
-.status-pending-payment { 
+.status-pending-payment,
+.status-pending { 
     background: #ff9800 !important; 
     color: #222222 !important; 
 }
@@ -1176,6 +1376,11 @@
         flex: 0 0 auto;
     }
     
+    .ga-hero-message-wrapper {
+        flex: 1 1 300px;
+        max-width: 400px;
+        margin: 0;
+    }
     
     .ga-points-section {
         flex: 0 0 auto;

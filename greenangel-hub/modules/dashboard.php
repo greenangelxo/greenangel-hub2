@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 function greenangel_render_dashboard_tab() {
     ?>
     <style>
@@ -166,6 +165,11 @@ function greenangel_render_dashboard_tab() {
             <span class="title">Delivery Settings</span>
             <span class="desc">Set cutoffs and blackout dates</span>
         </a>
+        <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=stock-check'); ?>" class="dashboard-module">
+            <span class="icon">📊</span>
+            <span class="title">Stock Check</span>
+            <span class="desc">Quick view all product stock levels</span>
+        </a>
         <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=tools'); ?>" class="dashboard-module">
             <span class="icon">🛠️</span>
             <span class="title">Tools</span>
@@ -178,3 +182,4 @@ function greenangel_render_dashboard_tab() {
     </div>
     <?php
 }
+?>

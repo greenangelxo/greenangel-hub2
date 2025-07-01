@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 /*
 Plugin Name: Angel Hub ❤️
 Plugin URI: https://greenangelshop.com
@@ -10,10 +9,6 @@ Author URI: https://greenangelshop.com
 */
 
 use Wlr\App\Models\Users;
-
-// ✅ Load DB installer early for shared helpers
-require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
-add_action('plugins_loaded', 'greenangel_create_code_tables');
 
 // 🌿 Load modules
 require_once plugin_dir_path(__FILE__) . 'modules/dashboard.php';
@@ -28,13 +23,11 @@ require_once plugin_dir_path(__FILE__) . 'modules/code-manager/tab.php';
 require_once plugin_dir_path(__FILE__) . 'modules/tools.php';
 require_once plugin_dir_path(__FILE__) . 'modules/delivery-settings/delivery-settings.php';
 require_once plugin_dir_path(__FILE__) . 'modules/postcode-rules/enforce-checkout.php';
+require_once plugin_dir_path(__FILE__) . 'modules/stock-check.php';
 
-// ➕ Register frontend user actions
-function greenangel_register_user_actions() {
-    add_action('admin_post_nopriv_greenangel_register_user', 'greenangel_handle_registration');
-    add_action('admin_post_greenangel_register_user', 'greenangel_handle_registration');
-}
-add_action('init', 'greenangel_register_user_actions');
+// ✅ Load DB installer
+require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
+add_action('plugins_loaded', 'greenangel_create_code_tables');
 
 // 🪄 Automatically create the custom account page if not exists
 register_activation_hook(__FILE__, 'greenangel_create_account_page');
@@ -51,13 +44,36 @@ function greenangel_create_account_page() {
     }
 }
 
-// 🔁 Redirect /my-account to your custom page and preserve endpoints
+// 🔁 SAFE Redirect - only redirect logged-in users to existing Angel Hub page
 add_action('template_redirect', function () {
-    if (is_account_page() && !is_page('angel-hub')) {
-        $request_uri = $_SERVER['REQUEST_URI'];
-        $endpoint = remove_query_arg('page', $request_uri);
-        wp_redirect(home_url('/angel-hub' . $endpoint));
-        exit;
+    // Only run on account pages for logged-in users
+    if (!is_user_logged_in() || !is_account_page()) {
+        return;
+    }
+    
+    // Don't redirect if we're already on angel-hub
+    if (is_page('angel-hub')) {
+        return;
+    }
+    
+    // Don't redirect if we're on a WooCommerce endpoint (like orders, edit-address, etc)
+    if (is_wc_endpoint_url()) {
+        return;
+    }
+    
+    // Find the Angel Hub page safely
+    $angel_hub_page = get_page_by_path('angel-hub');
+    
+    // Only redirect if the page actually exists
+    if ($angel_hub_page && $angel_hub_page->post_status === 'publish') {
+        // Get the proper permalink (works with any permalink structure)
+        $angel_hub_url = get_permalink($angel_hub_page->ID);
+        
+        // Only redirect if we got a valid URL on the CURRENT site
+        if ($angel_hub_url && strpos($angel_hub_url, home_url()) === 0) {
+            wp_safe_redirect($angel_hub_url);
+            exit;
+        }
     }
 });
 
@@ -92,7 +108,7 @@ function greenangel_admin_styles() { ?>
     </style>
 <?php }
 
-// 🌌 Main Admin Page Renderer (unchanged)
+// 🌌 Main Admin Page Renderer
 function greenangel_hub_page(){
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'dashboard';
     
@@ -338,7 +354,7 @@ function greenangel_hub_page(){
             }
         }
     </style>';
-    
+
     // Header with title and powered badge
     echo '<div class="angel-dark-header">';
     echo '<div class="header-left-dark">';
@@ -359,6 +375,7 @@ function greenangel_hub_page(){
             'tracking-numbers' => '📮 Tracking',
             'angel-codes' => '🪽 Angel Codes',
             'delivery-settings' => '🚚 Delivery Settings',
+            'stock-check' => '📊 Stock Check',
             'tools' => '🛠️ Tools'
         ];
         
@@ -393,6 +410,9 @@ function greenangel_hub_page(){
         case 'delivery-settings': 
             greenangel_render_delivery_settings_tab(); 
             break;
+        case 'stock-check':
+            greenangel_render_stock_check_tab(); 
+            break;
         case 'tools': 
             greenangel_render_tools_tab(); 
             break;
@@ -400,3 +420,4 @@ function greenangel_hub_page(){
     echo '</div>';
     echo '</div>';
 }
+?>

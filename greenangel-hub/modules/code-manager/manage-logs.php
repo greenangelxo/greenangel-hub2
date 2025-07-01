@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 // 🌿 Green Angel — Log Management for Angel Codes
 
 function esc_csv($value) {
@@ -9,7 +8,6 @@ function esc_csv($value) {
 // Clear usage log
 add_action('admin_post_greenangel_clear_usage_log', function () {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_admin_referer('greenangel_clear_usage_log');
     global $wpdb;
     $wpdb->query('TRUNCATE TABLE ' . $wpdb->prefix . 'greenangel_code_logs');
     wp_redirect(admin_url('admin.php?page=greenangel-hub&tab=angel-codes&log_cleared=1'));
@@ -19,7 +17,6 @@ add_action('admin_post_greenangel_clear_usage_log', function () {
 // Download usage log as CSV
 add_action('admin_post_greenangel_download_usage_log', function () {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_admin_referer('greenangel_download_usage_log');
     global $wpdb;
     $table = $wpdb->prefix . 'greenangel_code_logs';
     $logs  = $wpdb->get_results("SELECT * FROM $table ORDER BY timestamp DESC");
@@ -35,7 +32,6 @@ add_action('admin_post_greenangel_download_usage_log', function () {
 // Clear failed attempts log
 add_action('admin_post_greenangel_clear_failed_log', function () {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_admin_referer('greenangel_clear_failed_log');
     global $wpdb;
     $wpdb->query('TRUNCATE TABLE ' . $wpdb->prefix . 'greenangel_failed_code_attempts');
     wp_redirect(admin_url('admin.php?page=greenangel-hub&tab=angel-codes&failed_cleared=1'));
@@ -45,7 +41,6 @@ add_action('admin_post_greenangel_clear_failed_log', function () {
 // Download failed attempts log as CSV
 add_action('admin_post_greenangel_download_failed_log', function () {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
-    check_admin_referer('greenangel_download_failed_log');
     global $wpdb;
     $table = $wpdb->prefix . 'greenangel_failed_code_attempts';
     $logs  = $wpdb->get_results("SELECT * FROM $table ORDER BY timestamp DESC");
