@@ -151,15 +151,17 @@ class GreenAngelLogin {
     public function validate_angel_code() {
         check_ajax_referer('angel_login_nonce_action', 'nonce');
         
-        $code = sanitize_text_field($_POST['code']);
+        $code = strtoupper(trim(sanitize_text_field($_POST['code'])));
+        error_log("Submitted code: " . $code);
         
         global $wpdb;
         $table_name = $wpdb->prefix . 'greenangel_codes';
         
         $result = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table_name WHERE code = %s AND is_active = 1 AND used_by IS NULL",
+            "SELECT * FROM $table_name WHERE UPPER(code) = %s AND is_active = 1 AND used_by IS NULL",
             $code
         ));
+        error_log("Validation result: " . print_r($result, true));
         
         if ($result) {
             wp_send_json_success(array('message' => esc_html__('Valid angel code!', 'greenangel-login')));
