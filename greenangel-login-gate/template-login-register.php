@@ -17,6 +17,7 @@
         <!-- Login Form -->
         <div class="angel-form-container" id="login-form">
             <form class="angel-form" id="angel-login-form">
+                <?php wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce'); ?>
                 
                 <div class="angel-field-group">
                     <label for="login-email" class="angel-label">Email</label>
@@ -68,6 +69,7 @@
             </div>
             
             <form class="angel-form" id="angel-register-form">
+                <?php wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce'); ?>
                 
                 <div class="angel-field-row">
                     <div class="angel-field-group">
