@@ -1,14 +1,59 @@
+/* ⚡ GREEN ANGEL LOGIN - VIBRANT RGB LED EDITION */
+/* Bright, electric RGB colors with amazing LED vibes */
+
 /* Reset and base styles */
 .angel-login-body,
 html,
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: #151515 !important;
     min-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* Hide Halo Points launcher on login screen */
+.angel-login-body .wll-launcher-button-container,
+body .wll-launcher-button-container {
+    display: none !important;
+}
+
+/* 🌈 HIDE ALL SCROLLBARS - BULLETPROOF SOLUTION */
+/* Hide scrollbars for all browsers */
+html {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+/* Hide webkit scrollbars completely */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+    display: none !important;
+}
+
+/* Additional webkit scrollbar hiding */
+::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    display: none !important;
+}
+
+::-webkit-scrollbar-track {
+    display: none !important;
+}
+
+::-webkit-scrollbar-thumb {
+    display: none !important;
+}
+
+::-webkit-scrollbar-corner {
+    display: none !important;
 }
 
 .angel-login-container {
@@ -18,6 +63,8 @@ body {
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
+    background: #151515;
+    position: relative;
 }
 
 /* Main auth wrapper */
@@ -27,31 +74,77 @@ body {
     margin: 0 auto;
 }
 
+/* ⚡ MAIN CONSOLE - VIBRANT RGB LED WITH SUBTLE SHIMMER */
 .angel-auth-container {
-    background: #2a2a2a;
-    border: 1px solid #404040;
+    background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
 }
 
+/* 🌟 SUBTLE REFLECTIVE SHIMMER - CHIC AF */
+.angel-auth-container::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 400%;
+    height: 400%;
+    background: linear-gradient(45deg, 
+        transparent 40%, 
+        rgba(255, 255, 255, 0.03) 45%, 
+        rgba(255, 255, 255, 0.08) 50%, 
+        rgba(255, 255, 255, 0.03) 55%, 
+        transparent 60%
+    );
+    transform: rotate(45deg);
+    animation: subtle-shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes subtle-shimmer {
+    0%, 100% { transform: rotate(45deg) translateX(-100%); opacity: 0; }
+    50% { transform: rotate(45deg) translateX(100%); opacity: 1; }
+}
+
+/* ⚡ VIBRANT RGB LED STRIP - ELECTRIC COLORS */
 .angel-auth-container::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    pointer-events: none;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,     /* Electric cyan */
+        #ff1493 20%,    /* Deep pink */
+        #aed604 40%,    /* Iconic green */
+        #ff4500 60%,    /* Electric orange */
+        #9932cc 80%,    /* Electric purple */
+        #00ffff 100%    /* Back to cyan */
+    );
+    background-size: 300% 100%;
+    animation: rgb-led-flow 15s linear infinite;
+    border-radius: 24px 24px 0 0;
 }
 
-/* Brand section */
+@keyframes rgb-led-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* Brand section - WELCOME ANGEL */
 .angel-brand {
     text-align: center;
     margin-bottom: 32px;
+    position: relative;
+    z-index: 2;
 }
 
 .angel-title {
@@ -60,46 +153,126 @@ body {
     color: #ffffff;
     margin: 0 0 8px 0;
     letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #00ffff 0%, #ff1493 50%, #aed604 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .angel-subtitle {
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
     margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
-/* Tab navigation */
+/* ⚡ TAB NAVIGATION - VIBRANT RGB STYLE */
 .angel-tabs {
     display: flex;
-    background: #1a1a1a;
-    border-radius: 12px;
-    padding: 4px;
+    background: #0f0f0f;
+    border-radius: 16px;
+    padding: 6px;
     margin-bottom: 32px;
-    border: 1px solid #404040;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.angel-tabs::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(0, 255, 255, 0.1) 0%,
+        rgba(255, 20, 147, 0.1) 25%,
+        rgba(174, 214, 4, 0.1) 50%,
+        rgba(255, 69, 0, 0.1) 75%,
+        rgba(0, 255, 255, 0.1) 100%
+    );
+    background-size: 200% 200%;
+    animation: tab-rgb-glow 8s ease-in-out infinite;
+    border-radius: 16px;
+    opacity: 0.5;
+}
+
+@keyframes tab-rgb-glow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .angel-tab {
     flex: 1;
     background: none;
-    border: none;
-    padding: 12px 16px;
+    border: 2px solid transparent;
+    padding: 14px 18px;
     font-size: 14px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+    background-clip: padding-box;
 }
 
+/* ⚡ ACTIVE TAB WITH VIBRANT RGB BORDER */
 .angel-tab.active {
-    background: #aed604;
-    color: #000000;
-    box-shadow: none;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    color: #ffffff;
+    position: relative;
 }
 
+.angel-tab.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,     /* Electric cyan */
+        #ff1493 33%,    /* Deep pink */
+        #aed604 66%,    /* Iconic green */
+        #00ffff 100%    /* Back to cyan */
+    );
+    background-size: 200% 100%;
+    border-radius: 12px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: active-tab-rgb-flow 4s linear infinite;
+    z-index: 1;
+}
+
+@keyframes active-tab-rgb-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* ⚡ VIBRANT RGB HOVER EFFECT - BREATHING PULSE */
 .angel-tab:hover:not(.active) {
     color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
+    animation: rgb-pulse 2s ease-in-out infinite;
+    border-color: rgba(0, 255, 255, 0.6);
+}
+
+@keyframes rgb-pulse {
+    0%, 100% { 
+        transform: scale(1);
+        border-color: rgba(0, 255, 255, 0.3);
+    }
+    50% { 
+        transform: scale(1.02);
+        border-color: rgba(255, 20, 147, 0.6);
+    }
 }
 
 /* Form containers */
@@ -143,30 +316,31 @@ body {
     margin: 0;
 }
 
-/* Input styling */
+/* ⚡ INPUT STYLING - VIBRANT RGB MODE */
 .angel-input,
 .angel-select {
     background: #1a1a1a;
-    border: 1px solid #404040;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     padding: 14px 16px;
     font-size: 16px;
-    color: #888888;
-    transition: all 0.3s ease;
+    color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
+    position: relative;
 }
 
 .angel-input::placeholder,
 .angel-select option {
-    color: #666666;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .angel-input:focus,
 .angel-select:focus {
-    border-color: #aed604;
-    background: #1a1a1a;
-    box-shadow: none;
-    color: #cccccc;
+    border-color: #00ffff;
+    background: #222222;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.15);
 }
 
 /* Password field with toggle */
@@ -181,16 +355,17 @@ body {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
     border-radius: 6px;
     transition: all 0.2s ease;
+    font-size: 16px;
 }
 
 .angel-password-toggle:hover {
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.05);
+    color: #00ffff;
+    background: rgba(0, 255, 255, 0.1);
 }
 
 /* Checkbox styling */
@@ -214,15 +389,16 @@ body {
 .angel-checkbox-custom {
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 4px;
     position: relative;
     transition: all 0.2s ease;
+    background: #1a1a1a;
 }
 
 .angel-checkbox:checked + .angel-checkbox-custom {
-    background: #aed604;
-    border-color: #aed604;
+    background: linear-gradient(135deg, #00ffff 0%, #ff1493 100%);
+    border-color: #00ffff;
 }
 
 .angel-checkbox:checked + .angel-checkbox-custom::after {
@@ -231,42 +407,99 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #000000;
+    color: #ffffff;
     font-size: 12px;
     font-weight: bold;
 }
 
-/* Button styling */
+/* ⚡ BUTTON STYLING - VIBRANT RGB LED WITH BREATHING PULSE */
 .angel-button {
-    background: #aed604;
-    border: none;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 2px solid transparent;
     border-radius: 12px;
     padding: 16px 24px;
     font-size: 16px;
     font-weight: 600;
-    color: #000000;
+    color: #ffffff;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     margin-top: 8px;
+    background-clip: padding-box;
 }
 
+/* ⚡ VIBRANT RGB LED BORDER ANIMATION */
+.angel-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,     /* Electric cyan */
+        #ff1493 16%,    /* Deep pink */
+        #aed604 32%,    /* Iconic green */
+        #ff4500 48%,    /* Electric orange */
+        #9932cc 64%,    /* Electric purple */
+        #ff69b4 80%,    /* Hot pink */
+        #00ffff 100%    /* Back to cyan */
+    );
+    background-size: 300% 100%;
+    border-radius: 12px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: rgb-border-flow 12s linear infinite;
+    z-index: 1;
+}
+
+.angel-button > * {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes rgb-border-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* ⚡ VIBRANT RGB BREATHING PULSE ON HOVER */
 .angel-button:hover {
     transform: translateY(-2px);
-    box-shadow: none;
-    background: #c4f505;
+    background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+    animation: rgb-button-pulse 2s ease-in-out infinite;
+}
+
+@keyframes rgb-button-pulse {
+    0%, 100% { 
+        transform: translateY(-2px) scale(1);
+    }
+    50% { 
+        transform: translateY(-2px) scale(1.02);
+    }
+}
+
+.angel-button:hover::before {
+    animation-duration: 8s;
 }
 
 .angel-button:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 .angel-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
+}
+
+.angel-button:disabled::before {
+    animation: none;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .button-loader {
@@ -285,84 +518,196 @@ body {
 }
 
 .angel-link {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
     font-size: 14px;
-    transition: color 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .angel-link:hover {
-    color: #aed604;
+    color: #00ffff;
+    animation: link-rgb-pulse 1.5s ease-in-out infinite;
 }
 
-/* Invitation notice */
+@keyframes link-rgb-pulse {
+    0%, 100% { opacity: 1; color: #00ffff; }
+    50% { opacity: 0.8; color: #ff1493; }
+}
+
+/* ⚡ VIBRANT RGB INVITATION PORTAL - INSET CONSOLE STYLE */
 .angel-invitation-notice {
-    background: linear-gradient(135deg, #aed604 0%, #9bc604 100%);
-    color: #000000;
-    border-radius: 12px;
-    padding: 16px 20px;
+    background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 24px 20px;
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     position: relative;
     overflow: hidden;
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .angel-invitation-notice::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: shimmer 3s infinite;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,     /* Electric cyan */
+        #ff1493 25%,    /* Deep pink */
+        #aed604 50%,    /* Iconic green */
+        #ff4500 75%,    /* Electric orange */
+        #00ffff 100%    /* Back to cyan */
+    );
+    background-size: 200% 100%;
+    animation: portal-rgb-flow 6s linear infinite;
+    border-radius: 24px 24px 0 0;
 }
 
-@keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
+@keyframes portal-rgb-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
 }
 
 .angel-invitation-notice h3 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    margin: 0 0 4px 0;
-    color: #000000;
+    margin: 0 0 8px 0;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #00ffff 0%, #ff1493 50%, #aed604 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
 }
 
 .angel-invitation-notice p {
-    font-size: 13px;
-    margin: 0 0 12px 0;
-    opacity: 0.8;
+    font-size: 12px;
+    margin: 0 0 16px 0;
+    color: rgba(255, 255, 255, 0.7);
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
 }
 
+/* ⚡ EPIC RGB IP DISPLAY - THICKER BORDER */
 .ip-display {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 6px 10px;
+    background: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 100%);
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 6px 14px;
     font-size: 11px;
-    font-family: 'Courier New', monospace;
-    display: inline-block;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.5),
+        0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ip-display::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,     /* Electric cyan */
+        #ff1493 33%,    /* Deep pink */
+        #aed604 66%,    /* Iconic green */
+        #00ffff 100%    /* Back to cyan */
+    );
+    background-size: 200% 100%;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: ip-rgb-border-flow 3s linear infinite;
+    z-index: -1;
+}
+
+@keyframes ip-rgb-border-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.ip-display::after {
+    content: '●';
+    color: #ff1493;
+    font-size: 8px;
+    animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+    0%, 100% { opacity: 1; color: #ff1493; }
+    50% { opacity: 0.3; color: #00ffff; }
 }
 
 .ip-label {
-    opacity: 0.7;
-    margin-right: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    font-size: 10px;
 }
 
 .ip-address {
-    font-weight: 600;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00ffff 0%, #aed604 50%, #ff1493 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 100%;
+    animation: ip-text-flow 4s ease-in-out infinite;
+}
+
+@keyframes ip-text-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 /* VPN Warning */
 .angel-vpn-warning {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
-    color: #ffffff;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #2a1a1a 0%, #3a2a2a 100%);
+    border: 1px solid rgba(255, 69, 0, 0.4);
+    border-radius: 16px;
     padding: 20px;
     text-align: center;
     margin-bottom: 24px;
     position: relative;
+}
+
+.angel-vpn-warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        #ff4500 0%, 
+        #ff6347 50%, 
+        #ff4500 100%
+    );
+    background-size: 200% 100%;
+    animation: warning-pulse 2s ease-in-out infinite;
+}
+
+@keyframes warning-pulse {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .vpn-warning-icon {
@@ -380,14 +725,14 @@ body {
 .angel-vpn-warning p {
     font-size: 14px;
     margin: 0;
-    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.8);
     line-height: 1.4;
 }
 
 /* Field hints */
 .angel-field-hint {
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.4);
     margin-top: 4px;
 }
 
@@ -403,7 +748,7 @@ body {
 }
 
 .angel-code-validation.invalid {
-    color: #f87171;
+    color: #ff4500;
 }
 
 /* Messages */
@@ -414,21 +759,234 @@ body {
 
 .angel-message {
     padding: 12px 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 14px;
     margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .angel-message.success {
-    background: rgba(174, 214, 4, 0.1);
-    border: 1px solid rgba(174, 214, 4, 0.3);
-    color: #aed604;
+    background: linear-gradient(135deg, rgba(174, 214, 4, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
+    border-color: rgba(0, 255, 255, 0.3);
+    color: #00ffff;
 }
 
 .angel-message.error {
-    background: rgba(248, 113, 113, 0.1);
-    border: 1px solid rgba(248, 113, 113, 0.2);
-    color: #f87171;
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.1) 0%, rgba(255, 69, 0, 0.05) 100%);
+    border-color: rgba(255, 69, 0, 0.3);
+    color: #ff4500;
+}
+
+/* 🎲 DISPLAY NAME DICE GAME - VIBRANT RGB GAMING CONSOLE */
+.angel-name-dice-game {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    border: 1px solid rgba(255, 20, 147, 0.4);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ⚡ VIBRANT RGB LED STRIP AT TOP OF DICE GAME */
+.angel-name-dice-game::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        #ff1493 0%,     /* Deep pink */
+        #9932cc 25%,    /* Electric purple */
+        #00ffff 50%,    /* Electric cyan */
+        #ff69b4 75%,    /* Hot pink */
+        #ff1493 100%    /* Back to deep pink */
+    );
+    background-size: 300% 100%;
+    animation: dice-rgb-flow 8s linear infinite;
+    border-radius: 20px 20px 0 0;
+}
+
+@keyframes dice-rgb-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+.dice-display-name {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 1px solid rgba(255, 20, 147, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.dice-display-name.has-name {
+    border-color: rgba(0, 255, 255, 0.5);
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+}
+
+.dice-display-name.has-name::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(135deg, #00ffff 0%, #ff1493 50%, #aed604 100%);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+}
+
+.dice-name-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.dice-display-name.has-name .dice-name-text {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.angel-dice-button {
+    width: 100%;
+    background: linear-gradient(135deg, #2a2a2a 0%, #404040 100%);
+    border: 1px solid rgba(255, 20, 147, 0.4);
+    border-radius: 16px;
+    padding: 16px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.angel-dice-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(0, 255, 255, 0.3), 
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+/* ⚡ VIBRANT RGB DICE BUTTON BREATHING PULSE */
+.angel-dice-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #404040 0%, #555555 100%);
+    border-color: rgba(0, 255, 255, 0.6);
+    animation: dice-rgb-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dice-rgb-pulse {
+    0%, 100% { 
+        transform: translateY(-2px) scale(1);
+        border-color: rgba(0, 255, 255, 0.4);
+    }
+    50% { 
+        transform: translateY(-2px) scale(1.02);
+        border-color: rgba(255, 20, 147, 0.8);
+    }
+}
+
+.angel-dice-button:hover::before {
+    left: 100%;
+}
+
+.angel-dice-button:active {
+    transform: scale(0.98);
+}
+
+.angel-dice-button.rolling {
+    animation: dice-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes dice-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.dice-icon {
+    font-size: 1.5rem;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.angel-dice-button.rolling .dice-icon {
+    animation: spin 0.5s linear infinite;
+}
+
+.dice-text {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.dice-count {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.angel-dice-button.exhausted {
+    background: linear-gradient(135deg, #333333 0%, #444444 100%);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.angel-dice-button.exhausted:hover {
+    transform: none;
+    background: linear-gradient(135deg, #333333 0%, #444444 100%);
+    animation: none;
+}
+
+.dice-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+/* Rolling animation for the display name */
+@keyframes nameRoll {
+    0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    50% { opacity: 0.5; transform: translateY(0) scale(1.05); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dice-display-name.rolling .dice-name-text {
+    animation: nameRoll 0.4s ease-out;
+}
+
+/* Success state */
+.dice-display-name.selected {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-color: rgba(0, 255, 255, 0.6);
 }
 
 /* Mobile responsive */
@@ -453,7 +1011,15 @@ body {
     
     .angel-input,
     .angel-select {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
+    }
+
+    .angel-invitation-notice {
+        padding: 24px 20px;
+    }
+
+    .angel-name-dice-game {
+        padding: 20px;
     }
 }
 
@@ -476,5 +1042,30 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Enhanced focus states for accessibility */
+.angel-input:focus,
+.angel-select:focus,
+.angel-button:focus,
+.angel-tab:focus {
+    outline: 2px solid rgba(0, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .angel-auth-container::before,
+    .angel-tabs::before,
+    .angel-name-dice-game::before,
+    .angel-dice-button.rolling,
+    .dice-display-name.rolling .dice-name-text,
+    .angel-auth-container,
+    .rgb-pulse,
+    .rgb-button-pulse,
+    .dice-rgb-pulse,
+    .link-rgb-pulse {
+        animation: none !important;
     }
 }

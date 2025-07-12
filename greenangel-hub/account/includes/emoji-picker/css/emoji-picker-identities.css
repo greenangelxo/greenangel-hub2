@@ -1,0 +1,395 @@
+/* 🌟 GREEN ANGEL EMOJI PICKER - IDENTITY DESCRIPTIONS */
+/* Spicy emoji bios and vibes for each identity */
+/* Mobile-first with gorgeous animations */
+
+/* 🎭 IDENTITY MODAL OVERLAY */
+.identity-description-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15000;
+  animation: identityOverlayFadeIn 0.5s ease;
+}
+
+@keyframes identityOverlayFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(15px);
+  }
+}
+
+/* 🎨 IDENTITY DESCRIPTION MODAL */
+.identity-description-modal {
+  background: linear-gradient(145deg, 
+    rgba(26, 26, 26, 0.95) 0%, 
+    rgba(42, 42, 42, 0.9) 50%, 
+    rgba(26, 26, 26, 0.95) 100%
+  );
+  border: 2px solid var(--emoji-primary, #aed604);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  overflow: hidden;
+  animation: identityModalSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 20px 60px rgba(174, 214, 4, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@keyframes identityModalSlideIn {
+  from {
+    transform: translateY(-50px) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Modal LED strip */
+.identity-description-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--emoji-primary, #aed604) 0%, 
+    rgba(198, 247, 49, 0.9) 25%, 
+    var(--emoji-primary, #aed604) 50%, 
+    rgba(198, 247, 49, 0.9) 75%, 
+    var(--emoji-primary, #aed604) 100%
+  );
+  animation: identityLedFlow 2s linear infinite;
+}
+
+@keyframes identityLedFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* 📱 MODAL CONTENT */
+.identity-modal-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+/* 🎯 EMOJI DISPLAY */
+.identity-emoji-display {
+  margin-bottom: 1.5rem;
+}
+
+.identity-emoji-large {
+  font-size: 5rem;
+  line-height: 1;
+  animation: identityEmojiFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(174, 214, 4, 0.3));
+}
+
+@keyframes identityEmojiFloat {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% { 
+    transform: translateY(-8px) rotate(-2deg) scale(1.05);
+  }
+  50% { 
+    transform: translateY(-4px) rotate(2deg) scale(1.02);
+  }
+  75% { 
+    transform: translateY(-6px) rotate(-1deg) scale(1.03);
+  }
+}
+
+/* 🌟 IDENTITY NAME */
+.identity-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--emoji-primary, #aed604);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, 
+    var(--emoji-primary, #aed604) 0%, 
+    rgba(198, 247, 49, 0.9) 50%, 
+    var(--emoji-primary, #aed604) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: identityNameShimmer 3s ease-in-out infinite;
+}
+
+@keyframes identityNameShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 💫 IDENTITY BIO */
+.identity-bio {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  font-style: italic;
+  text-align: center;
+}
+
+/* 🎬 IDENTITY ACTIONS */
+.identity-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.identity-action {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.identity-action.back {
+  background: rgba(96, 125, 139, 0.2);
+  border: 1px solid rgba(96, 125, 139, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.identity-action.back:hover {
+  background: rgba(96, 125, 139, 0.3);
+  border-color: rgba(96, 125, 139, 0.6);
+  transform: translateY(-2px);
+}
+
+.identity-action.choose {
+  background: linear-gradient(135deg, 
+    var(--emoji-primary, #aed604) 0%, 
+    rgba(198, 247, 49, 0.9) 100%
+  );
+  color: #000000;
+  border: 1px solid var(--emoji-primary, #aed604);
+  position: relative;
+  overflow: hidden;
+}
+
+.identity-action.choose::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, 
+    transparent 40%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    transparent 60%
+  );
+  animation: chooseShimmer 3s ease-in-out infinite;
+}
+
+@keyframes chooseShimmer {
+  0%, 85% { transform: rotate(0deg) translateX(-100%); }
+  90% { transform: rotate(0deg) translateX(100%); }
+  100% { transform: rotate(0deg) translateX(100%); }
+}
+
+.identity-action.choose:hover {
+  background: linear-gradient(135deg, 
+    rgba(198, 247, 49, 0.9) 0%, 
+    var(--emoji-primary, #aed604) 100%
+  );
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(174, 214, 4, 0.4);
+}
+
+/* 🌈 CATEGORY COLOR VARIATIONS */
+.identity-description-modal.mystical {
+  border-color: #aed604;
+}
+
+.identity-description-modal.mystical::before {
+  background: linear-gradient(90deg, 
+    #aed604 0%, rgba(198, 247, 49, 0.9) 50%, #aed604 100%
+  );
+}
+
+.identity-description-modal.nature {
+  border-color: #4caf50;
+}
+
+.identity-description-modal.nature::before {
+  background: linear-gradient(90deg, 
+    #4caf50 0%, rgba(76, 175, 80, 0.9) 50%, #4caf50 100%
+  );
+}
+
+.identity-description-modal.cosmic {
+  border-color: #02a8d1;
+}
+
+.identity-description-modal.cosmic::before {
+  background: linear-gradient(90deg, 
+    #02a8d1 0%, rgba(2, 168, 209, 0.9) 50%, #02a8d1 100%
+  );
+}
+
+.identity-description-modal.vibes {
+  border-color: #cf11a0;
+}
+
+.identity-description-modal.vibes::before {
+  background: linear-gradient(90deg, 
+    #cf11a0 0%, rgba(207, 17, 160, 0.9) 50%, #cf11a0 100%
+  );
+}
+
+.identity-description-modal.animals {
+  border-color: #ff9800;
+}
+
+.identity-description-modal.animals::before {
+  background: linear-gradient(90deg, 
+    #ff9800 0%, rgba(255, 152, 0, 0.9) 50%, #ff9800 100%
+  );
+}
+
+.identity-description-modal.spicy {
+  border-color: #f44336;
+}
+
+.identity-description-modal.spicy::before {
+  background: linear-gradient(90deg, 
+    #f44336 0%, rgba(244, 67, 54, 0.9) 50%, #f44336 100%
+  );
+}
+
+.identity-description-modal.party {
+  border-color: #9c27b0;
+}
+
+.identity-description-modal.party::before {
+  background: linear-gradient(90deg, 
+    #9c27b0 0%, rgba(156, 39, 176, 0.9) 50%, #9c27b0 100%
+  );
+}
+
+.identity-description-modal.energy {
+  border-color: #ffeb3b;
+}
+
+.identity-description-modal.energy::before {
+  background: linear-gradient(90deg, 
+    #ffeb3b 0%, rgba(255, 235, 59, 0.9) 50%, #ffeb3b 100%
+  );
+}
+
+/* 📱 MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+  .identity-description-modal {
+    width: 95%;
+    padding: 0;
+  }
+  
+  .identity-modal-content {
+    padding: 1.5rem;
+  }
+  
+  .identity-emoji-large {
+    font-size: 4rem;
+  }
+  
+  .identity-name {
+    font-size: 1.4rem;
+  }
+  
+  .identity-bio {
+    font-size: 1rem;
+  }
+  
+  .identity-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .identity-action {
+    min-width: auto;
+    justify-content: center;
+  }
+}
+
+/* 💻 TABLET RESPONSIVE */
+@media (min-width: 481px) and (max-width: 768px) {
+  .identity-description-modal {
+    max-width: 450px;
+  }
+  
+  .identity-emoji-large {
+    font-size: 4.5rem;
+  }
+  
+  .identity-name {
+    font-size: 1.6rem;
+  }
+}
+
+/* 🖥️ DESKTOP RESPONSIVE */
+@media (min-width: 1024px) {
+  .identity-description-modal {
+    max-width: 550px;
+  }
+  
+  .identity-modal-content {
+    padding: 2.5rem;
+  }
+  
+  .identity-emoji-large {
+    font-size: 5.5rem;
+  }
+  
+  .identity-name {
+    font-size: 2rem;
+  }
+  
+  .identity-bio {
+    font-size: 1.2rem;
+  }
+}
+
+/* 🎨 ACCESSIBILITY & REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .identity-emoji-large,
+  .identity-name,
+  .identity-description-modal::before,
+  .identity-action.choose::before {
+    animation: none !important;
+  }
+}

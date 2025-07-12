@@ -1,40 +1,80 @@
 <?php
-// 🌿 Prevent direct access
+/**
+ * 🌿 GREEN ANGEL HUB v2.0 - MAIN DASHBOARD CONTROLLER
+ * Beautiful modular dashboard with premium app-like interface
+ * Completely refined with elegant, mobile-optimized components
+ * ENHANCED: Full emoji picker integration! 🎭
+ * 
+ * @package GreenAngelHub
+ * @version 2.0.0
+ */
+
+// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// 🌿 Enqueue account dashboard styles
-add_action('wp_enqueue_scripts', 'greenangel_enqueue_account_dashboard_styles');
-function greenangel_enqueue_account_dashboard_styles() {
-    if (!is_singular()) {
-        return; // Return from THIS FUNCTION only, not the whole file!
+// 🎨 Enqueue all dashboard styles and scripts
+add_action('wp_enqueue_scripts', 'ga_enqueue_dashboard_assets');
+function ga_enqueue_dashboard_assets() {
+    // Only load on pages with our shortcode
+    if (!ga_should_load_dashboard_assets()) {
+        return;
     }
     
-    global $post;
+    $plugin_url = plugin_dir_url(__FILE__);
+    $version = defined('WP_DEBUG') && WP_DEBUG ? time() : '2.0.1'; // Bumped version
+    
+    // Enqueue styles in correct order (shared first, then components)
+    wp_enqueue_style('ga-hub-shared', $plugin_url . 'shared.css', [], $version);
+    wp_enqueue_style('ga-hub-header', $plugin_url . 'header.css', ['ga-hub-shared'], $version);
+    wp_enqueue_style('ga-hub-tiles', $plugin_url . 'tiles.css', ['ga-hub-shared'], $version);
+    wp_enqueue_style('ga-hub-referral', $plugin_url . 'referral.css', ['ga-hub-shared'], $version);
+    wp_enqueue_style('ga-hub-activity', $plugin_url . 'activity.css', ['ga-hub-shared'], $version);
+    wp_enqueue_style('ga-hub-notifications', $plugin_url . 'notifications.css', ['ga-hub-shared'], $version);
+    
+    // Add Poppins font with better loading
+    wp_enqueue_style('ga-hub-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap', [], $version);
+    
+    // Add mobile viewport optimization
+    add_action('wp_head', 'ga_add_mobile_viewport_meta');
+}
 
-    if (has_shortcode($post->post_content, 'greenangel_account_dashboard')) {
-        wp_enqueue_style(
-            'greenangel-account-dashboard',
-            plugin_dir_url(__FILE__) . 'account-dashboard.css',
-            [],
-            '1.0'
-        );
+// 📱 Add mobile viewport meta for better mobile experience
+function ga_add_mobile_viewport_meta() {
+    if (!ga_should_load_dashboard_assets()) {
+        return;
+    }
+    
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">' . "\n";
+    echo '<meta name="mobile-web-app-capable" content="yes">' . "\n";
+    echo '<meta name="apple-mobile-web-app-capable" content="yes">' . "\n";
+    echo '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">' . "\n";
+}
+
+// 📄 Include all component files
+function ga_load_dashboard_components() {
+    $component_path = plugin_dir_path(__FILE__);
+    
+    $components = [
+        'header.php',
+        'tiles.php', 
+        'referral.php',
+        'activity.php',
+        'notifications.php'
+    ];
+    
+    foreach ($components as $component) {
+        $file_path = $component_path . $component;
+        if (file_exists($file_path)) {
+            require_once $file_path;
+        } else {
+            error_log("Green Angel Hub: Component file not found: " . $file_path);
+        }
     }
 }
 
-// 🌿 BACKUP: Always load (debug)
-add_action('wp_enqueue_scripts', 'greenangel_force_enqueue_account_dashboard_styles', 20);
-function greenangel_force_enqueue_account_dashboard_styles() {
-    wp_enqueue_style(
-        'greenangel-account-dashboard-force',
-        plugin_dir_url(__FILE__) . 'account-dashboard.css',
-        [],
-        time()
-    );
-}
-
-// 🌿 WP LOYALTY POINTS - FIXED COLUMN NAMES!
+// 🌿 ESSENTIAL FUNCTIONS FROM ORIGINAL DASHBOARD
 function greenangel_get_wp_loyalty_points_safe($user_id) {
     global $wpdb;
     
@@ -53,41 +93,26 @@ function greenangel_get_wp_loyalty_points_safe($user_id) {
         return ['available' => 0, 'redeemed' => 0];
     }
     
-    // 🎯 FIXED: Using correct column names from your debug!
-    $user_data = $wpdb->get_row($wpdb->prepare(
-        "SELECT points as available_points, used_total_points as redeemed_points FROM $table_name WHERE user_email = %s",
-        $email
-    ));
-    
-    if ($user_data) {
-        return [
-            'available' => (int) $user_data->available_points,
-            'redeemed' => (int) $user_data->redeemed_points
-        ];
+    // Using correct column names with error handling
+    try {
+        $user_data = $wpdb->get_row($wpdb->prepare(
+            "SELECT points as available_points, used_total_points as redeemed_points FROM $table_name WHERE user_email = %s",
+            $email
+        ));
+        
+        if ($user_data) {
+            return [
+                'available' => (int) $user_data->available_points,
+                'redeemed' => (int) $user_data->redeemed_points
+            ];
+        }
+    } catch (Exception $e) {
+        error_log("Green Angel Hub: Error fetching loyalty points - " . $e->getMessage());
     }
     
     return ['available' => 0, 'redeemed' => 0];
 }
 
-// 🌟 GET EARNING CAMPAIGNS/WAYS TO EARN
-function greenangel_get_earning_campaigns() {
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'wlr_earn_campaign';
-    
-    // Check if table exists
-    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
-    if (!$table_exists) {
-        return [];
-    }
-    
-    // Get active earning campaigns
-    $campaigns = $wpdb->get_results("SELECT * FROM $table_name WHERE active = 1 ORDER BY ordering ASC");
-    
-    return $campaigns ?: [];
-}
-
-// 🌟 GET ALL ACTIVITIES - FIXED TO SHOW ALL ACTIVITIES!
 function greenangel_get_recent_activities($user_id, $limit = 100) {
     global $wpdb;
     
@@ -96,11 +121,6 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     
     $email = $user->user_email;
     
-    // First, let's check if WP Loyalty has its own function we can use
-    if (class_exists('Wlr\App\Helpers\EarnCampaign')) {
-        error_log('DEBUG: WP Loyalty class exists - checking for built-in methods');
-    }
-    
     // Define all possible activity tables
     $logs_table = $wpdb->prefix . 'wlr_logs';
     $transaction_table = $wpdb->prefix . 'wlr_earn_campaign_transaction';
@@ -108,892 +128,374 @@ function greenangel_get_recent_activities($user_id, $limit = 100) {
     $points_ledger_table = $wpdb->prefix . 'wlr_points_ledger';
     
     $all_activities = [];
-    $activity_ids = []; // Track unique activities to prevent duplicates
+    $activity_ids = [];
     
-    // Let's try a DIRECT query to get EVERYTHING from logs first
+    // Get from logs table with error handling
     if ($wpdb->get_var("SHOW TABLES LIKE '$logs_table'") == $logs_table) {
-        // Get ALL columns to see what we're missing
-        $test_query = $wpdb->get_results($wpdb->prepare("
-            SELECT * FROM $logs_table 
-            WHERE user_email = %s 
-            ORDER BY created_at DESC 
-            LIMIT 10
-        ", $email));
-        
-        error_log('DEBUG: Sample log entry structure:');
-        if (!empty($test_query)) {
-            foreach ($test_query[0] as $key => $value) {
-                error_log("  $key => $value");
-            }
-        }
-        
-        // Now get the actual data
-        $log_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'log' as source,
-                id,
-                user_email,
-                action_type as activity_type,
-                points,
-                order_id,
-                created_at,
-                note,
-                action_process_type,
-                reward_display_name,
-                discount_code
-            FROM $logs_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($log_activities as $activity) {
-            $unique_key = $activity->source . '_' . $activity->id;
-            if (!isset($activity_ids[$unique_key])) {
-                $activity_ids[$unique_key] = true;
-                $all_activities[] = $activity;
-            }
-        }
-        
-        error_log('DEBUG: Log activities found: ' . count($log_activities));
-    }
-    
-    // 2. Get from earn campaign transactions (for any missing activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$transaction_table'") == $transaction_table) {
-        $earn_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'earn' as source,
-                id,
-                user_email,
-                action_type,
-                campaign_type,
-                points,
-                order_id,
-                created_at,
-                display_name as note
-            FROM $transaction_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($earn_activities as $activity) {
-            $activity->activity_type = $activity->campaign_type ?: $activity->action_type;
+        try {
+            $log_activities = $wpdb->get_results($wpdb->prepare("
+                SELECT 
+                    'log' as source,
+                    id,
+                    user_email,
+                    action_type as activity_type,
+                    points,
+                    order_id,
+                    created_at,
+                    note,
+                    action_process_type,
+                    reward_display_name,
+                    discount_code
+                FROM $logs_table
+                WHERE user_email = %s
+                ORDER BY created_at DESC, id DESC
+                LIMIT %d
+            ", $email, $limit));
             
-            // Check if this activity might already exist in logs
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if ($existing->source == 'log' && 
-                    $existing->points == $activity->points && 
-                    $existing->order_id == $activity->order_id &&
-                    abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 60) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
+            foreach ($log_activities as $activity) {
                 $unique_key = $activity->source . '_' . $activity->id;
                 if (!isset($activity_ids[$unique_key])) {
                     $activity_ids[$unique_key] = true;
                     $all_activities[] = $activity;
                 }
             }
+        } catch (Exception $e) {
+            error_log("Green Angel Hub: Error fetching activities - " . $e->getMessage());
         }
-        
-        error_log('Earn transactions found: ' . count($earn_activities) . ' (added: ' . (count($all_activities) - count($log_activities)) . ')');
     }
     
-    // 3. Get from reward transactions (redemptions)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$reward_trans_table'") == $reward_trans_table) {
-        $reward_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'redeem' as source,
-                id,
-                user_email,
-                'coupon_redeem' as activity_type,
-                -1 * reward_amount as points,
-                order_id,
-                created_at,
-                CONCAT('Redeemed ', discount_code) as note,
-                'redeem' as action_process_type,
-                discount_code
-            FROM $reward_trans_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($reward_activities as $activity) {
-            // Check if redemption already exists in logs
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if ($existing->source == 'log' && 
-                    $existing->action_process_type == 'redeem' &&
-                    $existing->discount_code == $activity->discount_code) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
-                $unique_key = $activity->source . '_' . $activity->id;
-                if (!isset($activity_ids[$unique_key])) {
-                    $activity_ids[$unique_key] = true;
-                    $all_activities[] = $activity;
-                }
-            }
-        }
-        
-        error_log('Reward transactions found: ' . count($reward_activities));
-    }
-    
-    // 4. Get from points ledger (for any additional activities)
-    if ($wpdb->get_var("SHOW TABLES LIKE '$points_ledger_table'") == $points_ledger_table) {
-        $ledger_activities = $wpdb->get_results($wpdb->prepare("
-            SELECT 
-                'ledger' as source,
-                id,
-                user_email,
-                action_type as activity_type,
-                CASE 
-                    WHEN credit_points > 0 THEN credit_points
-                    WHEN debit_points > 0 THEN -1 * debit_points
-                    ELSE 0
-                END as points,
-                0 as order_id,
-                created_at,
-                note,
-                action_process_type
-            FROM $points_ledger_table
-            WHERE user_email = %s
-            ORDER BY created_at DESC, id DESC
-            LIMIT %d
-        ", $email, $limit));
-        
-        foreach ($ledger_activities as $activity) {
-            // Check if this ledger entry is unique
-            $is_duplicate = false;
-            foreach ($all_activities as $existing) {
-                if (abs(strtotime($existing->created_at) - strtotime($activity->created_at)) < 5 &&
-                    $existing->points == $activity->points) {
-                    $is_duplicate = true;
-                    break;
-                }
-            }
-            
-            if (!$is_duplicate) {
-                $unique_key = $activity->source . '_' . $activity->id;
-                if (!isset($activity_ids[$unique_key])) {
-                    $activity_ids[$unique_key] = true;
-                    $all_activities[] = $activity;
-                }
-            }
-        }
-        
-        error_log('Points ledger found: ' . count($ledger_activities));
-    }
-    
-    // Sort all activities by date (newest first)
+    // Sort by date and limit
     usort($all_activities, function($a, $b) {
         $date_a = is_numeric($a->created_at) ? $a->created_at : strtotime($a->created_at);
         $date_b = is_numeric($b->created_at) ? $b->created_at : strtotime($b->created_at);
         return $date_b - $date_a;
     });
     
-    // Limit results
-    $all_activities = array_slice($all_activities, 0, $limit);
-    
-    error_log('Total unique activities returned: ' . count($all_activities));
-    
-    return $all_activities;
+    return array_slice($all_activities, 0, $limit);
 }
 
-// 🌿 Custom My Account Dashboard
-/**
- * Get Active Main Angel Code
- */
 function greenangel_get_main_angel_code() {
     global $wpdb;
     
     $table = $wpdb->prefix . 'greenangel_codes';
     
-    // Query for active main code that hasn't expired
-    $code = $wpdb->get_row($wpdb->prepare("
-        SELECT * FROM $table 
-        WHERE type = %s 
-        AND active = 1 
-        AND (expires_at IS NULL OR expires_at > NOW())
-        ORDER BY created_at DESC
-        LIMIT 1
-    ", 'main'));
+    // Check if table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+        return null;
+    }
     
-    if ($code) {
-        return $code->code;
+    try {
+        // Query for active main code that hasn't expired
+        $code = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM $table 
+            WHERE type = %s 
+            AND active = 1 
+            AND (expires_at IS NULL OR expires_at > NOW())
+            ORDER BY created_at DESC
+            LIMIT 1
+        ", 'main'));
+        
+        if ($code) {
+            return $code->code;
+        }
+    } catch (Exception $e) {
+        error_log("Green Angel Hub: Error fetching angel code - " . $e->getMessage());
     }
     
     return null;
 }
 
-function greenangel_account_dashboard() {
+// 🎯 Check if we should load dashboard assets
+function ga_should_load_dashboard_assets() {
+    global $post;
+    
+    // Check for shortcode in content
+    if (is_singular() && $post && has_shortcode($post->post_content, 'greenangel_account_dashboard')) {
+        return true;
+    }
+    
+    // Check for Angel Hub page
+    if (is_page('angel-hub')) {
+        return true;
+    }
+    
+    // Check for WooCommerce account pages
+    if (function_exists('is_account_page') && is_account_page()) {
+        return true;
+    }
+    
+    return false;
+}
+
+// 🌿 Main Dashboard Shortcode
+function greenangel_account_dashboard_shortcode($atts = []) {
+    // Check if user is logged in
     if (!is_user_logged_in()) {
-        return '<p class="greenangel-notice">Please log in to view your dashboard.</p>';
+        return ga_render_login_prompt();
     }
-
-    $user_id      = get_current_user_id();
-    $user         = wp_get_current_user();
-    $display_name = esc_html( $user->display_name ?: $user->user_login );
-
-    // WooCommerce data
-    $customer    = new WC_Customer($user_id);
-    $all_orders  = wc_get_orders(['customer' => $user_id, 'limit' => -1]);
     
-    // Filter for completed orders only for the count
-    $completed_orders = array_filter($all_orders, function($order) {
-        return $order->get_status() === 'completed';
-    });
-    $order_count = count($completed_orders);
+    // Load all components
+    ga_load_dashboard_components();
     
-    $total_spent = $customer->get_total_spent();
-
-    // 🌟 GET LOYALTY POINTS - SAFE METHOD
-    $loyalty_points = greenangel_get_wp_loyalty_points_safe($user_id);
-    $halo_points = $loyalty_points['available'];
-    $redeemed_points = $loyalty_points['redeemed'];
-
-    // 🌟 GET EARNING CAMPAIGNS
-    $earning_campaigns = greenangel_get_earning_campaigns();
+    $user_id = get_current_user_id();
     
-    // 🌟 GET RECENT ACTIVITIES - NOW WITH MORE DATA!
-    $recent_activities = greenangel_get_recent_activities($user_id, 200); // Increased limit to ensure we get all
+    // Get attributes with defaults
+    $atts = shortcode_atts([
+        'show_header' => 'true',
+        'show_tiles' => 'true',
+        'show_referral' => 'true',
+        'show_activity' => 'true',
+        'show_notifications' => 'true',
+        'layout' => 'full' // full, compact, minimal
+    ], $atts);
     
-    // DEBUG: Let's see what we're getting
-    error_log('DEBUG: Total activities fetched: ' . count($recent_activities));
-    error_log('DEBUG: Activities breakdown:');
-    foreach ($recent_activities as $idx => $act) {
-        error_log("Activity $idx: Type={$act->activity_type}, Points={$act->points}, Date={$act->created_at}, Source={$act->source}");
-    }
-
-    // First order date
-    $first_order_date = 'Not yet placed';
-    if (!empty($completed_orders)) {
-        $first = end($completed_orders);
-        $first_order_date = $first->get_date_created()->format('M Y');
-    }
-
-    // Angel status
-    $angel_status = 'Member';
-    if ($total_spent > 500)  $angel_status = 'VIP Angel';
-    if ($total_spent > 1000) $angel_status = 'Elite Angel';
-
-    // 🌟 Fetch WP Loyalty referral code
-    if ( function_exists('greenangel_get_loyalty_referral_code') ) {
-        $ref_code = greenangel_get_loyalty_referral_code( $user->user_email );
-    } else {
-        $ref_code = null;
-    }
-    // Build full dynamic URL
-    $ref_url = $ref_code
-        ? esc_url( home_url( '?wlr_ref=' . $ref_code ) )
-        : '';
-    
-    // 💌 Get notification settings
-    $notification_text = get_option( 'greenangel_notification_text', '' );
-    $notification_active = get_option( 'greenangel_notification_active', 'no' );
-
     ob_start();
     ?>
-    <div class="greenangel-dashboard-wrapper">
-
-        <!-- Hero Welcome Section -->
-        <div class="ga-hero-section">
-            <div class="ga-avatar-section">
-                <div class="ga-avatar">🌿</div>
-                <div class="ga-welcome-text">
-                    <h1 class="ga-welcome">Hey <?php echo $display_name; ?>!</h1>
-                    <div class="ga-pills-container">
-                        <div class="ga-status-pill">Status: <?php echo $angel_status; ?></div>
-                        <div class="ga-angel-since-pill">Angel Since <?php echo $first_order_date; ?></div>
-                        <div class="ga-registered-pill">Registered <?php echo date('M Y', strtotime($user->user_registered)); ?></div>
-                    </div>
-                </div>
-            </div>
+    
+    <div class="ga-hub">
+        <div class="ga-container">
             
-            <?php if ( $notification_active === 'yes' && ! empty( $notification_text ) ) : ?>
-            <div class="ga-hero-message-wrapper">
-                <div class="ga-hero-message">
-                    <div class="ga-message-text"><?php echo wp_kses_post( $notification_text ); ?></div>
-                </div>
-            </div>
-            <?php endif; ?>
-            
-            <div class="ga-points-section">
-                <!-- 🔄 Showing Live Halo Points from Database -->
-                <div class="ga-halo-points">
-                    <div class="ga-points-number"><?php echo number_format($halo_points); ?></div>
-                    <div class="ga-points-label">Halo Points</div>
-                </div>
-                <div class="ga-redeemed-points">
-                    <div class="ga-redeemed-number"><?php echo number_format($redeemed_points); ?></div>
-                    <div class="ga-redeemed-label">Redeemed</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats Grid -->
-        <div class="ga-stats-grid">
-            <div class="ga-stat-card">
-                <div class="ga-stat-icon">📦</div>
-                <div class="ga-stat-content">
-                    <div class="ga-stat-number"><?php echo $order_count; ?></div>
-                    <div class="ga-stat-label">Orders</div>
-                </div>
-            </div>
-            <a href="<?php echo wc_get_account_endpoint_url('orders'); ?>" class="ga-stat-card ga-stat-clickable">
-                <div class="ga-stat-icon">📋</div>
-                <div class="ga-stat-content">
-                    <div class="ga-stat-number">My Orders</div>
-                    <div class="ga-stat-label">View &amp; Track</div>
-                </div>
-            </a>
-            <a href="<?php echo wc_get_account_endpoint_url('edit-address'); ?>" class="ga-stat-card ga-stat-clickable">
-                <div class="ga-stat-icon">🏠</div>
-                <div class="ga-stat-content">
-                    <div class="ga-stat-number">Address Info</div>
-                    <div class="ga-stat-label">Update Details</div>
-                </div>
-            </a>
-            <a href="<?php echo wc_get_account_endpoint_url('edit-account'); ?>" class="ga-stat-card ga-stat-clickable">
-                <div class="ga-stat-icon">⚙️</div>
-                <div class="ga-stat-content">
-                    <div class="ga-stat-number">Account</div>
-                    <div class="ga-stat-label">Personal Details</div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Codes Section -->
-        <div class="ga-codes-section">
-            <!-- Referral Link Panel -->
-            <div class="ga-code-panel">
-                <div class="ga-code-header-pill">Referral Link 🎁</div>
-                <div class="ga-code-container">
-                    <div
-                      class="ga-code"
-                      id="referralLink"
-                      style="
-                        font-family: 'Poppins', sans-serif;
-                        font-size: 0.85rem;
-                        letter-spacing: 0;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                      "
-                    >
-                        <?php echo $ref_url ?: '—'; ?>
-                    </div>
-                    <?php if ( $ref_url ): ?>
-                        <button class="ga-copy-btn" onclick="copyReferralLink()">Copy Link</button>
-                    <?php else: ?>
-                        <button class="ga-copy-btn ga-disabled" disabled>No Link</button>
-                    <?php endif; ?>
-                </div>
-                <p class="ga-code-text">Share with friends and earn rewards!</p>
-            </div>
-
-            <!-- Access Code Panel -->
             <?php
-            // Get the active main Angel Code
-            $angel_code = greenangel_get_main_angel_code();
+            // 🌟 Header Section (Profile Banner)
+            if ($atts['show_header'] === 'true' && function_exists('ga_render_header_section')) {
+                echo ga_render_header_section($user_id);
+            }
+            
+            // 🔔 Smart Notifications (RIGHT AFTER HEADER - PERFECT POSITION!)
+            if ($atts['show_notifications'] === 'true' && function_exists('ga_render_notifications_section')) {
+                echo ga_render_notifications_section($user_id);
+            }
+            
+            // 🎯 Navigation Tiles
+            if ($atts['show_tiles'] === 'true' && function_exists('ga_render_navigation_tiles')) {
+                echo ga_render_navigation_tiles($user_id);
+            }
+            
+            // 🎁 Referral & Codes Section
+            if ($atts['show_referral'] === 'true' && function_exists('ga_render_referral_section')) {
+                echo ga_render_referral_section($user_id);
+            }
+            
+            // 📱 Activity Tabs (Orders | Halo Points | Wallet)
+            if ($atts['show_activity'] === 'true' && function_exists('ga_render_activity_section')) {
+                echo ga_render_activity_section($user_id);
+            }
             ?>
-            <div class="ga-code-panel">
-                <div class="ga-code-header-pill">Angel Access Code 👑</div>
-                <div class="ga-code-container">
-                    <?php if ($angel_code): ?>
-                        <div
-                          class="ga-code"
-                          id="accessCode"
-                          style="
-                            font-family: 'Poppins', sans-serif;
-                            font-size: 0.85rem;
-                            letter-spacing: 0;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                          "
-                        >
-                            <?php echo esc_html($angel_code); ?>
-                        </div>
-                        <button class="ga-copy-btn" onclick="copyAccessCode()">Copy</button>
-                    <?php else: ?>
-                        <div
-                          class="ga-code"
-                          id="accessCode"
-                          style="
-                            font-family: 'Poppins', sans-serif;
-                            font-size: 0.85rem;
-                            letter-spacing: 0;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            opacity: 0.5;
-                          "
-                        >
-                            No active code
-                        </div>
-                        <button class="ga-copy-btn ga-disabled" disabled>No Code</button>
-                    <?php endif; ?>
-                </div>
-                <p class="ga-code-text">Share this exclusive code with friends to invite them!</p>
-            </div>
-        </div>
-
-        <!-- Action Buttons Grid -->
-        <div class="ga-actions-grid">
-            <a href="/shop" class="ga-action-card">
-                <div class="ga-action-icon">🛍️</div>
-                <div class="ga-action-content">
-                    <div class="ga-action-title">Shop Now</div>
-                    <div class="ga-action-subtitle">Explore our products</div>
-                </div>
-            </a>
-            <a href="<?php echo wc_get_account_endpoint_url('loyalty_reward'); ?>" class="ga-action-card">
-                <div class="ga-action-icon">🌟</div>
-                <div class="ga-action-content">
-                    <div class="ga-action-title">Halo Hub</div>
-                    <div class="ga-action-subtitle">Spend your points</div>
-                </div>
-            </a>
-            <?php 
-            // Check if user is an affiliate
-            $is_affiliate = function_exists('slicewp_is_user_affiliate') && slicewp_is_user_affiliate(get_current_user_id());
-            ?>
-            <a href="<?php echo $is_affiliate ? '/my-account/affiliate/' : '#'; ?>" class="ga-action-card <?php echo !$is_affiliate ? 'ga-locked' : ''; ?>">
-                <div class="ga-action-icon"><?php echo $is_affiliate ? '💎' : '🔒'; ?></div>
-                <div class="ga-action-content">
-                    <div class="ga-action-title">Affiliate Hub</div>
-                    <div class="ga-action-subtitle"><?php echo $is_affiliate ? 'Your dashboard' : 'Access locked'; ?></div>
-                </div>
-            </a>
-            <a href="<?php echo wc_get_account_endpoint_url('customer-logout'); ?>" class="ga-action-card">
-                <div class="ga-action-icon">🚪</div>
-                <div class="ga-action-content">
-                    <div class="ga-action-title">Log Out</div>
-                    <div class="ga-action-subtitle">See you soon!</div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Order Activity -->
-        <?php if (!empty($all_orders)): ?>
-        <div class="ga-panel ga-collapsible">
-            <h3 class="ga-panel-title ga-panel-toggle" onclick="togglePanel(this)">
-                <span class="ga-title-pill" style="background: #02a8d1;">Order Activity</span>
-                <span class="ga-toggle-icon">➕</span>
-            </h3>
-            <div class="ga-panel-content ga-collapsed">
-                <div class="ga-orders-grid" id="ordersGrid">
-                    <?php 
-                    $order_counter = 0;
-                    foreach ($all_orders as $order): 
-                        $order_counter++;
-                        $hidden_class = $order_counter > 4 ? 'ga-order-hidden' : '';
-                        
-                        // Get order status color class
-                        $status_class = 'status-' . $order->get_status();
-                        
-                        // Format order total
-                        $order_total = wc_price($order->get_total());
-                    ?>
-                    <div class="ga-order-card <?php echo $hidden_class; ?>">
-                        <div class="ga-order-card-header">
-                            <div class="ga-order-number">#<?php echo $order->get_order_number(); ?></div>
-                            <div class="ga-order-date"><?php echo $order->get_date_created()->format('M j, Y'); ?></div>
-                        </div>
-                        <div class="ga-order-card-details">
-                            <div class="ga-order-total"><?php echo $order_total; ?></div>
-                            <div class="ga-order-items"><?php echo $order->get_item_count(); ?> items</div>
-                        </div>
-                        <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="ga-order-status <?php echo $status_class; ?>">
-                            <?php echo ucfirst($order->get_status()); ?>
-                        </a>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                
-                <?php if ($order_counter > 4): ?>
-                <div class="ga-load-more-container">
-                    <button class="ga-load-more-btn" onclick="loadMoreOrders()">
-                        <span class="ga-load-more-text">Load More Orders</span>
-                        <span class="ga-load-more-icon">↓</span>
-                    </button>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- 🌟 FIXED: Recent Activities - ALL ACTIVITIES, NOT JUST POINTS! -->
-        <?php 
-        // NO FILTERING! Show ALL activities!
-        if (!empty($recent_activities)): 
-        ?>
-        <div class="ga-panel ga-collapsible">
-            <h3 class="ga-panel-title ga-panel-toggle" onclick="togglePanel(this)">
-                <span class="ga-title-pill" style="background: #cf11a0;">Halo Activity</span>
-                <span class="ga-toggle-icon">➕</span>
-            </h3>
-            <div class="ga-panel-content ga-collapsed">
-                <div class="ga-activities-grid" id="activitiesGrid">
-                <?php 
-                $activity_counter = 0;
-                foreach ($recent_activities as $activity): 
-                    $activity_counter++;
-                    
-                    // Determine activity type and styling based on action_type
-                    $activity_icon = '🎁';
-                    $activity_type_display = 'Activity';
-                    $activity_class = 'general';
-                    $points_value = isset($activity->points) ? intval($activity->points) : 0;
-                    
-                    // Format based on action type from logs table
-                    $action_type = strtolower($activity->activity_type ?? $activity->action_type ?? '');
-                    
-                    if (strpos($action_type, 'point_for_purchase') !== false || strpos($action_type, 'purchase') !== false) {
-                        $activity_icon = '🛍️';
-                        $activity_type_display = 'Points For Purchase';
-                        $activity_class = 'purchase';
-                    } elseif (strpos($action_type, 'referral') !== false || strpos($action_type, 'referee') !== false) {
-                        $activity_icon = '🤝';
-                        $activity_type_display = 'Referral';
-                        $activity_class = 'referral';
-                    } elseif (strpos($action_type, 'review') !== false) {
-                        $activity_icon = '⭐';
-                        $activity_type_display = 'Review';
-                        $activity_class = 'review';
-                    } elseif (strpos($action_type, 'signup') !== false || strpos($action_type, 'sign_up') !== false) {
-                        $activity_icon = '👋';
-                        $activity_type_display = 'Welcome';
-                        $activity_class = 'signup';
-                    } elseif (strpos($action_type, 'birthday') !== false) {
-                        $activity_icon = '🎂';
-                        $activity_type_display = 'Birthday';
-                        $activity_class = 'birthday';
-                    } elseif (strpos($action_type, 'coupon_redeem') !== false || $activity->source == 'redeem') {
-                        $activity_icon = '🎁';
-                        $activity_type_display = 'Redeemed';
-                        $activity_class = 'redeem';
-                    } elseif (strpos($action_type, 'level') !== false || strpos($action_type, 'new_level') !== false) {
-                        $activity_icon = '🏆';
-                        $activity_type_display = 'New Level';
-                        $activity_class = 'level';
-                    }
-                    
-                    // Format order number if available
-                    $order_display = '';
-                    if (!empty($activity->order_id) && $activity->order_id > 0) {
-                        $order_display = '#' . $activity->order_id;
-                    }
-                    
-                    // Format date - handle both timestamp and datetime formats
-                    if (is_numeric($activity->created_at)) {
-                        $activity_date = date('M j', $activity->created_at);
-                    } else {
-                        $activity_date = date('M j', strtotime($activity->created_at));
-                    }
-                    
-                    // Handle points display
-                    $points_display = '';
-                    if ($points_value != 0) {
-                        $points_prefix = $points_value > 0 ? '+' : '';
-                        $points_display = $points_prefix . number_format(abs($points_value));
-                    } else {
-                        $points_display = '—'; // Show dash for no points like WP Loyalty does
-                    }
-                    
-                    // Add hidden class if beyond initial 4 items (was 8)
-                    $hidden_class = $activity_counter > 4 ? 'ga-activity-hidden' : '';
-                ?>
-                <div class="ga-activity-card ga-activity-<?php echo $activity_class; ?> <?php echo $hidden_class; ?>">
-                    <div class="ga-activity-card-icon"><?php echo $activity_icon; ?></div>
-                    <div class="ga-activity-card-content">
-                        <div class="ga-activity-card-info">
-                            <div class="ga-activity-card-type"><?php echo $activity_type_display; ?></div>
-                            <?php if (!empty($activity->note) || !empty($activity->customer_note)): ?>
-                            <div class="ga-activity-card-message">
-                                <?php 
-                                $message = !empty($activity->note) ? $activity->note : $activity->customer_note;
-                                // Clean up the message
-                                $message = strip_tags($message);
-                                $message = str_replace('(admin@greenangelshop.com)', '', $message);
-                                $message = trim($message);
-                                echo esc_html($message);
-                                ?>
-                            </div>
-                            <?php endif; ?>
-                            <div class="ga-activity-card-date"><?php echo $activity_date; ?></div>
-                            <?php if ($order_display): ?>
-                            <div class="ga-activity-card-order"><?php echo $order_display; ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="ga-activity-card-points"><?php echo $points_display; ?></div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-                </div>
-                
-                <?php if ($activity_counter > 4): ?>
-                <div class="ga-load-more-container">
-                    <button class="ga-load-more-btn" onclick="loadMoreActivities()">
-                        <span class="ga-load-more-text">Load More Activities</span>
-                        <span class="ga-load-more-icon">↓</span>
-                    </button>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php else: ?>
-        <div class="ga-panel">
-            <h3 class="ga-panel-title">
-                <span class="ga-title-pill" style="background: #cf11a0;">Halo Activity 😇</span>
-            </h3>
-            <p style="text-align: center; color: #999; padding: 2rem;">No activities yet. Start earning by shopping!</p>
-        </div>
-        <?php endif; ?>
-
-        <!-- 🌟 Earn Halo Points - Now as a separate main panel! -->
-        <?php if (!empty($earning_campaigns)): ?>
-        <div class="ga-panel ga-collapsible">
-            <h3 class="ga-panel-title ga-panel-toggle" onclick="togglePanel(this)">
-                <span class="ga-title-pill" style="background: #e1a003;">Earn Halo Points</span>
-                <span class="ga-toggle-icon">➕</span>
-            </h3>
-            <div class="ga-panel-content ga-collapsed">
-                <div class="ga-earning-campaigns">
-                    <?php foreach ($earning_campaigns as $campaign): 
-                        // Parse point rule to extract meaningful info
-                        $point_rule = json_decode($campaign->point_rule, true);
-                        $points_value = $point_rule['points'] ?? 0;
-                        
-                        // Determine campaign icon and description
-                        $campaign_icon = '🎁';
-                        $campaign_desc = $campaign->description ?: $campaign->name;
-                        
-                        // Campaign type specific formatting
-                        if (strpos(strtolower($campaign->action_type), 'purchase') !== false) {
-                            $campaign_icon = '🛍️';
-                            if ($points_value > 0) {
-                                $campaign_desc = $points_value . " Halo Points for each £1.00 spent";
-                            }
-                        } elseif (strpos(strtolower($campaign->action_type), 'referral') !== false) {
-                            $campaign_icon = '🤝';
-                            if ($points_value > 0) {
-                                $campaign_desc = "You get " . $points_value . " Halo Points, your friend gets " . $points_value . " Halo Points";
-                            }
-                        } elseif (strpos(strtolower($campaign->action_type), 'review') !== false) {
-                            $campaign_icon = '⭐';
-                            if ($points_value > 0) {
-                                $campaign_desc = "+" . $points_value . " Halo Points for verified reviews";
-                            }
-                        } elseif (strpos(strtolower($campaign->action_type), 'signup') !== false) {
-                            $campaign_icon = '👋';
-                            if ($points_value > 0) {
-                                $campaign_desc = "+" . $points_value . " Halo Points for joining";
-                            }
-                        }
-                    ?>
-                    <div class="ga-earning-card">
-                        <div class="ga-earning-icon"><?php echo $campaign_icon; ?></div>
-                        <div class="ga-earning-content">
-                            <div class="ga-earning-title"><?php echo esc_html($campaign->name); ?></div>
-                            <div class="ga-earning-desc"><?php echo esc_html($campaign_desc); ?></div>
-                            <?php if ($points_value > 0): ?>
-                            <div class="ga-earning-points">+<?php echo number_format($points_value); ?> points</div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
+            
+            <!-- 🌿 Footer Badge -->
+            <div class="ga-footer-badge">
+                <div class="ga-badge">
+                    <span class="ga-badge-icon">🌿</span>
+                    <span>Green Angel Hub v2.0</span>
+                    <span class="ga-badge-sparkle">✨</span>
                 </div>
             </div>
+            
+            <!-- Spacer for mobile -->
+            <div style="height: 2rem;"></div>
+            
         </div>
-        <?php endif; ?>
-
-    </div> <!-- Close greenangel-dashboard-wrapper -->
-
-    <!-- 🌟 Version Badge -->
-    <div class="ga-version-badge">Green Angel Hub v1.0</div>
+    </div>
     
-    <!-- Spacer for footer -->
-    <div style="height: 3rem;"></div>
-
-    <script>
-    function copyReferralLink() {
-        const text = document.getElementById('referralLink').textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector('.ga-code-panel:first-child .ga-copy-btn');
-            const orig = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.backgroundColor = '#aed604';
-            setTimeout(() => {
-                btn.textContent = orig;
-                btn.style.backgroundColor = '';
-            }, 2000);
-        });
-    }
-
-    function copyAccessCode() {
-        const text = document.getElementById('accessCode').textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector('.ga-code-panel:last-child .ga-copy-btn');
-            const orig = btn.textContent;
-            btn.textContent = 'Copied!';
-            btn.style.backgroundColor = '#aed604';
-            setTimeout(() => {
-                btn.textContent = orig;
-                btn.style.backgroundColor = '';
-            }, 2000);
-        });
+    <style>
+    /* 🌿 Footer Badge Styling */
+    .ga-footer-badge {
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
     }
     
-    // 🌟 Toggle Panel Function
-    function togglePanel(header) {
-        const panel = header.closest('.ga-panel, .ga-inner-panel');
-        const content = panel.querySelector('.ga-panel-content');
-        const icon = header.querySelector('.ga-toggle-icon');
-        
-        if (content.classList.contains('ga-collapsed')) {
-            content.classList.remove('ga-collapsed');
-            content.classList.add('ga-expanded');
-            icon.textContent = '➖';
-            icon.style.color = '#ffffff';
-        } else {
-            content.classList.remove('ga-expanded');
-            content.classList.add('ga-collapsed');
-            icon.textContent = '➕';
-            icon.style.color = '#222222';
+    .ga-badge {
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 0.2) 0%, 
+            rgba(198, 247, 49, 0.15) 50%, 
+            rgba(174, 214, 4, 0.1) 100%
+        );
+        border: 1px solid rgba(174, 214, 4, 0.3);
+        color: rgba(174, 214, 4, 0.9);
+        padding: 0.6rem 1.5rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: 'Poppins', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    .ga-badge:hover {
+        transform: translateY(-1px);
+        border-color: rgba(174, 214, 4, 0.5);
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 0.25) 0%, 
+            rgba(198, 247, 49, 0.2) 50%, 
+            rgba(174, 214, 4, 0.15) 100%
+        );
+    }
+    
+    .ga-badge-icon {
+        font-size: 1rem;
+        animation: gentleFloat 3s ease-in-out infinite;
+    }
+    
+    .ga-badge-sparkle {
+        font-size: 0.9rem;
+        animation: sparkle 2s ease-in-out infinite;
+    }
+    
+    @keyframes gentleFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-2px) rotate(1deg); }
+    }
+    
+    @keyframes sparkle {
+        0%, 100% { opacity: 0.6; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.1); }
+    }
+    
+    @media (max-width: 767px) {
+        .ga-badge {
+            font-size: 0.75rem;
+            padding: 0.5rem 1.25rem;
         }
     }
+    </style>
     
-    // 🌟 Load More Activities Function
-    function loadMoreActivities() {
-        const btn = document.querySelector('.ga-load-more-btn');
-        const hiddenActivities = document.querySelectorAll('.ga-activity-hidden');
-        const loadMoreText = btn.querySelector('.ga-load-more-text');
-        
-        // Add loading state
-        btn.classList.add('loading');
-        loadMoreText.textContent = 'Loading...';
-        
-        // Simulate loading delay for smooth UX
-        setTimeout(() => {
-            let count = 0;
-            hiddenActivities.forEach((activity, index) => {
-                if (index < 4) { // Show next 4 items
-                    activity.classList.remove('ga-activity-hidden');
-                    activity.classList.add('ga-show');
-                    count++;
-                }
-            });
-            
-            // Check if there are more hidden items
-            const remainingHidden = document.querySelectorAll('.ga-activity-hidden').length;
-            
-            btn.classList.remove('loading');
-            
-            if (remainingHidden === 0) {
-                // No more items to load
-                btn.style.display = 'none';
-            } else {
-                // Update button text
-                loadMoreText.textContent = `Load More Activities (${remainingHidden})`;
-            }
-        }, 300);
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('greenangel_account_dashboard', 'greenangel_account_dashboard_shortcode');
+
+// 🔐 Enhanced Login Prompt for Non-Logged-In Users
+function ga_render_login_prompt() {
+    ob_start();
+    ?>
+    
+    <div class="ga-hub">
+        <div class="ga-container">
+            <div class="ga-login-prompt">
+                <div class="ga-login-icon">🌿</div>
+                <h2 class="ga-login-title">Welcome to Green Angel Hub</h2>
+                <p class="ga-login-description">
+                    Please log in to access your personalized dashboard with Halo Points, orders, and exclusive Angel features!
+                </p>
+                <a href="<?php echo wp_login_url(get_permalink()); ?>" class="ga-login-button">
+                    <span>Log In to Your Hub</span>
+                    <span>🚀</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+    .ga-login-prompt {
+        background: linear-gradient(145deg, 
+            rgba(26, 26, 26, 0.95) 0%, 
+            rgba(42, 42, 42, 0.9) 50%, 
+            rgba(26, 26, 26, 0.95) 100%
+        );
+        border: 1px solid rgba(174, 214, 4, 0.2);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: #ffffff;
+        backdrop-filter: blur(15px);
+        max-width: 500px;
+        margin: 2rem auto;
     }
     
-    // 🌟 Load More Orders Function
-    function loadMoreOrders() {
-        const btn = event.target.closest('.ga-load-more-btn');
-        const hiddenOrders = document.querySelectorAll('.ga-order-hidden');
-        const loadMoreText = btn.querySelector('.ga-load-more-text');
-        
-        // Add loading state
-        btn.classList.add('loading');
-        loadMoreText.textContent = 'Loading...';
-        
-        // Simulate loading delay for smooth UX
-        setTimeout(() => {
-            let count = 0;
-            hiddenOrders.forEach((order, index) => {
-                if (index < 4) { // Show next 4 items
-                    order.classList.remove('ga-order-hidden');
-                    order.classList.add('ga-show');
-                    count++;
-                }
-            });
-            
-            // Check if there are more hidden items
-            const remainingHidden = document.querySelectorAll('.ga-order-hidden').length;
-            
-            btn.classList.remove('loading');
-            
-            if (remainingHidden === 0) {
-                // No more items to load
-                btn.style.display = 'none';
-            } else {
-                // Update button text
-                loadMoreText.textContent = `Load More Orders (${remainingHidden})`;
-            }
-        }, 300);
+    .ga-login-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        animation: gentleFloat 4s ease-in-out infinite;
     }
-    </script>
+    
+    .ga-login-title {
+        color: rgba(174, 214, 4, 0.9);
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .ga-login-description {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 2rem;
+        font-size: 1rem;
+        line-height: 1.6;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .ga-login-button {
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 0.9) 0%, 
+            rgba(198, 247, 49, 0.8) 100%
+        );
+        color: #1a1a1a;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .ga-login-button:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: #1a1a1a;
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 1) 0%, 
+            rgba(198, 247, 49, 0.9) 100%
+        );
+        box-shadow: 0 8px 25px rgba(174, 214, 4, 0.3);
+    }
+    
+    @media (max-width: 767px) {
+        .ga-login-prompt {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+        }
+        
+        .ga-login-icon {
+            font-size: 3rem;
+        }
+        
+        .ga-login-title {
+            font-size: 1.5rem;
+        }
+        
+        .ga-login-description {
+            font-size: 0.9rem;
+        }
+        
+        .ga-login-button {
+            font-size: 0.9rem;
+            padding: 0.9rem 1.8rem;
+        }
+    }
+    </style>
+    
     <?php
     return ob_get_clean();
 }
 
-// Register the shortcode
-function greenangel_account_dashboard_wrapper() {
-    if (!is_user_logged_in()) {
-        return '<p class="greenangel-notice">Please log in to view your dashboard.</p>';
-    }
-
-    ob_start();
-
-    echo '<div class="greenangel-dashboard-wrapper">';
-
-    // Check if a WooCommerce endpoint is active
-    if (WC()->query->get_current_endpoint()) {
-        // 🌟 ADD THE GORGEOUS BACK BUTTON HERE!
-        ?>
-        <a href="<?php echo esc_url( wc_get_account_endpoint_url( '' ) ); ?>" class="ga-back-button">
-            <span class="ga-back-icon">←</span>
-            <span class="ga-back-text">Back to Dashboard</span>
-        </a>
-        <?php
-        
-        // 💫 Inject WooCommerce native endpoint content (edit-account, orders, etc.)
-        woocommerce_account_content();
-    } else {
-        // 🌿 Load the custom dashboard view
-        echo greenangel_account_dashboard(); // Call your full dashboard function
-    }
-
-    echo '</div>';
-
-    return ob_get_clean();
-}
-add_shortcode('greenangel_account_dashboard', 'greenangel_account_dashboard_wrapper');
-
-// 🌟 UNIVERSAL BACK BUTTON FOR ALL WOOCOMMERCE ACCOUNT PAGES
-add_action('woocommerce_before_account_navigation', 'greenangel_add_universal_back_button');
-
-function greenangel_add_universal_back_button() {
-    // Only show on WooCommerce account pages
-    if (!is_account_page()) {
-        return;
-    }
-    
-    // Don't show on main Angel Hub page
-    if (is_page('angel-hub')) {
+// 🔄 Enhanced Back Button for WooCommerce Account Pages
+add_action('woocommerce_before_account_navigation', 'ga_add_enhanced_back_button', 5);
+function ga_add_enhanced_back_button() {
+    // Only show on WooCommerce account pages, not on Angel Hub
+    if (!function_exists('is_account_page') || !is_account_page() || is_page('angel-hub')) {
         return;
     }
     
@@ -1005,73 +507,600 @@ function greenangel_add_universal_back_button() {
     
     $back_url = get_permalink($angel_hub_page->ID);
     ?>
+    
+    <div class="ga-back-button-container">
+        <a href="<?php echo esc_url($back_url); ?>" class="ga-back-button">
+            <span class="ga-back-arrow">←</span>
+            <span>Back to Angel Hub</span>
+        </a>
+    </div>
+    
     <style>
-    /* Angel Hub Back Button - At top of content */
-    .angel-back-button {
-        display: inline-flex !important;
-        background: linear-gradient(135deg, #aed604 0%, #c6f731 100%) !important;
-        color: #222222 !important;
-        border: none !important;
-        border-radius: 50px !important;
-        padding: 12px 20px !important;
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        text-decoration: none !important;
-        align-items: center !important;
-        gap: 8px !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-        cursor: pointer !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-        margin-bottom: 20px !important;
+    .ga-back-button-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
     }
     
-    .angel-back-button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-        text-decoration: none !important;
-        color: #222222 !important;
+    .ga-back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 0.2) 0%, 
+            rgba(174, 214, 4, 0.1) 100%
+        );
+        border: 1px solid rgba(174, 214, 4, 0.3);
+        color: rgba(174, 214, 4, 0.9);
+        padding: 0.6rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
     }
     
-    .angel-back-button:active {
-        transform: scale(0.98) !important;
+    .ga-back-button:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: rgba(174, 214, 4, 1);
+        border-color: rgba(174, 214, 4, 0.5);
+        background: linear-gradient(135deg, 
+            rgba(174, 214, 4, 0.25) 0%, 
+            rgba(174, 214, 4, 0.15) 100%
+        );
     }
     
-    .angel-back-arrow {
-        font-size: 16px !important;
-        line-height: 1 !important;
+    .ga-back-arrow {
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
     }
     
-    /* Container to center the button */
-    .angel-back-container {
-        display: flex !important;
-        justify-content: center !important;
-        width: 100% !important;
-        margin-bottom: 20px !important;
-        margin-top: 5px !important;
-    }
-    
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-        .angel-back-button {
-            padding: 10px 16px !important;
-            font-size: 13px !important;
-        }
-        
-        .angel-back-arrow {
-            font-size: 14px !important;
-        }
+    .ga-back-button:hover .ga-back-arrow {
+        transform: translateX(-2px);
     }
     </style>
     
-    <div class="angel-back-container">
-        <a href="<?php echo esc_url($back_url); ?>" class="angel-back-button">
-            <span class="angel-back-arrow">←</span>
-            <span>Angel Hub</span>
-        </a>
-    </div>
+    <?php
+}
+
+// 🎨 Add Dashboard Body Classes
+add_filter('body_class', 'ga_add_dashboard_body_classes');
+function ga_add_dashboard_body_classes($classes) {
+    if (ga_should_load_dashboard_assets()) {
+        $classes[] = 'green-angel-hub';
+        $classes[] = 'ga-dashboard-active';
+        
+        // Add mobile class for better targeting
+        if (wp_is_mobile()) {
+            $classes[] = 'ga-mobile';
+        }
+    }
+    
+    return $classes;
+}
+
+// 🔧 Dashboard Customization Hooks
+add_action('ga_before_dashboard', 'ga_dashboard_maintenance_notice');
+function ga_dashboard_maintenance_notice() {
+    // Show maintenance notice if needed
+    $maintenance_mode = get_option('ga_maintenance_mode', false);
+    if ($maintenance_mode) {
+        echo '<div class="ga-maintenance-notice">
+            <span class="ga-maintenance-icon">🔧</span>
+            <span>Dashboard is currently being enhanced. Some features may be temporarily unavailable.</span>
+        </div>';
+    }
+}
+
+// 🌟 Add Dashboard Admin Bar Menu (for admins)
+add_action('admin_bar_menu', 'ga_add_admin_bar_menu', 100);
+function ga_add_admin_bar_menu($wp_admin_bar) {
+    if (!is_user_logged_in() || !current_user_can('manage_options')) {
+        return;
+    }
+    
+    $wp_admin_bar->add_menu([
+        'id' => 'green-angel-hub',
+        'title' => '🌿 Angel Hub',
+        'href' => get_permalink(get_page_by_path('angel-hub')),
+        'meta' => [
+            'title' => 'Green Angel Hub Dashboard'
+        ]
+    ]);
+    
+    if (function_exists('admin_url')) {
+        $wp_admin_bar->add_node([
+            'parent' => 'green-angel-hub',
+            'id' => 'ga-hub-settings',
+            'title' => 'Hub Settings',
+            'href' => admin_url('admin.php?page=green-angel-settings')
+        ]);
+    }
+}
+
+// 🚀 Initialize Dashboard
+add_action('init', 'ga_init_dashboard');
+function ga_init_dashboard() {
+    // Load components early
+    ga_load_dashboard_components();
+    
+    // Add dashboard-specific actions
+    do_action('ga_dashboard_init');
+}
+
+/**
+ * 🌿 ENHANCED HELPER FUNCTIONS
+ */
+
+// Format currency for display
+function ga_format_currency($amount) {
+    return '£' . number_format($amount, 2);
+}
+
+// Get user's Angel level with enhanced logic
+function ga_get_user_angel_level($total_spent) {
+    if ($total_spent >= 5000) return 'Angel Legend';
+    if ($total_spent >= 2500) return 'Elite Angel';
+    if ($total_spent >= 1000) return 'VIP Angel';
+    if ($total_spent >= 500) return 'Rising Angel';
+    return 'New Angel';
+}
+
+// Check if user has specific capability
+function ga_user_can($capability, $user_id = null) {
+    if (!$user_id) {
+        $user_id = get_current_user_id();
+    }
+    
+    return user_can($user_id, $capability);
+}
+
+// Get dashboard URL
+function ga_get_dashboard_url() {
+    $hub_page = get_page_by_path('angel-hub');
+    return $hub_page ? get_permalink($hub_page) : home_url('/my-account/');
+}
+
+// 📊 Enhanced Dashboard Analytics
+add_action('ga_dashboard_view', 'ga_track_dashboard_view');
+function ga_track_dashboard_view($user_id) {
+    // Track dashboard views for analytics
+    $view_count = get_user_meta($user_id, 'ga_dashboard_views', true) ?: 0;
+    update_user_meta($user_id, 'ga_dashboard_views', $view_count + 1);
+    update_user_meta($user_id, 'ga_last_dashboard_view', time());
+    
+    // Track mobile vs desktop usage
+    if (wp_is_mobile()) {
+        $mobile_views = get_user_meta($user_id, 'ga_mobile_views', true) ?: 0;
+        update_user_meta($user_id, 'ga_mobile_views', $mobile_views + 1);
+    }
+}
+
+// Fire analytics when shortcode is rendered
+add_action('init', function() {
+    if (is_user_logged_in() && ga_should_load_dashboard_assets()) {
+        do_action('ga_dashboard_view', get_current_user_id());
+    }
+});
+
+// 🛡️ Security: Rate limiting for AJAX requests
+function ga_check_rate_limit($user_id, $action = 'general', $limit = 60, $window = 3600) {
+    $transient_key = "ga_rate_limit_{$user_id}_{$action}";
+    $current_count = get_transient($transient_key) ?: 0;
+    
+    if ($current_count >= $limit) {
+        return false; // Rate limit exceeded
+    }
+    
+    set_transient($transient_key, $current_count + 1, $window);
+    return true;
+}
+
+// 🎯 Performance: Preload critical resources
+add_action('wp_head', 'ga_preload_critical_resources', 1);
+function ga_preload_critical_resources() {
+    if (!ga_should_load_dashboard_assets()) {
+        return;
+    }
+    
+    echo '<link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" as="style">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+}
+
+// 🌿 Clean up on plugin deactivation
+register_deactivation_hook(__FILE__, 'ga_cleanup_dashboard');
+function ga_cleanup_dashboard() {
+    // Clean up any transients or temporary data
+    global $wpdb;
+    
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'ga_rate_limit_%'");
+    wp_cache_flush();
+}
+
+/**
+ * 🎭 EMOJI PICKER INTEGRATION FUNCTIONS - THE MAGIC HAPPENS HERE!
+ */
+
+// 🔄 AJAX ENDPOINT TO REFRESH DASHBOARD AFTER EMOJI SELECTION
+add_action('wp_ajax_refresh_dashboard_identity', 'handle_refresh_dashboard_identity');
+function handle_refresh_dashboard_identity() {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'emoji_identity_nonce')) {
+        wp_die('Security check failed');
+    }
+    
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error('User not logged in');
+    }
+    
+    // Get fresh user meta
+    $user_emoji = get_user_meta($user_id, 'angel_identity_emoji', true);
+    $user_identity_name = get_user_meta($user_id, 'angel_identity_name', true);
+    $user_identity_bio = get_user_meta($user_id, 'angel_identity_bio', true);
+    
+    wp_send_json_success([
+        'emoji' => $user_emoji,
+        'identity_name' => $user_identity_name,
+        'identity_bio' => $user_identity_bio,
+        'has_identity' => !empty($user_emoji) && $user_emoji !== '💎'
+    ]);
+}
+
+// 🎯 ENHANCED EMOJI PICKER SUCCESS REDIRECT WITH DASHBOARD REFRESH
+add_action('wp_head', 'ga_add_dashboard_refresh_script');
+function ga_add_dashboard_refresh_script() {
+    if (!is_page('emoji-picker')) {
+        return;
+    }
+    ?>
+    <script>
+    // 🎭 ENHANCED: Intercept emoji picker success to refresh dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        // Override the success close function to refresh dashboard
+        window.originalCloseSuccessCelebration = window.closeSuccessCelebration;
+        
+        window.closeSuccessCelebration = function() {
+            console.log('🎭 Enhanced success - refreshing dashboard identity...');
+            
+            // Call refresh endpoint before redirect
+            const nonce = window.emojiPickerData?.nonce || window.emojiPickerNonce || '';
+            
+            if (nonce) {
+                fetch(window.emojiPickerData?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'refresh_dashboard_identity',
+                        nonce: nonce
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Dashboard identity refreshed:', data.data);
+                        
+                        // Store identity data for dashboard refresh
+                        sessionStorage.setItem('freshIdentity', JSON.stringify({
+                            emoji: data.data.emoji,
+                            identity_name: data.data.identity_name,
+                            identity_bio: data.data.identity_bio,
+                            timestamp: Date.now()
+                        }));
+                    }
+                    
+                    // Proceed with original redirect
+                    if (window.originalCloseSuccessCelebration) {
+                        window.originalCloseSuccessCelebration();
+                    } else {
+                        // Fallback redirect
+                        const angelHubUrl = window.emojiPickerBackUrl || '/';
+                        window.location.href = angelHubUrl;
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Failed to refresh dashboard identity:', error);
+                    // Still proceed with redirect
+                    if (window.originalCloseSuccessCelebration) {
+                        window.originalCloseSuccessCelebration();
+                    }
+                });
+            } else {
+                // No nonce available, proceed normally
+                if (window.originalCloseSuccessCelebration) {
+                    window.originalCloseSuccessCelebration();
+                }
+            }
+        };
+        
+        // 🎲 ENHANCED: Also override fate picker success
+        if (window.FateEmojiPicker && window.FateEmojiPicker.closeSuccessCelebration) {
+            window.originalFateCloseSuccess = window.FateEmojiPicker.closeSuccessCelebration;
+            
+            window.FateEmojiPicker.closeSuccessCelebration = function() {
+                console.log('🎲 Enhanced fate success - refreshing dashboard identity...');
+                
+                // Same refresh logic for fate picker
+                const nonce = window.emojiPickerData?.nonce || window.emojiPickerNonce || '';
+                
+                if (nonce) {
+                    fetch(window.emojiPickerData?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            action: 'refresh_dashboard_identity',
+                            nonce: nonce
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('✅ Fate dashboard identity refreshed:', data.data);
+                            
+                            // Store identity data for dashboard refresh
+                            sessionStorage.setItem('freshIdentity', JSON.stringify({
+                                emoji: data.data.emoji,
+                                identity_name: data.data.identity_name,
+                                identity_bio: data.data.identity_bio,
+                                timestamp: Date.now()
+                            }));
+                        }
+                        
+                        // Proceed with original redirect
+                        if (window.originalFateCloseSuccess) {
+                            window.originalFateCloseSuccess();
+                        } else {
+                            // Fallback redirect
+                            const angelHubUrl = window.emojiPickerBackUrl || '/';
+                            window.location.href = angelHubUrl;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Failed to refresh fate dashboard identity:', error);
+                        // Still proceed with redirect
+                        if (window.originalFateCloseSuccess) {
+                            window.originalFateCloseSuccess();
+                        }
+                    });
+                } else {
+                    // No nonce available, proceed normally
+                    if (window.originalFateCloseSuccess) {
+                        window.originalFateCloseSuccess();
+                    }
+                }
+            };
+        }
+    });
+    </script>
+    <?php
+}
+
+// 🏠 DASHBOARD IDENTITY REFRESH ON LOAD
+add_action('wp_head', 'ga_add_dashboard_identity_refresh_on_load');
+function ga_add_dashboard_identity_refresh_on_load() {
+    if (!ga_should_load_dashboard_assets()) {
+        return;
+    }
+    ?>
+    <script>
+    // 🎭 Check for fresh identity on dashboard load
+    document.addEventListener('DOMContentLoaded', function() {
+        const freshIdentity = sessionStorage.getItem('freshIdentity');
+        
+        if (freshIdentity) {
+            try {
+                const identity = JSON.parse(freshIdentity);
+                const age = Date.now() - identity.timestamp;
+                
+                // Only use if less than 5 minutes old
+                if (age < 300000) {
+                    console.log('🎭 Found fresh identity, refreshing dashboard...', identity);
+                    
+                    // Call the refresh function
+                    if (window.refreshDashboardIdentity) {
+                        setTimeout(() => {
+                            window.refreshDashboardIdentity(
+                                identity.emoji,
+                                identity.identity_name,
+                                identity.identity_bio
+                            );
+                        }, 1000); // Delay for page to settle
+                    }
+                }
+                
+                // Clear the stored identity
+                sessionStorage.removeItem('freshIdentity');
+            } catch (e) {
+                console.error('❌ Failed to parse fresh identity:', e);
+                sessionStorage.removeItem('freshIdentity');
+            }
+        }
+    });
+    </script>
+    <?php
+}
+
+// 🎭 ADD ENHANCED IDENTITY CSS TO DASHBOARD PAGES
+add_action('wp_head', 'ga_add_enhanced_identity_css');
+function ga_add_enhanced_identity_css() {
+    if (!ga_should_load_dashboard_assets()) {
+        return;
+    }
+    ?>
+    <style>
+    /* 🎭 ENHANCED IDENTITY SUCCESS ANIMATIONS */
+    @keyframes identityUpdateSuccess {
+        0% {
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+        }
+        50% {
+            opacity: 1;
+            transform: translateY(-5px) scale(1.05);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    @keyframes badgeVanish {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.5;
+            transform: scale(1.2) rotate(10deg);
+        }
+        100% {
+            opacity: 0;
+            transform: scale(0) rotate(180deg);
+        }
+    }
+    
+    @keyframes glowTransition {
+        0% {
+            background-position: 0% 50%;
+            opacity: 0.6;
+        }
+        50% {
+            background-position: 100% 50%;
+            opacity: 1;
+        }
+        100% {
+            background-position: 200% 50%;
+            opacity: 0.8;
+        }
+    }
+    
+    /* 🎉 IDENTITY UPDATE CELEBRATION PARTICLES */
+    @keyframes celebrationParticle {
+        0% {
+            opacity: 1;
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        25% {
+            opacity: 1;
+            transform: translate(var(--random-x), var(--random-y)) scale(1.2) rotate(90deg);
+        }
+        50% {
+            opacity: 0.8;
+            transform: translate(calc(var(--random-x) * 1.5), calc(var(--random-y) * 1.5)) scale(1) rotate(180deg);
+        }
+        75% {
+            opacity: 0.5;
+            transform: translate(calc(var(--random-x) * 2), calc(var(--random-y) * 2)) scale(0.8) rotate(270deg);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(calc(var(--random-x) * 3), calc(var(--random-y) * 3)) scale(0.3) rotate(360deg);
+        }
+    }
+    
+    /* 🌟 SMOOTH IDENTITY TRANSITIONS */
+    .ga-avatar-glow {
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .ga-avatar {
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .ga-identity-bio-display {
+        animation: identityUpdateSuccess 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .ga-identity-name-tag {
+        animation: identityUpdateSuccess 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    }
+    
+    .ga-identity-pill {
+        animation: identityUpdateSuccess 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+    }
+    
+    /* 🎯 ENHANCED HOVER STATES FOR IDENTITY ELEMENTS */
+    .ga-avatar-link:hover .ga-avatar {
+        transform: scale(1.08) rotate(2deg);
+    }
+    
+    .ga-identity-bio-display:hover {
+        background: rgba(174, 214, 4, 0.15);
+        border-color: rgba(174, 214, 4, 0.4);
+        transform: translateY(-1px);
+    }
+    
+    .ga-identity-name-tag:hover {
+        color: rgba(174, 214, 4, 1);
+        text-shadow: 0 0 8px rgba(174, 214, 4, 0.3);
+    }
+    
+    /* 📱 MOBILE OPTIMIZATIONS FOR IDENTITY */
+    @media (max-width: 767px) {
+        .ga-identity-bio-display {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .ga-identity-name-tag {
+            font-size: 0.65rem;
+            margin-left: 0.3rem;
+        }
+        
+        .ga-identity-pill {
+            padding: 0.4rem 0.8rem;
+            min-height: 36px;
+        }
+        
+        .ga-identity-pill-text {
+            font-size: 0.75rem;
+        }
+    }
+    
+    /* 🎨 HIGH CONTRAST MODE SUPPORT */
+    @media (prefers-contrast: high) {
+        .ga-identity-bio-display {
+            border-width: 2px;
+            background: rgba(174, 214, 4, 0.2);
+        }
+        
+        .ga-identity-name-tag {
+            background: rgba(174, 214, 4, 0.1);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+        }
+        
+        .ga-identity-pill {
+            border-width: 2px;
+        }
+    }
+    
+    /* 🎭 REDUCED MOTION SUPPORT */
+    @media (prefers-reduced-motion: reduce) {
+        .ga-identity-bio-display,
+        .ga-identity-name-tag,
+        .ga-identity-pill {
+            animation: none;
+        }
+        
+        .ga-avatar-glow,
+        .ga-avatar {
+            transition: none;
+        }
+        
+        .ga-avatar-link:hover .ga-avatar {
+            transform: none;
+        }
+    }
+    </style>
     <?php
 }
 ?>

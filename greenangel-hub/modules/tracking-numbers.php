@@ -198,213 +198,258 @@ function greenangel_render_tracking_numbers() {
     ?>
     
     <script>
-        let autoFlowOrders = [];
-        let currentAutoIndex = 0;
-        
-        function startAutoFlow() {
-            // Get all order data from cards
-            const cards = document.querySelectorAll('.tracking-card');
-            autoFlowOrders = [];
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Tracking Numbers module loaded!');
             
-            cards.forEach(card => {
-                const orderId = card.dataset.orderId;
-                const customerName = card.querySelector('.customer-name').textContent;
-                const postcode = card.querySelector('.postcode-display').textContent;
-                const total = card.querySelector('.info-value.price').textContent;
+            // Global variables
+            window.autoFlowOrders = [];
+            window.currentAutoIndex = 0;
+            
+            // Make functions globally accessible
+            window.startAutoFlow = function() {
+                try {
+                    console.log('Starting auto flow...');
+                    
+                    // Get all order data from cards
+                    const cards = document.querySelectorAll('.tracking-card');
+                    console.log('Found cards:', cards.length);
+                    
+                    window.autoFlowOrders = [];
+                    
+                    cards.forEach(card => {
+                        const orderId = card.dataset.orderId;
+                        const customerNameEl = card.querySelector('.customer-name');
+                        const postcodeEl = card.querySelector('.postcode-display');
+                        const totalEl = card.querySelector('.total-value');
+                        const input = card.querySelector('.tracking-input');
+                        
+                        if (!customerNameEl || !postcodeEl || !totalEl) {
+                            console.warn('Missing elements in card:', orderId);
+                            return;
+                        }
+                        
+                        const customerName = customerNameEl.textContent;
+                        const postcode = postcodeEl.textContent;
+                        const total = totalEl.textContent;
+                        
+                        console.log('Processing card:', {orderId, customerName, postcode, total});
+                        
+                        if (input && !input.value.trim()) {
+                            window.autoFlowOrders.push({
+                                orderId,
+                                customerName,
+                                postcode,
+                                total,
+                                element: card
+                            });
+                        }
+                    });
+                    
+                    console.log('Orders to process:', window.autoFlowOrders.length);
+                    
+                    if (window.autoFlowOrders.length === 0) {
+                        alert('All orders already have tracking numbers!');
+                        return;
+                    }
+                    
+                    window.currentAutoIndex = 0;
+                    showAutoFlowModal();
+                    
+                } catch (error) {
+                    console.error('Error in startAutoFlow:', error);
+                    alert('Oops! Something went wrong. Check the console for details.');
+                }
+            };
+            
+            window.showAutoFlowModal = function() {
+                const modal = document.getElementById('autoFlowModal');
+                if (!modal) {
+                    console.error('Modal element not found!');
+                    return;
+                }
+                modal.classList.add('active');
+                updateAutoFlowDisplay();
+                
+                // Focus the input after a tiny delay
+                setTimeout(() => {
+                    const input = document.getElementById('autoFlowInput');
+                    if (input) input.focus();
+                }, 100);
+            };
+            
+            window.closeAutoFlow = function() {
+                const modal = document.getElementById('autoFlowModal');
+                if (modal) modal.classList.remove('active');
+            };
+            
+            window.updateAutoFlowDisplay = function() {
+                if (window.currentAutoIndex >= window.autoFlowOrders.length) {
+                    showAutoFlowComplete();
+                    return;
+                }
+                
+                const order = window.autoFlowOrders[window.currentAutoIndex];
+                document.getElementById('autoFlowProgress').textContent = 
+                    `Order ${window.currentAutoIndex + 1} of ${window.autoFlowOrders.length}`;
+                document.getElementById('autoFlowPostcode').textContent = order.postcode;
+                document.getElementById('autoFlowOrderId').textContent = `#${order.orderId}`;
+                document.getElementById('autoFlowCustomer').textContent = order.customerName;
+                document.getElementById('autoFlowTotal').textContent = order.total;
+                document.getElementById('autoFlowInput').value = '';
+                document.getElementById('autoFlowNext').disabled = true;
+                document.getElementById('autoFlowInput').focus();
+            };
+            
+            window.handleAutoFlowInput = function(e) {
+                const value = e.target.value.trim();
+                const nextBtn = document.getElementById('autoFlowNext');
+                if (nextBtn) nextBtn.disabled = !value;
+                
+                // Auto-proceed on Enter key
+                if (e.key === 'Enter' && value) {
+                    nextAutoFlow();
+                }
+            };
+            
+            window.nextAutoFlow = function() {
+                const trackingNumber = document.getElementById('autoFlowInput').value.trim();
+                
+                if (trackingNumber) {
+                    // Fill in the tracking number in the card
+                    const order = window.autoFlowOrders[window.currentAutoIndex];
+                    const input = order.element.querySelector('.tracking-input');
+                    if (input) {
+                        input.value = trackingNumber;
+                        
+                        // Highlight the card briefly
+                        order.element.style.borderColor = '#aed604';
+                        setTimeout(() => {
+                            order.element.style.borderColor = '';
+                        }, 500);
+                    }
+                }
+                
+                window.currentAutoIndex++;
+                updateAutoFlowDisplay();
+            };
+            
+            window.skipAutoFlow = function() {
+                window.currentAutoIndex++;
+                updateAutoFlowDisplay();
+            };
+            
+            window.showAutoFlowComplete = function() {
+                const orderDiv = document.getElementById('autoFlowOrder');
+                const completeDiv = document.getElementById('autoFlowComplete');
+                if (orderDiv) orderDiv.style.display = 'none';
+                if (completeDiv) completeDiv.style.display = 'block';
+            };
+            
+            window.finishAutoFlow = function() {
+                closeAutoFlow();
+                // Optionally submit all tracking numbers
+                if (confirm('Submit all tracking numbers now?')) {
+                    const form = document.getElementById('bulk-tracking-form');
+                    if (form) form.submit();
+                }
+            };
+            
+            window.sendTracking = function(orderId) {
+                console.log('sendTracking called for order:', orderId);
+                
+                // Find the card
+                const card = document.querySelector(`.tracking-card[data-order-id="${orderId}"]`);
+                
+                if (!card) {
+                    console.error('Could not find card for order:', orderId);
+                    return;
+                }
+                
                 const input = card.querySelector('.tracking-input');
                 
-                if (!input.value.trim()) {
-                    autoFlowOrders.push({
-                        orderId,
-                        customerName,
-                        postcode,
-                        total,
-                        element: card
-                    });
+                if (!input || !input.value.trim()) {
+                    if (input) input.focus();
+                    return;
                 }
-            });
-            
-            if (autoFlowOrders.length === 0) {
-                alert('All orders already have tracking numbers!');
-                return;
-            }
-            
-            currentAutoIndex = 0;
-            showAutoFlowModal();
-        }
-        
-        function showAutoFlowModal() {
-            const modal = document.getElementById('autoFlowModal');
-            modal.classList.add('active');
-            updateAutoFlowDisplay();
-            
-            // Focus the input after a tiny delay
-            setTimeout(() => {
-                document.getElementById('autoFlowInput').focus();
-            }, 100);
-        }
-        
-        function closeAutoFlow() {
-            document.getElementById('autoFlowModal').classList.remove('active');
-        }
-        
-        function updateAutoFlowDisplay() {
-            if (currentAutoIndex >= autoFlowOrders.length) {
-                showAutoFlowComplete();
-                return;
-            }
-            
-            const order = autoFlowOrders[currentAutoIndex];
-            document.getElementById('autoFlowProgress').textContent = 
-                `Order ${currentAutoIndex + 1} of ${autoFlowOrders.length}`;
-            document.getElementById('autoFlowPostcode').textContent = order.postcode;
-            document.getElementById('autoFlowOrderId').textContent = `#${order.orderId}`;
-            document.getElementById('autoFlowCustomer').textContent = order.customerName;
-            document.getElementById('autoFlowTotal').textContent = order.total;
-            document.getElementById('autoFlowInput').value = '';
-            document.getElementById('autoFlowNext').disabled = true;
-            document.getElementById('autoFlowInput').focus();
-        }
-        
-        function handleAutoFlowInput(e) {
-            const value = e.target.value.trim();
-            document.getElementById('autoFlowNext').disabled = !value;
-            
-            // Auto-proceed on Enter key
-            if (e.key === 'Enter' && value) {
-                nextAutoFlow();
-            }
-        }
-        
-        function nextAutoFlow() {
-            const trackingNumber = document.getElementById('autoFlowInput').value.trim();
-            
-            if (trackingNumber) {
-                // Fill in the tracking number in the card
-                const order = autoFlowOrders[currentAutoIndex];
-                const input = order.element.querySelector('.tracking-input');
-                input.value = trackingNumber;
                 
-                // Highlight the card briefly
-                order.element.style.borderColor = '#aed604';
-                setTimeout(() => {
-                    order.element.style.borderColor = '';
-                }, 500);
-            }
+                console.log('Tracking number:', input.value);
+                
+                // Get the hidden form and submit it
+                const hiddenForm = document.getElementById(`individual-form-${orderId}`);
+                if (!hiddenForm) {
+                    console.error('Hidden form not found for order:', orderId);
+                    alert('Error: Hidden form not found for order #' + orderId);
+                    return;
+                }
+                
+                const hiddenInput = hiddenForm.querySelector('.hidden-tracking-input');
+                if (!hiddenInput) {
+                    console.error('Hidden input not found in form');
+                    alert('Error: Hidden input not found');
+                    return;
+                }
+                
+                // Copy value to hidden form
+                hiddenInput.value = input.value;
+                
+                // Add sending state
+                card.classList.add('sending');
+                
+                console.log('About to submit form with tracking:', hiddenInput.value);
+                
+                // Submit the hidden form
+                hiddenForm.submit();
+            };
             
-            currentAutoIndex++;
-            updateAutoFlowDisplay();
-        }
-        
-        function skipAutoFlow() {
-            currentAutoIndex++;
-            updateAutoFlowDisplay();
-        }
-        
-        function showAutoFlowComplete() {
-            document.getElementById('autoFlowOrder').style.display = 'none';
-            document.getElementById('autoFlowComplete').style.display = 'block';
-        }
-        
-        function finishAutoFlow() {
-            closeAutoFlow();
-            // Optionally submit all tracking numbers
-            if (confirm('Submit all tracking numbers now?')) {
-                document.getElementById('bulk-tracking-form').submit();
-            }
-        }
-        
-        function sendTracking(orderId) {
-            console.log('sendTracking called for order:', orderId);
+            window.validateBulkSend = function() {
+                const inputs = document.querySelectorAll('.tracking-input');
+                let hasValues = false;
+                
+                inputs.forEach(input => {
+                    if (input.value.trim()) {
+                        hasValues = true;
+                    }
+                });
+                
+                if (!hasValues) {
+                    alert('Please enter at least one tracking number before bulk sending.');
+                    return false;
+                }
+                
+                return confirm('Send all entered tracking numbers? This will mark orders as completed and send emails.');
+            };
             
-            // Find the card
-            const card = document.querySelector(`.tracking-card[data-order-id="${orderId}"]`);
+            window.toggleCompleted = function() {
+                const section = document.getElementById('completedSection');
+                if (section) section.classList.toggle('collapsed');
+            };
             
-            if (!card) {
-                console.error('Could not find card for order:', orderId);
-                return;
-            }
-            
-            const input = card.querySelector('.tracking-input');
-            
-            if (!input || !input.value.trim()) {
-                if (input) input.focus();
-                return;
-            }
-            
-            console.log('Tracking number:', input.value);
-            
-            // Get the hidden form and submit it
-            const hiddenForm = document.getElementById(`individual-form-${orderId}`);
-            if (!hiddenForm) {
-                console.error('Hidden form not found for order:', orderId);
-                alert('Error: Hidden form not found for order #' + orderId);
-                return;
-            }
-            
-            const hiddenInput = hiddenForm.querySelector('.hidden-tracking-input');
-            if (!hiddenInput) {
-                console.error('Hidden input not found in form');
-                alert('Error: Hidden input not found');
-                return;
-            }
-            
-            // Copy value to hidden form
-            hiddenInput.value = input.value;
-            
-            // Add sending state
-            card.classList.add('sending');
-            
-            console.log('About to submit form with tracking:', hiddenInput.value);
-            
-            // Submit the hidden form
-            hiddenForm.submit();
-        }
-        
-        function validateBulkSend() {
-            const inputs = document.querySelectorAll('.tracking-input');
-            let hasValues = false;
-            
-            inputs.forEach(input => {
-                if (input.value.trim()) {
-                    hasValues = true;
+            // Auto-uppercase tracking inputs
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('tracking-input') || e.target.id === 'autoFlowInput') {
+                    e.target.value = e.target.value.toUpperCase();
                 }
             });
             
-            if (!hasValues) {
-                alert('Please enter at least one tracking number before bulk sending.');
-                return false;
-            }
+            // Enter key to send
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.target.classList.contains('tracking-input')) {
+                    e.preventDefault();
+                    const card = e.target.closest('[data-order-id]');
+                    if (card) {
+                        const orderId = card.dataset.orderId;
+                        sendTracking(orderId);
+                    }
+                }
+            });
             
-            return confirm('Send all entered tracking numbers? This will mark orders as completed and send emails.');
-        }
-        
-        function toggleCompleted() {
-            const section = document.getElementById('completedSection');
-            section.classList.toggle('collapsed');
-        }
-        
-        // Auto-uppercase tracking inputs
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('tracking-input') || e.target.id === 'autoFlowInput') {
-                e.target.value = e.target.value.toUpperCase();
-            }
-        });
-        
-        // Enter key to send
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && e.target.classList.contains('tracking-input')) {
-                e.preventDefault();
-                const orderId = e.target.closest('[data-order-id]').dataset.orderId;
-                sendTracking(orderId);
-            }
-        });
-        
-        // Also listen for keyup on the auto flow input specifically
-        document.addEventListener('keyup', function(e) {
-            if (e.target.id === 'autoFlowInput') {
-                handleAutoFlowInput(e);
-            }
+            // Keyup for auto flow input
+            document.addEventListener('keyup', function(e) {
+                if (e.target.id === 'autoFlowInput') {
+                    handleAutoFlowInput(e);
+                }
+            });
         });
     </script>
     
@@ -450,13 +495,13 @@ function greenangel_render_tracking_numbers() {
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 99999;
+            z-index: 999999 !important;
             padding: 0;
             overflow-y: auto;
         }
         
         .auto-flow-modal.active {
-            display: flex;
+            display: flex !important;
         }
         
         .auto-flow-content {

@@ -4,7 +4,7 @@
         
         <!-- Logo/Brand Area -->
         <div class="angel-brand">
-            <h1 class="angel-title">Welcome, Angel ✨</h1>
+            <h1 class="angel-title">Welcome Angel</h1>
             <p class="angel-subtitle">Your magical journey begins here</p>
         </div>
         
@@ -18,21 +18,20 @@
         <div class="angel-form-container" id="login-form">
             <form class="angel-form" id="angel-login-form">
                 <?php
-                    // Generate the login nonce with a unique ID while keeping the same name
-                    $login_nonce_field = wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce', true, false);
-                    echo str_replace('id="angel_login_nonce"', 'id="angel_login_nonce_login"', $login_nonce_field);
+                    // Generate unique nonce for login form
+                    wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce_login');
                 ?>
                 
                 <div class="angel-field-group">
                     <label for="login-email" class="angel-label">Email</label>
-                    <input type="email" id="login-email" name="email" class="angel-input" required>
+                    <input type="email" id="login-email" name="email" class="angel-input" required autocomplete="email">
                 </div>
                 
                 <div class="angel-field-group">
                     <label for="login-password" class="angel-label">Password</label>
                     <div class="angel-password-wrapper">
-                        <input type="password" id="login-password" name="password" class="angel-input" required>
-                        <button type="button" class="angel-password-toggle" data-target="login-password">
+                        <input type="password" id="login-password" name="password" class="angel-input" required autocomplete="current-password">
+                        <button type="button" class="angel-password-toggle" data-target="login-password" aria-label="Toggle password visibility">
                             <span class="toggle-show">👁️</span>
                             <span class="toggle-hide" style="display: none;">🙈</span>
                         </button>
@@ -41,7 +40,7 @@
                 
                 <div class="angel-checkbox-group">
                     <label class="angel-checkbox-label">
-                        <input type="checkbox" name="remember" class="angel-checkbox">
+                        <input type="checkbox" id="login-remember" name="remember" class="angel-checkbox">
                         <span class="angel-checkbox-custom"></span>
                         Remember me
                     </label>
@@ -74,67 +73,83 @@
             
             <form class="angel-form" id="angel-register-form">
                 <?php
-                    // Generate the register nonce with a unique ID while keeping the same name
-                    $register_nonce_field = wp_nonce_field('angel_login_nonce_action', 'angel_login_nonce', true, false);
-                    echo str_replace('id="angel_login_nonce"', 'id="angel_login_nonce_register"', $register_nonce_field);
+                    // Generate unique nonce for register form
+                    wp_nonce_field('angel_login_nonce_action', 'angel_register_nonce');
                 ?>
-                
-                <div class="angel-field-row">
-                    <div class="angel-field-group">
-                        <label for="reg-first-name" class="angel-label">First Name</label>
-                        <input type="text" id="reg-first-name" name="first_name" class="angel-input" required>
-                    </div>
-                    <div class="angel-field-group">
-                        <label for="reg-last-name" class="angel-label">Last Name</label>
-                        <input type="text" id="reg-last-name" name="last_name" class="angel-input" required>
-                    </div>
-                </div>
-                
-                <div class="angel-field-group">
-                    <label for="reg-email" class="angel-label">Email</label>
-                    <input type="email" id="reg-email" name="email" class="angel-input" required>
-                </div>
-                
-                <div class="angel-field-group">
-                    <label for="reg-password" class="angel-label">Password</label>
-                    <div class="angel-password-wrapper">
-                        <input type="password" id="reg-password" name="password" class="angel-input" required>
-                        <button type="button" class="angel-password-toggle" data-target="reg-password">
-                            <span class="toggle-show">👁️</span>
-                            <span class="toggle-hide" style="display: none;">🙈</span>
-                        </button>
-                    </div>
-                </div>
                 
                 <div class="angel-field-group">
                     <label for="reg-angel-code" class="angel-label">Angel Code</label>
-                    <input type="text" id="reg-angel-code" name="angel_code" class="angel-input" required>
+                    <input type="text" id="reg-angel-code" name="angel_code" class="angel-input" required autocomplete="off" maxlength="50">
                     <div class="angel-field-hint">Enter your special invitation code</div>
                     <div class="angel-code-validation" id="code-validation"></div>
                 </div>
                 
                 <div class="angel-field-row">
                     <div class="angel-field-group">
+                        <label for="reg-first-name" class="angel-label">First Name</label>
+                        <input type="text" id="reg-first-name" name="first_name" class="angel-input" required autocomplete="given-name">
+                    </div>
+                    <div class="angel-field-group">
+                        <label for="reg-last-name" class="angel-label">Last Name</label>
+                        <input type="text" id="reg-last-name" name="last_name" class="angel-input" required autocomplete="family-name">
+                    </div>
+                </div>
+
+                <div class="angel-field-row">
+                    <div class="angel-field-group">
                         <label for="reg-birth-month" class="angel-label">Birth Month</label>
-                        <select id="reg-birth-month" name="birth_month" class="angel-select" required>
+                        <select id="reg-birth-month" name="birth_month" class="angel-select" required autocomplete="bday-month">
                             <option value="">Select month</option>
-                            <option value="Jan">Jan</option>
-                            <option value="Feb">Feb</option>
-                            <option value="Mar">Mar</option>
-                            <option value="Apr">Apr</option>
+                            <option value="Jan">January</option>
+                            <option value="Feb">February</option>
+                            <option value="Mar">March</option>
+                            <option value="Apr">April</option>
                             <option value="May">May</option>
-                            <option value="Jun">Jun</option>
-                            <option value="Jul">Jul</option>
-                            <option value="Aug">Aug</option>
-                            <option value="Sep">Sep</option>
-                            <option value="Oct">Oct</option>
-                            <option value="Nov">Nov</option>
-                            <option value="Dec">Dec</option>
+                            <option value="Jun">June</option>
+                            <option value="Jul">July</option>
+                            <option value="Aug">August</option>
+                            <option value="Sep">September</option>
+                            <option value="Oct">October</option>
+                            <option value="Nov">November</option>
+                            <option value="Dec">December</option>
                         </select>
                     </div>
                     <div class="angel-field-group">
                         <label for="reg-birth-year" class="angel-label">Birth Year</label>
-                        <input type="text" id="reg-birth-year" name="birth_year" class="angel-input" placeholder="YYYY" maxlength="4" required>
+                        <input type="text" id="reg-birth-year" name="birth_year" class="angel-input" placeholder="YYYY" maxlength="4" required autocomplete="bday-year" pattern="[0-9]{4}" inputmode="numeric">
+                    </div>
+                </div>
+                
+                <div class="angel-field-group">
+                    <label for="reg-email" class="angel-label">Email</label>
+                    <input type="email" id="reg-email" name="email" class="angel-input" required autocomplete="email">
+                </div>
+                
+                <div class="angel-field-group">
+                    <label for="reg-password" class="angel-label">Password</label>
+                    <div class="angel-password-wrapper">
+                        <input type="password" id="reg-password" name="password" class="angel-input" required autocomplete="new-password" minlength="8">
+                        <button type="button" class="angel-password-toggle" data-target="reg-password" aria-label="Toggle password visibility">
+                            <span class="toggle-show">👁️</span>
+                            <span class="toggle-hide" style="display: none;">🙈</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 🎲 DISPLAY NAME DICE GAME 🎲 -->
+                <div class="angel-field-group">
+                    <label for="roll-dice-btn" class="angel-label">Choose Your Display Name</label>
+                    <div class="angel-name-dice-game">
+                        <div class="dice-display-name" id="dice-display-name">
+                            <span class="dice-name-text">Press the dice to generate!</span>
+                        </div>
+                        <button type="button" class="angel-dice-button" id="roll-dice-btn" aria-label="Generate random display name">
+                            <span class="dice-icon">🎲</span>
+                            <span class="dice-text">Roll the Dice!</span>
+                            <span class="dice-count">5 rolls left</span>
+                        </button>
+                        <input type="hidden" id="reg-display-name-hidden" name="display_name" value="">
+                        <div class="dice-hint">You can roll up to 5 times to find your perfect name!</div>
                     </div>
                 </div>
                 

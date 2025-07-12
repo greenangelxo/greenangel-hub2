@@ -1,7 +1,7 @@
 <?php
 /**
  * 🌿 Green Angel — Database Table Installer
- * Creates all required tables for the Angel Code system
+ * Creates all required tables for the Angel Code system + Customer Module
  */
 function greenangel_create_code_tables() {
     global $wpdb;
@@ -60,7 +60,7 @@ function greenangel_create_code_tables() {
         update_option('greenangel_failed_code_logs_created', 'yes');
     }
     
-    // ✅ NEW: Postcode Rules Table
+    // ✅ Postcode Rules Table
     $table = $wpdb->prefix . 'greenangel_postcode_rules';
     if (!get_option('greenangel_postcode_rules_created') || $wpdb->get_var("SHOW TABLES LIKE '{$table}'") !== $table) {
         $sql = "CREATE TABLE IF NOT EXISTS $table (
@@ -78,6 +78,8 @@ function greenangel_create_code_tables() {
     
     // Fix any existing NULL values in the active column
     $wpdb->query("UPDATE {$table} SET active = 'yes' WHERE active IS NULL");
+    
+    // ✅ Customer Module uses existing wallet system - no new tables needed!
 }
 
 // 🚀 ACTIVATION HOOK NOTE:

@@ -1,0 +1,26 @@
+function greenangel_create_emoji_identity_page() {
+    // Only run once
+    if (get_option('greenangel_emoji_picker_page_created')) return;
+
+    // Check if page exists
+    $existing_page = get_page_by_path('emoji-identity');
+    if ($existing_page) {
+        update_option('greenangel_emoji_picker_page_id', $existing_page->ID);
+        update_option('greenangel_emoji_picker_page_created', true);
+        return;
+    }
+
+    // Create page
+    $page_id = wp_insert_post([
+        'post_title'    => 'Emoji Identity',
+        'post_name'     => 'emoji-identity',
+        'post_status'   => 'publish',
+        'post_type'     => 'page',
+        'post_content'  => '[greenangel_emoji_picker]', // Your shortcode placeholder
+    ]);
+
+    if ($page_id) {
+        update_option('greenangel_emoji_picker_page_id', $page_id);
+        update_option('greenangel_emoji_picker_page_created', true);
+    }
+}

@@ -1,0 +1,446 @@
+/* 🌿 GREEN ANGEL HUB v2.0 - SHARED FOUNDATION */
+
+:root {
+  /* 🎨 Brand Colors */
+  --ga-primary: #aed604;
+  --ga-primary-light: #c6f731;
+  --ga-primary-dark: #9bc003;
+  --ga-accent: #cf11a0;
+  --ga-accent-light: #e91e63;
+  --ga-info: #02a8d1;
+  --ga-info-light: #03c4f0;
+  --ga-success: #4caf50;
+  --ga-warning: #ff9800;
+  --ga-error: #f44336;
+  
+  /* 🌙 Dark Theme */
+  --ga-bg-primary: #1a1a1a;
+  --ga-bg-secondary: #2a2a2a;
+  --ga-bg-tertiary: #333333;
+  --ga-bg-card: #222222;
+  --ga-bg-glass: rgba(26, 26, 26, 0.9);
+  
+  /* 📝 Typography */
+  --ga-text-primary: #ffffff;
+  --ga-text-secondary: #cccccc;
+  --ga-text-muted: #999999;
+  --ga-text-dark: #222222;
+  
+  /* 📐 Spacing */
+  --ga-space-xs: 0.5rem;
+  --ga-space-sm: 0.75rem;
+  --ga-space-md: 1rem;
+  --ga-space-lg: 1.5rem;
+  --ga-space-xl: 2rem;
+  --ga-space-2xl: 2.5rem;
+  
+  /* 🎭 Borders & Radius */
+  --ga-radius-sm: 8px;
+  --ga-radius-md: 12px;
+  --ga-radius-lg: 16px;
+  --ga-radius-xl: 20px;
+  --ga-radius-pill: 50px;
+  --ga-border-color: #444;
+  --ga-border-hover: var(--ga-primary);
+  
+  /* ✨ Shadows */
+  --ga-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --ga-shadow-md: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --ga-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.25);
+  --ga-shadow-glow: 0 4px 15px rgba(174, 214, 4, 0.3);
+  
+  /* 🎬 Transitions */
+  --ga-transition-fast: 0.2s ease;
+  --ga-transition-smooth: 0.3s ease;
+  --ga-transition-slow: 0.5s ease;
+  
+  /* 📱 Breakpoints (for reference) */
+  --ga-mobile: 320px;
+  --ga-mobile-lg: 375px;
+  --ga-tablet: 768px;
+  --ga-desktop: 1024px;
+  --ga-desktop-lg: 1200px;
+  --ga-max-width: 1400px;
+}
+
+/* 🌿 Base Styles */
+.ga-hub {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: transparent;
+  color: var(--ga-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ga-hub * {
+  box-sizing: border-box;
+}
+
+/* 🎨 Gradient Utilities */
+.ga-gradient-primary {
+  background: linear-gradient(135deg, var(--ga-primary) 0%, var(--ga-primary-light) 100%);
+}
+
+.ga-gradient-accent {
+  background: linear-gradient(135deg, var(--ga-accent) 0%, var(--ga-accent-light) 100%);
+}
+
+.ga-gradient-info {
+  background: linear-gradient(135deg, var(--ga-info) 0%, var(--ga-info-light) 100%);
+}
+
+.ga-gradient-dark {
+  background: linear-gradient(135deg, var(--ga-bg-secondary) 0%, var(--ga-bg-tertiary) 100%);
+}
+
+.ga-gradient-glass {
+  background: linear-gradient(135deg, var(--ga-bg-glass) 0%, rgba(42, 42, 42, 0.8) 100%);
+}
+
+/* 🏗️ Layout Utilities */
+.ga-container {
+  width: 100%;
+  max-width: var(--ga-max-width);
+  margin: 0 auto;
+  padding: var(--ga-space-md);
+}
+
+.ga-grid {
+  display: grid;
+  gap: var(--ga-space-sm);
+}
+
+.ga-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.ga-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.ga-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.ga-flex {
+  display: flex;
+  gap: var(--ga-space-sm);
+}
+
+.ga-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ga-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ga-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🎴 Card Components */
+.ga-card {
+  background: var(--ga-gradient-dark);
+  border: 1px solid var(--ga-border-color);
+  border-radius: var(--ga-radius-lg);
+  padding: var(--ga-space-lg);
+  transition: all var(--ga-transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-card:hover {
+  border-color: var(--ga-border-hover);
+  transform: translateY(-2px);
+}
+
+.ga-card-sm {
+  padding: var(--ga-space-md);
+  border-radius: var(--ga-radius-md);
+}
+
+.ga-card-interactive {
+  cursor: pointer;
+}
+
+.ga-card-interactive:active {
+  transform: scale(0.98);
+}
+
+/* ✨ Shimmer Effect (NO GLOW!) */
+.ga-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  pointer-events: none;
+}
+
+.ga-shimmer:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* 🎯 Button Base */
+.ga-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ga-space-xs);
+  padding: var(--ga-space-sm) var(--ga-space-lg);
+  border: none;
+  border-radius: var(--ga-radius-pill);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--ga-transition-smooth);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ga-btn:focus {
+  outline: 2px solid var(--ga-primary);
+  outline-offset: 2px;
+}
+
+.ga-btn-primary {
+  background: var(--ga-gradient-primary);
+  color: var(--ga-text-dark);
+}
+
+.ga-btn-primary:hover {
+  background: linear-gradient(135deg, var(--ga-primary-light) 0%, #d8ff41 100%);
+  transform: translateY(-2px);
+}
+
+.ga-btn-secondary {
+  background: var(--ga-gradient-dark);
+  color: var(--ga-text-primary);
+  border: 1px solid var(--ga-border-color);
+}
+
+.ga-btn-secondary:hover {
+  border-color: var(--ga-primary);
+}
+
+/* 🏷️ Pills & Tags */
+.ga-pill {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--ga-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ga-pill-primary {
+  background: var(--ga-gradient-primary);
+  color: var(--ga-text-dark);
+}
+
+.ga-pill-accent {
+  background: var(--ga-gradient-accent);
+  color: var(--ga-text-dark);
+}
+
+.ga-pill-info {
+  background: var(--ga-gradient-info);
+  color: var(--ga-text-dark);
+}
+
+/* 📊 Stats & Metrics */
+.ga-stat {
+  text-align: center;
+}
+
+.ga-stat-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--ga-primary);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.ga-stat-label {
+  font-size: 0.8rem;
+  color: var(--ga-text-secondary);
+  font-weight: 500;
+}
+
+/* 🎭 Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 🎨 State Classes */
+.ga-hidden { display: none !important; }
+.ga-loading { animation: pulse 1.5s infinite; }
+.ga-disabled { opacity: 0.5; cursor: not-allowed !important; }
+
+/* 📱 Responsive Utilities */
+@media (max-width: 767px) {
+  .ga-container {
+    padding: var(--ga-space-sm);
+  }
+  
+  .ga-grid { gap: var(--ga-space-xs); }
+  .ga-card { padding: var(--ga-space-md); }
+  .ga-btn { padding: var(--ga-space-xs) var(--ga-space-md); font-size: 0.85rem; }
+  
+  .ga-desktop-only { display: none !important; }
+  .ga-grid-mobile-2 { grid-template-columns: repeat(2, 1fr); }
+  .ga-grid-mobile-1 { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 768px) {
+  .ga-container {
+    padding: var(--ga-space-lg);
+  }
+  
+  .ga-grid { gap: var(--ga-space-md); }
+  .ga-card { padding: var(--ga-space-xl); }
+  
+  .ga-mobile-only { display: none !important; }
+  .ga-grid-tablet-3 { grid-template-columns: repeat(3, 1fr); }
+  .ga-grid-tablet-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .ga-container {
+    padding: var(--ga-space-xl);
+  }
+  
+  .ga-grid { gap: var(--ga-space-lg); }
+  .ga-grid-desktop-4 { grid-template-columns: repeat(4, 1fr); }
+  .ga-grid-desktop-5 { grid-template-columns: repeat(5, 1fr); }
+}
+
+/* 🎯 Focus & Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --ga-border-color: #ffffff;
+    --ga-text-secondary: #ffffff;
+  }
+}
+
+/* 🔧 DASHBOARD LEVEL SPACING CONTROL - Add this to your main CSS or shared.css */
+
+/* Remove default margins from all sections and control spacing at dashboard level */
+.ga-hub .ga-header-new,
+.ga-hub .ga-notifications-section,
+.ga-hub .ga-tiles-section,
+.ga-hub .ga-referral-section,
+.ga-hub .ga-activity-section {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Add controlled spacing between sections */
+.ga-hub .ga-header-new {
+  margin-bottom: 1.5rem !important;
+}
+
+.ga-hub .ga-notifications-section {
+  margin-bottom: 1.25rem !important; /* 🔧 Slightly more breathing room */
+}
+
+.ga-hub .ga-tiles-section {
+  margin-bottom: 1.5rem !important;
+}
+
+/* 🔧 FIX: Make Angel Hub title same size as Notifications */
+.ga-tiles-title .ga-tiles-text {
+  font-size: 1rem !important; /* Match notifications text size */
+}
+
+.ga-hub .ga-referral-section {
+  margin-bottom: 1.5rem !important;
+}
+
+.ga-hub .ga-activity-section {
+  margin-bottom: 2rem !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .ga-hub .ga-header-new {
+    margin-bottom: 1rem !important;
+  }
+  
+  .ga-hub .ga-notifications-section {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .ga-hub .ga-tiles-section {
+    margin-bottom: 1rem !important;
+  }
+  
+  .ga-hub .ga-referral-section {
+    margin-bottom: 1rem !important;
+  }
+  
+  .ga-hub .ga-activity-section {
+    margin-bottom: 1.5rem !important;
+  }
+}

@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel Hub – Tools Module
+// 🌿 Green Angel Hub – Tools Module with Notification Center
 
 function greenangel_copy_login_form() {
     $source = plugin_dir_path(__FILE__) . 'assets/form-login.php';
@@ -65,28 +65,101 @@ function greenangel_upload_login_form() {
 }
 add_action( 'admin_post_greenangel_upload_login_form', 'greenangel_upload_login_form' );
 
-// 🌟 Angel Notification Functions
+// 🔔 ENHANCED NOTIFICATION FUNCTIONS
 function greenangel_save_notification() {
-    if ( ! current_user_can( 'manage_woocommerce' ) ) {
-        wp_die( 'Permission denied' );
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
     }
-    check_admin_referer( 'greenangel_save_notification', 'greenangel_notification_nonce' );
+    check_admin_referer('greenangel_save_notification', 'greenangel_notification_nonce');
     
-    // Get the text and remove WordPress's automatic escaping
-    $notification_text = isset( $_POST['notification_text'] ) ? stripslashes( $_POST['notification_text'] ) : '';
-    // Then sanitize it properly
-    $notification_text = wp_kses_post( $notification_text );
+    $notification_id = isset($_POST['notification_id']) ? sanitize_text_field($_POST['notification_id']) : 'notif_' . uniqid();
+    $notification_type = isset($_POST['notification_type']) ? sanitize_text_field($_POST['notification_type']) : 'system';
+    $notification_text = isset($_POST['notification_text']) ? stripslashes($_POST['notification_text']) : '';
+    $notification_badge = isset($_POST['notification_badge']) ? sanitize_text_field($_POST['notification_badge']) : '';
+    $notification_active = isset($_POST['notification_active']) ? 'yes' : 'no';
     
-    $notification_active = isset( $_POST['notification_active'] ) ? 'yes' : 'no';
+    // Clean up text
+    $notification_text = str_replace(["\r\n", "\r", "\n"], ' ', $notification_text);
+    $notification_text = preg_replace('/\s+/', ' ', $notification_text);
+    $notification_text = str_replace(['<p>', '</p>'], '', $notification_text);
     
-    update_option( 'greenangel_notification_text', $notification_text );
-    update_option( 'greenangel_notification_active', $notification_active );
-    update_option( 'greenangel_notification_updated', current_time( 'mysql' ) );
+    $allowed_html = array(
+        'strong' => array(),
+        'b' => array(),
+        'em' => array(),
+        'i' => array(),
+        'br' => array(),
+        'span' => array('style' => array())
+    );
+    $notification_text = wp_kses($notification_text, $allowed_html);
+    $notification_text = trim($notification_text);
     
-    wp_redirect( admin_url( 'admin.php?page=greenangel-hub&tab=tools&notification=saved' ) );
+    // Get existing messages
+    $messages = get_option('greenangel_notification_messages', []);
+    
+    // If it's a new notification and no ID was provided, ensure unique ID
+    if (empty($_POST['notification_id']) || $_POST['notification_id'] === '') {
+        $notification_id = 'notif_' . time() . '_' . mt_rand(1000, 9999);
+    }
+    
+    // Add/update message
+    $messages[$notification_id] = [
+        'type' => $notification_type,
+        'text' => $notification_text,
+        'badge' => $notification_badge,
+        'active' => $notification_active,
+        'created_at' => isset($messages[$notification_id]['created_at']) ? $messages[$notification_id]['created_at'] : time(),
+        'updated_at' => time()
+    ];
+    
+    update_option('greenangel_notification_messages', $messages);
+    
+    wp_redirect(admin_url('admin.php?page=greenangel-hub&tab=tools&notification=saved'));
     exit;
 }
-add_action( 'admin_post_greenangel_save_notification', 'greenangel_save_notification' );
+add_action('admin_post_greenangel_save_notification', 'greenangel_save_notification');
+
+// Delete notification
+function greenangel_delete_notification() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
+    check_admin_referer('greenangel_delete_notification');
+    
+    $notification_id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
+    
+    if ($notification_id) {
+        $messages = get_option('greenangel_notification_messages', []);
+        unset($messages[$notification_id]);
+        update_option('greenangel_notification_messages', $messages);
+    }
+    
+    wp_redirect(admin_url('admin.php?page=greenangel-hub&tab=tools&notification=deleted'));
+    exit;
+}
+add_action('admin_post_greenangel_delete_notification', 'greenangel_delete_notification');
+
+// Toggle notification
+function greenangel_toggle_notification() {
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Permission denied');
+    }
+    check_admin_referer('greenangel_toggle_notification');
+    
+    $notification_id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
+    
+    if ($notification_id) {
+        $messages = get_option('greenangel_notification_messages', []);
+        if (isset($messages[$notification_id])) {
+            $messages[$notification_id]['active'] = $messages[$notification_id]['active'] === 'yes' ? 'no' : 'yes';
+            update_option('greenangel_notification_messages', $messages);
+        }
+    }
+    
+    wp_redirect(admin_url('admin.php?page=greenangel-hub&tab=tools&notification=toggled'));
+    exit;
+}
+add_action('admin_post_greenangel_toggle_notification', 'greenangel_toggle_notification');
 
 // 📮 NEW: Postcode Rule Functions
 function greenangel_save_postcode_rule() {
@@ -195,10 +268,8 @@ function greenangel_render_tools_tab() {
     $last_restored = get_option( 'greenangel_last_login_restore' );
     $action        = admin_url( 'admin-post.php' );
     
-    // Get notification settings
-    $notification_text = get_option( 'greenangel_notification_text', '' );
-    $notification_active = get_option( 'greenangel_notification_active', 'no' );
-    $notification_updated = get_option( 'greenangel_notification_updated' );
+    // Get all notification messages
+    $notification_messages = get_option('greenangel_notification_messages', []);
     
     // Get postcode rules
     global $wpdb;
@@ -333,47 +404,165 @@ function greenangel_render_tools_tab() {
             color: #aed604;
         }
         
-        /* Notification Card Styles */
-        .notification-preview {
+        /* Notification Center Styles */
+        .notification-center {
+            margin-bottom: 30px;
+        }
+        
+        .notification-cards {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .notification-card {
+            background: #0a0a0a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .notification-card:hover {
+            border-color: #444;
+        }
+        
+        .notification-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .notification-card-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .notification-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .notification-type-badge.system {
+            background: rgba(207, 17, 160, 0.2);
+            color: #cf11a0;
+        }
+        
+        .notification-type-badge.urgent {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .notification-type-badge.love {
+            background: rgba(236, 72, 153, 0.2);
+            color: #ec4899;
+        }
+        
+        .notification-type-badge.achievement {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+        
+        .notification-type-badge.promo {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .notification-type-badge.reminder {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .notification-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .notification-card-body {
+            margin-bottom: 10px;
+        }
+        
+        .notification-preview-text {
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 10px;
+            background: rgba(174, 214, 4, 0.05);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .notification-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .notification-card-badge {
+            background: #222;
+            border: 1px solid #444;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #888;
+        }
+        
+        /* Notification Form */
+        .notification-form {
             background: rgba(174, 214, 4, 0.05);
             border: 2px solid rgba(174, 214, 4, 0.2);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
         }
         
-        .preview-label {
-            font-size: 12px;
-            color: #aed604;
+        .notification-type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .type-option {
+            background: #222;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .type-option:hover {
+            border-color: #aed604;
+            background: rgba(174, 214, 4, 0.1);
+        }
+        
+        .type-option.selected {
+            border-color: #aed604;
+            background: #aed604;
+            color: #000;
+        }
+        
+        .type-option-emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .type-option-label {
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .preview-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-height: 40px;
-        }
-        
-        .preview-content.inactive {
-            opacity: 0.5;
-        }
-        
-        .preview-icon {
-            font-size: 24px;
-        }
-        
-        .preview-text {
-            color: #fff;
-            font-size: 15px;
-            line-height: 1.5;
-            flex: 1;
         }
         
         /* Editor Toolbar */
@@ -430,7 +619,6 @@ function greenangel_render_tools_tab() {
             border-color: #aed604;
         }
         
-        /* Toggle Switch */
         .toggle-wrapper {
             display: flex;
             align-items: center;
@@ -486,6 +674,19 @@ function greenangel_render_tools_tab() {
             font-weight: 500;
         }
         
+        /* Badge Input */
+        .badge-input-wrapper {
+            margin-bottom: 15px;
+        }
+        
+        .badge-input-wrapper label {
+            color: #aed604;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
         /* Postcode Rules Styles */
         .postcode-form-grid {
             display: grid;
@@ -526,7 +727,7 @@ function greenangel_render_tools_tab() {
             border-color: #aed604;
         }
         
-        /* Desktop Grid Layout - FIXED */
+        /* Desktop Grid Layout */
         .tools-grid {
             display: block;
         }
@@ -544,20 +745,20 @@ function greenangel_render_tools_tab() {
             }
         }
         
-        /* RULES CARDS - ALWAYS CARDS, NEVER TABLE */
+        /* RULES CARDS */
         .rules-cards {
             display: grid;
             gap: 20px;
             margin-top: 20px;
-            margin-bottom: 20px; /* Add bottom margin */
-            grid-template-columns: 1fr; /* mobile: single column */
-            row-gap: 20px; /* Explicit row gap */
+            margin-bottom: 20px;
+            grid-template-columns: 1fr;
+            row-gap: 20px;
         }
         
         @media (min-width: 768px) {
             .rules-cards {
-                grid-template-columns: repeat(2, 1fr); /* desktop: 2 columns */
-                gap: 20px; /* Consistent gap for both columns and rows */
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
         }
         
@@ -569,8 +770,7 @@ function greenangel_render_tools_tab() {
             transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
-            align-self: start; /* Don't stretch vertically */
-            /* removed height: 100% */
+            align-self: start;
         }
         
         .rule-card:hover {
@@ -588,7 +788,7 @@ function greenangel_render_tools_tab() {
             display: grid;
             gap: 8px;
             font-size: 13px;
-            flex: 1; /* Make body expand */
+            flex: 1;
         }
         
         .rule-card-row {
@@ -611,9 +811,9 @@ function greenangel_render_tools_tab() {
             margin-top: 8px;
             padding-top: 8px;
             border-top: 1px solid #333;
-            min-height: 80px; /* Fixed height for ~4 lines */
-            max-height: 80px; /* Ensure it doesn't grow */
-            overflow-y: auto; /* Just in case */
+            min-height: 80px;
+            max-height: 80px;
+            overflow-y: auto;
         }
         
         .rule-card-message .rule-card-label {
@@ -630,13 +830,13 @@ function greenangel_render_tools_tab() {
         .rule-card-actions {
             display: flex;
             gap: 8px;
-            margin-top: auto; /* Push to bottom */
+            margin-top: auto;
             padding-top: 12px;
             border-top: 1px solid #333;
         }
         
         .rule-card-actions .angel-button {
-            padding: 8px 16px !important; /* Smaller padding */
+            padding: 8px 16px !important;
             font-size: 13px !important;
         }
         
@@ -681,7 +881,7 @@ function greenangel_render_tools_tab() {
             overflow: auto;
         }
         
-        /* Scrollbar Styling - Dark Theme */
+        /* Scrollbar Styling */
         textarea::-webkit-scrollbar,
         .code-preview::-webkit-scrollbar {
             width: 10px;
@@ -711,7 +911,7 @@ function greenangel_render_tools_tab() {
             scrollbar-color: #333 #0a0a0a;
         }
         
-        /* File Upload - Fixed for Login Manager */
+        /* File Upload */
         .login-manager-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -791,7 +991,7 @@ function greenangel_render_tools_tab() {
             }
             
             .rule-card-actions {
-                flex-direction: row; /* Keep horizontal on mobile */
+                flex-direction: row;
                 gap: 8px;
             }
             
@@ -803,7 +1003,7 @@ function greenangel_render_tools_tab() {
             }
             
             .rule-card-actions .angel-button:last-child {
-                flex: 0 0 auto; /* Delete button doesn't expand */
+                flex: 0 0 auto;
             }
         }
         
@@ -842,31 +1042,68 @@ function greenangel_render_tools_tab() {
     
     <div class="tools-container">
         
-        <!-- Desktop Grid for first two cards -->
-        <div class="tools-grid">
-            <!-- Angel Notifications -->
-            <div class="tool-card">
-                <div class="tool-header">
-                    <span class="tool-icon">💌</span>
-                    <h3 class="tool-title">Angel Notifications</h3>
-                </div>
-                <div class="tool-content">
-                    <?php if (isset($_GET['notification']) && $_GET['notification'] === 'saved'): ?>
-                        <div class="success-message">✅ Notification saved successfully!</div>
+        <!-- 🔔 NOTIFICATION CENTER - FULL WIDTH -->
+        <div class="tool-card full-width">
+            <div class="tool-header">
+                <span class="tool-icon">🔔</span>
+                <h3 class="tool-title">Notification Center</h3>
+            </div>
+            <div class="tool-content">
+                <?php if (isset($_GET['notification'])): ?>
+                    <?php
+                    $messages = [
+                        'saved' => '✅ Notification saved successfully!',
+                        'deleted' => '🗑️ Notification deleted.',
+                        'toggled' => '✨ Notification status updated!'
+                    ];
+                    if (isset($messages[$_GET['notification']])):
+                    ?>
+                        <div class="success-message"><?php echo $messages[$_GET['notification']]; ?></div>
                     <?php endif; ?>
+                <?php endif; ?>
+                
+                <!-- CREATE/EDIT NOTIFICATION FORM -->
+                <div class="notification-form">
+                    <h4 style="color: #aed604; margin-top: 0; margin-bottom: 20px;">📝 Create New Notification</h4>
                     
-                    <form method="post" action="<?php echo esc_url($action); ?>">
+                    <form method="post" action="<?php echo esc_url($action); ?>" id="notification-form">
                         <input type="hidden" name="action" value="greenangel_save_notification">
+                        <input type="hidden" name="notification_id" id="notification_id" value="">
                         <?php wp_nonce_field('greenangel_save_notification', 'greenangel_notification_nonce'); ?>
                         
-                        <div class="notification-preview">
-                            <span class="preview-label">Live Preview</span>
-                            <div class="preview-content <?php echo $notification_active === 'yes' ? '' : 'inactive'; ?>">
-                                <span class="preview-icon">💚</span>
-                                <span class="preview-text"><?php echo $notification_text ?: 'Your message will appear here...'; ?></span>
+                        <!-- Message Type Selector -->
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: #aed604; font-size: 13px; font-weight: 600; display: block; margin-bottom: 10px;">Message Type</label>
+                            <div class="notification-type-selector">
+                                <?php
+                                $types = [
+                                    'system' => ['emoji' => '📢', 'label' => 'System'],
+                                    'urgent' => ['emoji' => '🚨', 'label' => 'Urgent'],
+                                    'love' => ['emoji' => '💚', 'label' => 'Love'],
+                                    'achievement' => ['emoji' => '🏆', 'label' => 'Achievement'],
+                                    'promo' => ['emoji' => '🌟', 'label' => 'Promo'],
+                                    'reminder' => ['emoji' => '⏰', 'label' => 'Reminder']
+                                ];
+                                foreach ($types as $type => $info):
+                                ?>
+                                <div class="type-option" onclick="selectType('<?php echo $type; ?>')" data-type="<?php echo $type; ?>">
+                                    <span class="type-option-emoji"><?php echo $info['emoji']; ?></span>
+                                    <span class="type-option-label"><?php echo $info['label']; ?></span>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
+                            <input type="hidden" name="notification_type" id="notification_type" value="system">
                         </div>
                         
+                        <!-- Badge Input -->
+                        <div class="badge-input-wrapper">
+                            <label>Badge Text (Optional)</label>
+                            <input type="text" name="notification_badge" id="notification_badge" 
+                                   placeholder="e.g. Limited, Important, New" 
+                                   class="angel-input" style="max-width: 300px;">
+                        </div>
+                        
+                        <!-- Message Editor -->
                         <div class="editor-wrapper">
                             <div class="editor-toolbar">
                                 <button type="button" class="format-btn" onclick="formatText('bold')" title="Bold">
@@ -884,28 +1121,96 @@ function greenangel_render_tools_tab() {
                                 name="notification_text" 
                                 id="notification_textarea"
                                 class="notification-textarea" 
-                                placeholder="Write a special message for your angels... discount codes, updates, love notes 💚"><?php echo esc_textarea($notification_text); ?></textarea>
+                                placeholder="Write your message to your angels... Be personal, be real, be you 💚"
+                                required></textarea>
                         </div>
                         
                         <div class="toggle-wrapper">
                             <label class="toggle-switch">
-                                <input type="checkbox" name="notification_active" <?php checked($notification_active, 'yes'); ?>>
+                                <input type="checkbox" name="notification_active" checked>
                                 <span class="toggle-slider"></span>
-                                <span class="toggle-label">Show notification to customers</span>
+                                <span class="toggle-label">Activate immediately</span>
                             </label>
                             
-                            <button type="submit" class="angel-button">
-                                💚 Save Notification
-                            </button>
+                            <div class="button-group">
+                                <button type="submit" class="angel-button" id="submit-notification-btn">
+                                    💚 Create Notification
+                                </button>
+                                <button type="button" class="angel-button secondary" id="cancel-notification-edit" 
+                                        style="display:none;" onclick="cancelNotificationEdit()">
+                                    Cancel Edit
+                                </button>
+                            </div>
                         </div>
-                        
-                        <?php if ($notification_updated): ?>
-                            <p class="text-muted" style="margin-top: 15px;">✨ Last updated: <?php echo esc_html($notification_updated); ?></p>
-                        <?php endif; ?>
                     </form>
                 </div>
+                
+                <!-- ACTIVE NOTIFICATIONS -->
+                <?php if (!empty($notification_messages)): ?>
+                <h4 style="color: #aed604; margin-bottom: 15px;">📨 Active Notifications (<?php echo count($notification_messages); ?> total)</h4>
+                <div class="notification-cards">
+                    <?php 
+                    $active_count = 0;
+                    foreach ($notification_messages as $msg_id => $message): 
+                        if (isset($message['active']) && $message['active'] === 'yes') {
+                            $active_count++;
+                        }
+                    ?>
+                    <div class="notification-card">
+                        <div class="notification-card-header">
+                            <div class="notification-card-type">
+                                <span class="notification-type-badge <?php echo esc_attr($message['type'] ?? 'system'); ?>">
+                                    <?php echo ucfirst($message['type'] ?? 'system'); ?>
+                                </span>
+                                <?php if (!empty($message['badge'])): ?>
+                                <span class="notification-card-badge"><?php echo esc_html($message['badge']); ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="notification-card-actions">
+                                <a href="<?php echo wp_nonce_url(admin_url('admin-post.php?action=greenangel_toggle_notification&id=' . $msg_id), 'greenangel_toggle_notification'); ?>" 
+                                   class="angel-button secondary" style="padding: 6px 12px !important; font-size: 12px !important;">
+                                    <?php echo (isset($message['active']) && $message['active'] === 'yes') ? '✅' : '❌'; ?>
+                                </a>
+                                <button class="angel-button secondary" 
+                                        style="padding: 6px 12px !important; font-size: 12px !important;"
+                                        onclick='editNotification(<?php echo json_encode([
+                                            "id" => $msg_id,
+                                            "type" => $message['type'] ?? 'system',
+                                            "text" => $message['text'],
+                                            "badge" => $message['badge'] ?? '',
+                                            "active" => $message['active'] ?? 'no'
+                                        ]); ?>)'>✏️</button>
+                                <a href="<?php echo wp_nonce_url(admin_url('admin-post.php?action=greenangel_delete_notification&id=' . $msg_id), 'greenangel_delete_notification'); ?>" 
+                                   class="angel-button secondary" 
+                                   style="padding: 6px 12px !important; font-size: 12px !important;"
+                                   onclick="return confirm('Delete this notification?');">🗑️</a>
+                            </div>
+                        </div>
+                        <div class="notification-card-body">
+                            <div class="notification-preview-text">
+                                <?php echo $message['text']; ?>
+                            </div>
+                        </div>
+                        <div class="notification-card-meta">
+                            <span>Created: <?php echo date('M j, Y', $message['created_at'] ?? time()); ?></span>
+                            <span><?php echo (isset($message['active']) && $message['active'] === 'yes') ? '🟢 Active' : '🔴 Inactive'; ?></span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <p style="color: #888; font-size: 12px; margin-top: 10px;">
+                    📊 <?php echo $active_count; ?> active notification<?php echo $active_count !== 1 ? 's' : ''; ?> showing to customers
+                </p>
+                <?php else: ?>
+                <div class="empty-state">
+                    <p>No notifications created yet. Create your first message above! 💌</p>
+                </div>
+                <?php endif; ?>
             </div>
-            
+        </div>
+        
+        <!-- Desktop Grid for postcode rules -->
+        <div class="tools-grid">
             <!-- Postcode Restrictions -->
             <div class="tool-card">
                 <div class="tool-header">
@@ -970,7 +1275,7 @@ function greenangel_render_tools_tab() {
             </div>
         </div>
         
-        <!-- Postcode Rules - Always Cards, Never Table -->
+        <!-- Postcode Rules Display -->
         <?php if (!empty($rules)): ?>
             <div class="tool-card full-width">
                 <div class="tool-header">
@@ -1022,7 +1327,7 @@ function greenangel_render_tools_tab() {
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    <div style="height: 20px;"></div> <!-- Spacer at bottom -->
+                    <div style="height: 20px;"></div>
                 </div>
             </div>
         <?php endif; ?>
@@ -1105,6 +1410,46 @@ function greenangel_render_tools_tab() {
     </div>
     
     <script>
+    // 🔔 Notification Type Selection
+    function selectType(type) {
+        document.getElementById('notification_type').value = type;
+        
+        // Update visual selection
+        document.querySelectorAll('.type-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+    }
+    
+    // Edit Notification
+    function editNotification(notification) {
+        document.getElementById('notification_id').value = notification.id;
+        document.getElementById('notification_type').value = notification.type;
+        document.getElementById('notification_textarea').value = notification.text;
+        document.getElementById('notification_badge').value = notification.badge || '';
+        
+        // Update type selection
+        selectType(notification.type);
+        
+        // Update active checkbox
+        document.querySelector('input[name="notification_active"]').checked = notification.active === 'yes';
+        
+        // Update button text
+        document.getElementById('submit-notification-btn').innerHTML = '💾 Update Notification';
+        document.getElementById('cancel-notification-edit').style.display = 'inline-flex';
+        
+        // Scroll to form
+        document.getElementById('notification-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    function cancelNotificationEdit() {
+        document.getElementById('notification-form').reset();
+        document.getElementById('notification_id').value = '';
+        document.getElementById('submit-notification-btn').innerHTML = '💚 Create Notification';
+        document.getElementById('cancel-notification-edit').style.display = 'none';
+        selectType('system');
+    }
+    
     // Notification Functions
     function formatText(command) {
         const textarea = document.getElementById('notification_textarea');
@@ -1121,7 +1466,6 @@ function greenangel_render_tools_tab() {
             }
             
             textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
-            updatePreview();
         }
     }
     
@@ -1131,13 +1475,6 @@ function greenangel_render_tools_tab() {
         textarea.value = textarea.value.substring(0, start) + '<br>' + textarea.value.substring(start);
         textarea.selectionStart = textarea.selectionEnd = start + 4;
         textarea.focus();
-        updatePreview();
-    }
-    
-    function updatePreview() {
-        const textarea = document.getElementById('notification_textarea');
-        const preview = document.querySelector('.preview-text');
-        preview.innerHTML = textarea.value || 'Your message will appear here...';
     }
     
     // Postcode Rule Functions
@@ -1191,13 +1528,11 @@ function greenangel_render_tools_tab() {
     
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        const textarea = document.getElementById('notification_textarea');
-        if (textarea) {
-            textarea.addEventListener('input', updatePreview);
-            updatePreview();
-        }
+        // Select default type
+        selectType('system');
     });
     </script>
     
     <?php
 }
+?>

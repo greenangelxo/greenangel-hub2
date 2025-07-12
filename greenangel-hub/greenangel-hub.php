@@ -2,7 +2,7 @@
 /*
 Plugin Name: Angel Hub ❤️
 Plugin URI: https://greenangelshop.com
-Description: Unified admin interface for Ship Today, NFC Cards, Packing Slips, and more — beautifully styled for the Green Angel brand.
+Description: Unified admin interface for Ship Today, NFC Cards, Packing Slips, Customers, and more — beautifully styled for the Green Angel brand.
 Version: 1.0.0
 Author: Jess + Aurora
 Author URI: https://greenangelshop.com
@@ -10,7 +10,7 @@ Author URI: https://greenangelshop.com
 
 use Wlr\App\Models\Users;
 
-// 🌿 Load plugin modules
+// 🌿 Load modules
 require_once plugin_dir_path(__FILE__) . 'modules/dashboard.php';
 require_once plugin_dir_path(__FILE__) . 'modules/ship-today.php';
 require_once plugin_dir_path(__FILE__) . 'orders/orders-preview.php';
@@ -24,12 +24,116 @@ require_once plugin_dir_path(__FILE__) . 'modules/tools.php';
 require_once plugin_dir_path(__FILE__) . 'modules/delivery-settings/delivery-settings.php';
 require_once plugin_dir_path(__FILE__) . 'modules/postcode-rules/enforce-checkout.php';
 require_once plugin_dir_path(__FILE__) . 'modules/stock-check.php';
+require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/angel-wallet.php';
+require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/functions.php';
+require_once plugin_dir_path(__FILE__) . 'includes/wallet-products.php';
 
-// ✅ Load database installer
+// 👥 NEW CUSTOMER MODULE - The crown jewel of your admin interface!
+require_once plugin_dir_path(__FILE__) . 'modules/customers/customers.php';
+require_once plugin_dir_path(__FILE__) . 'modules/customers/functions.php';
+
+// 🎨 NEW MODULAR EMOJI PICKER SYSTEM
+// Load the new modular emoji picker interface (replaces old single files)
+$emoji_modular_interface = plugin_dir_path(__FILE__) . 'account/includes/emoji-picker/emoji-picker-interface.php';
+if (file_exists($emoji_modular_interface)) {
+    require_once $emoji_modular_interface;
+    
+    // 🎨 Simple emoji picker page creator function (inline since we're modular now)
+    if (!function_exists('greenangel_create_emoji_picker_page')) {
+        function greenangel_create_emoji_picker_page() {
+            // Check if we already created this page
+            if (get_option('greenangel_emoji_picker_page_id')) {
+                return true;
+            }
+            
+            // Check if page already exists
+            $existing = get_page_by_path('emoji-picker');
+            
+            if ($existing) {
+                // Page exists, save its ID
+                update_option('greenangel_emoji_picker_page_id', $existing->ID);
+                return true;
+            }
+            
+            // Create the page with our modular shortcode
+            $page_data = array(
+                'post_title' => 'Emoji Picker',
+                'post_name' => 'emoji-picker',
+                'post_status' => 'publish',
+                'post_type' => 'page',
+                'post_content' => '[greenangel_emoji_picker]', // This shortcode is in the modular interface
+            );
+            
+            $page_id = wp_insert_post($page_data);
+            
+            if ($page_id && !is_wp_error($page_id)) {
+                update_option('greenangel_emoji_picker_page_id', $page_id);
+                return true;
+            }
+            
+            return false;
+        }
+    }
+    
+    // 🎨 Simple admin tab renderer function (inline since we're modular now)
+    if (!function_exists('greenangel_render_emoji_picker_tab')) {
+        function greenangel_render_emoji_picker_tab() {
+            echo '<h2>🎨 Emoji Picker - Modular Edition</h2>';
+            
+            $page_id = get_option('greenangel_emoji_picker_page_id');
+            
+            if ($page_id) {
+                $page_url = get_permalink($page_id);
+                echo '<p>✅ Modular emoji picker page created successfully!</p>';
+                echo '<p><a href="' . esc_url($page_url) . '" target="_blank" class="button">View Emoji Picker Page →</a></p>';
+                
+                echo '<div style="background: #333; padding: 20px; border-radius: 8px; margin-top: 20px;">';
+                echo '<h3>🚀 Modular System Active!</h3>';
+                echo '<p><strong>✨ Core Features:</strong></p>';
+                echo '<ul>';
+                echo '<li>🎨 <strong>Split CSS:</strong> Core styles + Fate spinner styles</li>';
+                echo '<li>⚡ <strong>Split JS:</strong> Main functionality + Fast fate spinner</li>';
+                echo '<li>🔙 <strong>Sleek Back Button:</strong> Bottom-left pill with arrow only</li>';
+                echo '<li>📱 <strong>Mobile Categories:</strong> 2 per row on mobile</li>';
+                echo '<li>🎲 <strong>Enticing Fate Button:</strong> Wiggles and breathes to entice users</li>';
+                echo '<li>⚡ <strong>Fast Spinner:</strong> No glitchy 5-second waits!</li>';
+                echo '</ul>';
+                echo '</div>';
+            } else {
+                echo '<p>⚠️ Emoji picker page not found. Try reactivating the plugin.</p>';
+                
+                echo '<div style="background: #444; padding: 15px; border-radius: 8px; margin-top: 15px;">';
+                echo '<p><strong>🔧 Troubleshooting:</strong></p>';
+                echo '<p>If you\'re having issues, make sure these files exist:</p>';
+                echo '<ul>';
+                echo '<li><code>account/includes/emoji-picker/emoji-picker-interface.php</code></li>';
+                echo '<li><code>account/includes/emoji-picker/css/emoji-picker-core.css</code></li>';
+                echo '<li><code>account/includes/emoji-picker/css/emoji-picker-fate.css</code></li>';
+                echo '<li><code>account/includes/emoji-picker/js/emoji-picker-core.js</code></li>';
+                echo '<li><code>account/includes/emoji-picker/js/emoji-picker-fate.js</code></li>';
+                echo '</ul>';
+                echo '</div>';
+            }
+        }
+    }
+} else {
+    // 🎨 FALLBACK: Load old emoji picker files if modular system not found
+    $emoji_picker_page_file = plugin_dir_path(__FILE__) . 'account/includes/emoji-picker-page.php';
+    if (file_exists($emoji_picker_page_file)) {
+        require_once $emoji_picker_page_file;
+    }
+
+    $emoji_interface_file = plugin_dir_path(__FILE__) . 'account/includes/emoji-picker-interface.php';
+    if (file_exists($emoji_interface_file)) {
+        require_once $emoji_interface_file;
+    }
+}
+
+// ✅ Load DB installer - KEEP YOUR EXISTING SYSTEM!
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
 add_action('plugins_loaded', 'greenangel_create_code_tables');
 
-// 🪄 Create the custom account page if it does not exist
+// 🪄 Automatically create the custom account page if not exists
 register_activation_hook(__FILE__, 'greenangel_create_account_page');
 function greenangel_create_account_page() {
     $slug = 'angel-hub';
@@ -44,7 +148,34 @@ function greenangel_create_account_page() {
     }
 }
 
-// 🔁 Safe redirect to the existing Angel Hub page for logged-in users
+// 💸 Auto-Create the Angel Wallet Page
+register_activation_hook(__FILE__, 'greenangel_create_angel_wallet_page');
+function greenangel_create_angel_wallet_page() {
+    if (get_option('greenangel_angel_wallet_page_id')) return;
+    
+    $existing = get_page_by_path('angel-wallet');
+    $page_id = $existing ? $existing->ID : wp_insert_post([
+        'post_title' => 'Angel Wallet',
+        'post_name' => 'angel-wallet',
+        'post_status' => 'publish',
+        'post_type' => 'page',
+        'post_content' => '[greenangel_wallet_console]',
+    ]);
+    
+    if ($page_id && !is_wp_error($page_id)) {
+        update_option('greenangel_angel_wallet_page_id', $page_id);
+    }
+}
+
+// 🎨 Auto-Create the Emoji Picker Page (now uses modular system)
+if (function_exists('greenangel_create_emoji_picker_page')) {
+    register_activation_hook(__FILE__, 'greenangel_create_emoji_picker_page');
+}
+
+// 💳 Auto-Create Wallet Top-up Products
+register_activation_hook(__FILE__, 'greenangel_create_wallet_topup_products');
+
+// 🔁 SAFE Redirect - only redirect logged-in users to existing Angel Hub page
 add_action('template_redirect', function () {
     // Only run on account pages for logged-in users
     if (!is_user_logged_in() || !is_account_page()) {
@@ -53,6 +184,11 @@ add_action('template_redirect', function () {
     
     // Don't redirect if we're already on angel-hub
     if (is_page('angel-hub')) {
+        return;
+    }
+    
+    // Don't redirect if we're on the emoji picker page
+    if (is_page('emoji-picker')) {
         return;
     }
     
@@ -77,7 +213,7 @@ add_action('template_redirect', function () {
     }
 });
 
-// 🌈 Register the WP Admin menu
+// 🌈 Add to WP Admin menu
 add_action('admin_menu', 'greenangel_hub_menu');
 function greenangel_hub_menu() {
     add_menu_page(
@@ -91,7 +227,7 @@ function greenangel_hub_menu() {
     );
 }
 
-// 💅 Admin styling and hide notices
+// 💅 Admin styling + hide notices
 add_action('admin_head','greenangel_admin_styles');
 function greenangel_admin_styles() { ?>
     <style>
@@ -108,14 +244,12 @@ function greenangel_admin_styles() { ?>
     </style>
 <?php }
 
-// 🌌 Render the main admin page
+// 🌌 Main Admin Page Renderer
 function greenangel_hub_page(){
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'dashboard';
     
     // Unified dark theme wrapper for all other tabs
     echo '<div class="wrap greenangel-dark-wrap">';
-    echo '<form method="post">';
-    wp_nonce_field( 'greenangel_admin_nonce_action', 'greenangel_admin_nonce' );
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';  
     echo '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
@@ -357,7 +491,7 @@ function greenangel_hub_page(){
         }
     </style>';
 
-    // Header with page title and badge
+    // Header with title and powered badge
     echo '<div class="angel-dark-header">';
     echo '<div class="header-left-dark">';
     echo '<h1 class="title-dark">Welcome, Angel 💫</h1>';
@@ -366,7 +500,7 @@ function greenangel_hub_page(){
     echo '<div class="diamond-power-dark">Powered by diamonds</div>';
     echo '</div>';
     
-    // Navigation tabs, hidden on the dashboard
+    // Navigation tabs - only show if NOT on dashboard
     if ($active_tab !== 'dashboard') {
         echo '<div class="nav-tabs-dark">';
         $tabs = [
@@ -378,8 +512,15 @@ function greenangel_hub_page(){
             'angel-codes' => '🪽 Angel Codes',
             'delivery-settings' => '🚚 Delivery Settings',
             'stock-check' => '📊 Stock Check',
+            'wallet' => '💸 Wallet',
+            'customers' => '👥 Customers',  // NEW GORGEOUS CUSTOMER MODULE! 
             'tools' => '🛠️ Tools'
         ];
+        
+        // Only add emoji picker tab if the functions exist
+        if (function_exists('greenangel_render_emoji_picker_tab')) {
+            $tabs['emoji-picker'] = '🎨 Emoji Picker';
+        }
         
         foreach($tabs as $key => $label){
             $active = ($active_tab === $key) ? 'nav-tab-active' : '';
@@ -388,7 +529,7 @@ function greenangel_hub_page(){
         echo '</div>';
     }
     
-    // Dark theme content area
+    // Content area with dark theme
     echo '<div class="angel-content-dark">';
     switch($active_tab){
         case 'dashboard':
@@ -415,12 +556,26 @@ function greenangel_hub_page(){
         case 'stock-check':
             greenangel_render_stock_check_tab(); 
             break;
+        case 'wallet':
+            greenangel_render_wallet_tab();
+            break;
+        case 'customers':  // THE GORGEOUS NEW CUSTOMER MODULE! ✨👼💎
+            greenangel_render_customers_tab();
+            break;
+        case 'emoji-picker':
+            // Only call function if it exists
+            if (function_exists('greenangel_render_emoji_picker_tab')) {
+                greenangel_render_emoji_picker_tab();
+            } else {
+                echo '<h2>🎨 Emoji Picker</h2>';
+                echo '<p>Emoji picker module is being prepared... ✨</p>';
+            }
+            break;
         case 'tools': 
             greenangel_render_tools_tab(); 
             break;
     }
     echo '</div>';
-    echo '</form>';
     echo '</div>';
 }
 ?>

@@ -170,6 +170,20 @@ function greenangel_render_dashboard_tab() {
             <span class="title">Stock Check</span>
             <span class="desc">Quick view all product stock levels</span>
         </a>
+        
+        <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=wallet'); ?>" class="dashboard-module">
+            <span class="icon">💸</span>
+            <span class="title">Wallet</span>
+            <span class="desc">View, credit and manage balances</span>
+        </a>
+
+        <!-- 👥 NEW: GORGEOUS CUSTOMERS MODULE! -->
+        <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=customers'); ?>" class="dashboard-module">
+            <span class="icon">👥</span>
+            <span class="title">Customers</span>
+            <span class="desc">Manage your Angels and their journeys</span>
+        </a>
+
         <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=tools'); ?>" class="dashboard-module">
             <span class="icon">🛠️</span>
             <span class="title">Tools</span>

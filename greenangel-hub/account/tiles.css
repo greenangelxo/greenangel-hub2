@@ -1,0 +1,993 @@
+/* 🌿 GREEN ANGEL HUB v2.0 - WILD & PLAYFUL NAVIGATION TILES */
+/* Each tile has its own PERSONALITY and NEON SOUL! ✨ */
+/* NOW WRAPPED IN GORGEOUS PREMIUM CONTAINER! */
+
+.ga-tiles-section {
+  margin-bottom: 2rem;
+  margin-top: 0;
+  padding: 0;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 🌟 GORGEOUS PREMIUM CONTAINER - MATCHES HEADER & NOTIFICATIONS */
+.ga-tiles-container {
+  background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  border-radius: 20px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideInFromBottom 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* LED Strip Effect - Same as notifications */
+.ga-tiles-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(174, 214, 4, 0.8) 20%, 
+    rgba(207, 17, 160, 0.8) 40%, 
+    rgba(2, 168, 209, 0.8) 60%, 
+    rgba(174, 214, 4, 0.8) 80%, 
+    transparent 100%
+  );
+  opacity: 0.8;
+  animation: ledStrip 8s linear infinite;
+}
+
+@keyframes ledStrip {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* 🎯 GORGEOUS HEADER SECTION - PERFECT MATCH TO NOTIFICATIONS STYLE */
+.ga-tiles-header {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ga-tiles-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ga-space-sm);
+  font-weight: 700;
+  font-size: 1rem !important; /* 🔧 FIXED: Match notifications exactly */
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.ga-tiles-icon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 3px rgba(174, 214, 4, 0.5));
+  animation: ledPulse 3s ease-in-out infinite;
+}
+
+@keyframes ledPulse {
+  0%, 100% { 
+    opacity: 0.8; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.05);
+  }
+}
+
+.ga-tiles-text {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.6) 0%, 
+    rgba(255, 255, 255, 0.9) 20%, 
+    rgba(174, 214, 4, 0.8) 40%, 
+    rgba(255, 255, 255, 0.9) 60%, 
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 8s ease-in-out infinite;
+  font-size: 1rem !important; /* 🔧 FIXED: Match notifications exactly */
+}
+
+@keyframes shimmerText {
+  0%, 100% { background-position: -100% 0; }
+  50% { background-position: 100% 0; }
+}
+
+.ga-tiles-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* 🎯 MAIN NAVIGATION GRID - MOBILE FIRST & COMPACT */
+.ga-nav-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  position: relative;
+  z-index: 3;
+}
+
+/* 🚀 BASE TILE STYLING - SMALLER & MORE COMPACT */
+.ga-nav-tile {
+  background: linear-gradient(145deg, 
+    rgba(26, 26, 26, 0.95) 0%, 
+    rgba(42, 42, 42, 0.9) 25%, 
+    rgba(30, 30, 30, 0.95) 50%, 
+    rgba(45, 45, 45, 0.9) 75%, 
+    rgba(26, 26, 26, 0.95) 100%
+  );
+  border-radius: 16px;
+  padding: 1rem 0.75rem;
+  text-decoration: none;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  backdrop-filter: blur(15px);
+  box-shadow: none !important;
+  -webkit-backdrop-filter: blur(15px);
+  -webkit-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* OVERRIDE ANY LINGERING SHADOWS */
+.ga-nav-tile,
+.ga-nav-tile:hover,
+.ga-nav-tile:focus,
+.ga-nav-tile:active {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+/* 🔧 LOGOUT BUTTON SAFETY - Make only the subtitle pill clickable */
+.ga-nav-tile[data-tile="logout"] {
+  pointer-events: none; /* Disable clicking the whole tile */
+  cursor: default;
+}
+
+.ga-nav-tile[data-tile="logout"] .ga-tile-subtitle {
+  pointer-events: all; /* Re-enable clicking just the subtitle */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+/* Enhanced visual feedback for the clickable pill */
+.ga-nav-tile[data-tile="logout"] .ga-tile-subtitle:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.35) 0%, rgba(229, 57, 53, 0.25) 50%, rgba(244, 67, 54, 0.15) 100%);
+  border-color: rgba(244, 67, 54, 0.6);
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+
+/* 🛍️ SHOP NOW - VIBRANT GREEN PERSONALITY */
+.ga-nav-tile.shop,
+.ga-nav-tile[data-tile="shop"] {
+  border: 2px solid rgba(76, 175, 80, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(76, 175, 80, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(76, 175, 80, 0.05) 100%
+  );
+  animation: shopPulse 4s ease-in-out infinite;
+  -webkit-animation: shopPulse 4s ease-in-out infinite;
+}
+
+@keyframes shopPulse {
+  0%, 100% { 
+    border-color: rgba(76, 175, 80, 0.6);
+  }
+  50% { 
+    border-color: rgba(76, 175, 80, 0.9);
+  }
+}
+
+.ga-nav-tile.shop .ga-tile-title {
+  background: linear-gradient(135deg, #4caf50, #66bb6a, #81c784);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ✨ HALO HUB - SIGNATURE LIME PERSONALITY */
+.ga-nav-tile.halo {
+  border: 2px solid rgba(174, 214, 4, 0.7);
+  background: linear-gradient(145deg, 
+    rgba(174, 214, 4, 0.1) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(174, 214, 4, 0.06) 100%
+  );
+  animation: haloPulse 3s ease-in-out infinite;
+}
+
+@keyframes haloPulse {
+  0%, 100% { 
+    border-color: rgba(174, 214, 4, 0.7);
+  }
+  50% { 
+    border-color: rgba(174, 214, 4, 1);
+  }
+}
+
+.ga-nav-tile.halo .ga-tile-title {
+  background: linear-gradient(135deg, #aed604, #c6f731, #d8ff41);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 📦 ORDERS - ELECTRIC BLUE PERSONALITY */
+.ga-nav-tile.orders {
+  border: 2px solid rgba(2, 168, 209, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(2, 168, 209, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(2, 168, 209, 0.05) 100%
+  );
+  animation: ordersPulse 5s ease-in-out infinite;
+}
+
+@keyframes ordersPulse {
+  0%, 100% { 
+    border-color: rgba(2, 168, 209, 0.6);
+  }
+  50% { 
+    border-color: rgba(2, 168, 209, 0.9);
+  }
+}
+
+.ga-nav-tile.orders .ga-tile-title {
+  background: linear-gradient(135deg, #02a8d1, #29b6f6, #4fc3f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 💰 WALLET - GOLDEN ORANGE PERSONALITY */
+.ga-nav-tile.wallet {
+  border: 2px solid rgba(255, 152, 0, 0.7);
+  background: linear-gradient(145deg, 
+    rgba(255, 152, 0, 0.1) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(255, 152, 0, 0.06) 100%
+  );
+  animation: walletPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes walletPulse {
+  0%, 100% { 
+    border-color: rgba(255, 152, 0, 0.7);
+  }
+  50% { 
+    border-color: rgba(255, 152, 0, 1);
+  }
+}
+
+.ga-nav-tile.wallet .ga-tile-title {
+  background: linear-gradient(135deg, #ff9800, #ffb74d, #ffcc02);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 💎 AFFILIATE - HOT PINK PERSONALITY */
+.ga-nav-tile.affiliate {
+  border: 2px solid rgba(207, 17, 160, 0.7);
+  background: linear-gradient(145deg, 
+    rgba(207, 17, 160, 0.1) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(207, 17, 160, 0.06) 100%
+  );
+  animation: affiliatePulse 4.5s ease-in-out infinite;
+}
+
+@keyframes affiliatePulse {
+  0%, 100% { 
+    border-color: rgba(207, 17, 160, 0.7);
+  }
+  50% { 
+    border-color: rgba(207, 17, 160, 1);
+  }
+}
+
+.ga-nav-tile.affiliate .ga-tile-title {
+  background: linear-gradient(135deg, #cf11a0, #e91e63, #f06292);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ⚙️ PROFILE/SETTINGS - ROYAL PURPLE PERSONALITY */
+.ga-nav-tile.profile {
+  border: 2px solid rgba(156, 39, 176, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(156, 39, 176, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(156, 39, 176, 0.05) 100%
+  );
+  animation: profilePulse 5.5s ease-in-out infinite;
+}
+
+@keyframes profilePulse {
+  0%, 100% { 
+    border-color: rgba(156, 39, 176, 0.6);
+  }
+  50% { 
+    border-color: rgba(156, 39, 176, 0.9);
+  }
+}
+
+.ga-nav-tile.profile .ga-tile-title {
+  background: linear-gradient(135deg, #9c27b0, #ab47bc, #ba68c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 🏠 ADDRESS BOOK - GORGEOUS BABY BLUE PERSONALITY */
+.ga-nav-tile[data-tile="addresses"] {
+  border: 2px solid rgba(129, 212, 250, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(129, 212, 250, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(129, 212, 250, 0.05) 100%
+  );
+  animation: addressPulse 5s ease-in-out infinite;
+}
+
+@keyframes addressPulse {
+  0%, 100% { 
+    border-color: rgba(129, 212, 250, 0.6);
+  }
+  50% { 
+    border-color: rgba(129, 212, 250, 0.9);
+  }
+}
+
+.ga-nav-tile[data-tile="addresses"] .ga-tile-title {
+  background: linear-gradient(135deg, #81d4fa, #4fc3f7, #29b6f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ga-nav-tile[data-tile="addresses"]:hover {
+  border-color: rgba(129, 212, 250, 1);
+  background: linear-gradient(145deg, 
+    rgba(129, 212, 250, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(129, 212, 250, 0.15) 100%
+  );
+}
+
+/* ⚙️ SETTINGS - MATCHING PROFILE STYLE */
+.ga-nav-tile[data-tile="settings"] {
+  border: 2px solid rgba(156, 39, 176, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(156, 39, 176, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(156, 39, 176, 0.05) 100%
+  );
+  animation: profilePulse 5.5s ease-in-out infinite;
+}
+
+.ga-nav-tile[data-tile="settings"] .ga-tile-title {
+  background: linear-gradient(135deg, #9c27b0, #ab47bc, #ba68c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ga-nav-tile[data-tile="settings"]:hover {
+  border-color: rgba(156, 39, 176, 1);
+  background: linear-gradient(145deg, 
+    rgba(156, 39, 176, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(156, 39, 176, 0.15) 100%
+  );
+}
+
+/* ⛔ LOGOUT - RED PERSONALITY */
+.ga-nav-tile[data-tile="logout"] {
+  border: 2px solid rgba(244, 67, 54, 0.6);
+  background: linear-gradient(145deg, 
+    rgba(244, 67, 54, 0.08) 0%, 
+    rgba(26, 26, 26, 0.95) 30%, 
+    rgba(244, 67, 54, 0.05) 100%
+  );
+  animation: logoutPulse 4s ease-in-out infinite;
+}
+
+@keyframes logoutPulse {
+  0%, 100% { 
+    border-color: rgba(244, 67, 54, 0.6);
+  }
+  50% { 
+    border-color: rgba(244, 67, 54, 0.9);
+  }
+}
+
+.ga-nav-tile[data-tile="logout"] .ga-tile-title {
+  background: linear-gradient(135deg, #f44336, #e53935, #ef5350);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 🔥 HOVER STATES - TILES EXPLODE WITH PERSONALITY */
+.ga-nav-tile:hover {
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-4px) scale(1.03) rotate(0.5deg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ga-nav-tile.shop:hover {
+  border-color: rgba(76, 175, 80, 1);
+  background: linear-gradient(145deg, 
+    rgba(76, 175, 80, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(76, 175, 80, 0.15) 100%
+  );
+}
+
+.ga-nav-tile.halo:hover {
+  border-color: rgba(174, 214, 4, 1);
+  background: linear-gradient(145deg, 
+    rgba(174, 214, 4, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(174, 214, 4, 0.15) 100%
+  );
+}
+
+.ga-nav-tile.orders:hover {
+  border-color: rgba(2, 168, 209, 1);
+  background: linear-gradient(145deg, 
+    rgba(2, 168, 209, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(2, 168, 209, 0.15) 100%
+  );
+}
+
+.ga-nav-tile.wallet:hover {
+  border-color: rgba(255, 152, 0, 1);
+  background: linear-gradient(145deg, 
+    rgba(255, 152, 0, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(255, 152, 0, 0.15) 100%
+  );
+}
+
+.ga-nav-tile.affiliate:hover {
+  border-color: rgba(207, 17, 160, 1);
+  background: linear-gradient(145deg, 
+    rgba(207, 17, 160, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(207, 17, 160, 0.15) 100%
+  );
+}
+
+.ga-nav-tile.profile:hover,
+.ga-nav-tile[data-tile="settings"]:hover {
+  border-color: rgba(156, 39, 176, 1);
+  background: linear-gradient(145deg, 
+    rgba(156, 39, 176, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(156, 39, 176, 0.15) 100%
+  );
+}
+
+.ga-nav-tile[data-tile="logout"]:hover {
+  border-color: rgba(244, 67, 54, 1);
+  background: linear-gradient(145deg, 
+    rgba(244, 67, 54, 0.2) 0%, 
+    rgba(26, 26, 26, 0.9) 50%, 
+    rgba(244, 67, 54, 0.15) 100%
+  );
+}
+
+/* 🚨 GORGEOUS LOGOUT MODAL */
+.ga-logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ga-logout-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ga-logout-modal-content {
+  background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 2px solid rgba(244, 67, 54, 0.6);
+  border-radius: 24px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ga-logout-modal.active .ga-logout-modal-content {
+  transform: scale(1);
+}
+
+.ga-logout-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f44336, #e53935, #ef5350, #f44336);
+  background-size: 200% 100%;
+  animation: redBorderFlow 3s ease-in-out infinite;
+}
+
+@keyframes redBorderFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.ga-logout-modal-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: pulseIcon 2s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.ga-logout-modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #f44336, #e53935, #ef5350);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ga-logout-modal-message {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.ga-logout-modal-username {
+  color: #f44336;
+  font-weight: 700;
+}
+
+.ga-logout-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.ga-modal-button {
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  min-width: 120px;
+}
+
+.ga-modal-button.confirm {
+  background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+  color: #ffffff;
+}
+
+.ga-modal-button.confirm:hover {
+  background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
+  transform: translateY(-2px);
+}
+
+.ga-modal-button.cancel {
+  background: linear-gradient(135deg, rgba(96, 125, 139, 0.2) 0%, rgba(96, 125, 139, 0.1) 100%);
+  border: 1px solid rgba(96, 125, 139, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ga-modal-button.cancel:hover {
+  background: linear-gradient(135deg, rgba(96, 125, 139, 0.3) 0%, rgba(96, 125, 139, 0.2) 100%);
+  border-color: rgba(96, 125, 139, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 📱 TOUCH FEEDBACK FOR MOBILE */
+.ga-nav-tile:active {
+  transform: translateY(-2px) scale(0.98) rotate(-0.5deg);
+  transition: transform 0.1s ease;
+}
+
+/* 🎯 TILE ICONS - SMALLER & MORE COMPACT */
+.ga-tile-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: iconFloat 4s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(1deg); }
+}
+
+.ga-nav-tile:hover .ga-tile-icon {
+  transform: translateY(-4px) scale(1.1) rotate(-3deg);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* 📝 TILE CONTENT - COMPACT & BEAUTIFUL */
+.ga-tile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 3;
+}
+
+.ga-tile-title {
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: 0.8px;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  position: relative;
+  z-index: 3;
+}
+
+.ga-nav-tile:hover .ga-tile-title {
+  transform: translateY(-1px) scale(1.02);
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* 💫 COMPACT SUBTITLE BUBBLES */
+.ga-tile-subtitle {
+  border-radius: 10px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  transition: all 0.3s ease;
+  letter-spacing: 0.2px;
+  position: relative;
+  z-index: 3;
+  backdrop-filter: blur(10px);
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* All the individual tile subtitle styles remain the same but with compact sizing */
+.ga-nav-tile.shop .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.25) 0%, rgba(139, 195, 74, 0.15) 50%, rgba(76, 175, 80, 0.08) 100%);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.ga-nav-tile.halo .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(174, 214, 4, 0.3) 0%, rgba(198, 247, 49, 0.2) 50%, rgba(174, 214, 4, 0.1) 100%);
+  border: 1px solid rgba(174, 214, 4, 0.5);
+}
+
+.ga-nav-tile.orders .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(2, 168, 209, 0.25) 0%, rgba(41, 182, 246, 0.15) 50%, rgba(2, 168, 209, 0.08) 100%);
+  border: 1px solid rgba(2, 168, 209, 0.4);
+}
+
+.ga-nav-tile.wallet .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 183, 77, 0.2) 50%, rgba(255, 152, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 152, 0, 0.5);
+}
+
+.ga-nav-tile.affiliate .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(207, 17, 160, 0.3) 0%, rgba(233, 30, 99, 0.2) 50%, rgba(207, 17, 160, 0.1) 100%);
+  border: 1px solid rgba(207, 17, 160, 0.5);
+}
+
+.ga-nav-tile.profile .ga-tile-subtitle,
+.ga-nav-tile[data-tile="settings"] .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(171, 71, 188, 0.15) 50%, rgba(156, 39, 176, 0.08) 100%);
+  border: 1px solid rgba(156, 39, 176, 0.4);
+}
+
+.ga-nav-tile[data-tile="addresses"] .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(129, 212, 250, 0.25) 0%, rgba(79, 195, 247, 0.15) 50%, rgba(129, 212, 250, 0.08) 100%);
+  border: 1px solid rgba(129, 212, 250, 0.4);
+}
+
+.ga-nav-tile[data-tile="logout"] .ga-tile-subtitle {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.25) 0%, rgba(229, 57, 53, 0.15) 50%, rgba(244, 67, 54, 0.08) 100%);
+  border: 1px solid rgba(244, 67, 54, 0.4);
+}
+
+.ga-nav-tile:hover .ga-tile-subtitle {
+  transform: translateY(-0.5px) scale(1.01);
+}
+
+/* 🔒 LOCKED STATE - MYSTERIOUS & COOL */
+.ga-nav-tile.ga-locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(145deg, 
+    rgba(26, 26, 26, 0.98) 0%, 
+    rgba(42, 42, 42, 0.95) 50%, 
+    rgba(26, 26, 26, 0.98) 100%
+  ) !important;
+  animation: lockedPulse 4s ease-in-out infinite;
+}
+
+@keyframes lockedPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.3; }
+}
+
+.ga-nav-tile.ga-locked:hover {
+  transform: none;
+}
+
+.ga-nav-tile.ga-locked .ga-tile-icon {
+  color: rgba(255, 255, 255, 0.4);
+  animation: none;
+}
+
+.ga-nav-tile.ga-locked .ga-tile-title {
+  color: rgba(255, 255, 255, 0.5) !important;
+  background: none !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.ga-nav-tile.ga-locked .ga-tile-subtitle {
+  color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 📱 MOBILE OPTIMIZATIONS - EVEN MORE COMPACT */
+@media (max-width: 480px) {
+  .ga-tiles-container {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+  
+  .ga-tiles-header {
+    margin-bottom: 1.25rem;
+  }
+  
+  .ga-tiles-text {
+    font-size: 0.9rem;
+  }
+  
+  .ga-tiles-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .ga-nav-tiles {
+    gap: 0.6rem;
+  }
+  
+  .ga-nav-tile {
+    padding: 0.8rem 0.6rem;
+    min-height: 85px;
+    border-radius: 14px;
+    border-width: 1.5px;
+  }
+  
+  .ga-tile-icon {
+    font-size: 1.8rem;
+  }
+  
+  .ga-tile-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.6px;
+  }
+  
+  .ga-tile-subtitle {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+  }
+  
+  /* Keep logout pill same size as everything else */
+  
+  .ga-logout-modal-content {
+    width: 85%;
+    max-width: 320px;
+    padding: 1.5rem;
+  }
+  
+  .ga-logout-modal-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .ga-modal-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* 💻 TABLET */
+@media (min-width: 768px) {
+  .ga-tiles-container {
+    padding: 2rem;
+  }
+  
+  .ga-nav-tiles {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  
+  .ga-nav-tile {
+    padding: 1.25rem 1rem;
+    min-height: 110px;
+    border-radius: 18px;
+  }
+  
+  .ga-tile-icon {
+    font-size: 2.6rem;
+  }
+  
+  .ga-tile-title {
+    font-size: 0.9rem;
+  }
+  
+  .ga-tile-subtitle {
+    font-size: 0.7rem;
+  }
+}
+
+/* 🖥️ DESKTOP */
+@media (min-width: 1024px) {
+  .ga-tiles-container {
+    padding: 2.5rem;
+  }
+  
+  .ga-nav-tiles {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+  
+  .ga-nav-tile {
+    padding: 1.5rem 1.25rem;
+    min-height: 130px;
+    border-radius: 20px;
+  }
+  
+  .ga-tile-icon {
+    font-size: 3rem;
+  }
+  
+  .ga-tile-title {
+    font-size: 1rem;
+  }
+  
+  .ga-tile-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
+/* 🌟 DESKTOP SPECIFIC SIZING TO ENSURE PERFECT MATCH WITH NOTIFICATIONS */
+@media (min-width: 1440px) {
+  .ga-tiles-title,
+  .ga-tiles-text {
+    font-size: 1.1rem !important; /* 🔧 FIXED: Match notifications ultra-wide size */
+  }
+}
+
+/* 🎨 ACCESSIBILITY & REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .ga-nav-tile,
+  .ga-tile-icon,
+  .ga-tiles-container,
+  .ga-tiles-icon {
+    animation: none !important;
+  }
+  
+  .ga-nav-tile {
+    transition: transform 0.2s ease !important;
+  }
+}

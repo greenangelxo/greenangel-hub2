@@ -1,0 +1,1638 @@
+/* 🌿 GREEN ANGEL HUB v2.0 - HEADER PROFILE BANNER */
+/* Mobile-first VERTICAL design, then responsive up */
+/* NOW WITH EMOJI IDENTITY SYSTEM! 🎭 */
+/* ENHANCED: Full dashboard ↔ emoji picker integration! */
+
+.ga-header-new {
+  margin-bottom: 1.5rem;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.ga-header-card {
+  background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  border-radius: 20px;
+  padding: 1.25rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-header-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #aed604, #cf11a0, #02a8d1, #aed604);
+  background-size: 200% 100%;
+  animation: rainbow-border 3s linear infinite;
+}
+
+@keyframes rainbow-border {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* 📱 MOBILE-FIRST: VERTICAL LAYOUT */
+.ga-header-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* 🎭 AVATAR SECTION - NOW WITH EMOJI IDENTITY SYSTEM! */
+.ga-avatar-section {
+  order: 1;
+  flex-shrink: 0;
+}
+
+/* 🔧 FIXED Z-INDEX LAYERING - Badge container has lower z-index */
+.ga-avatar-glow {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  z-index: 1; /* 🔧 ADD THIS - ensure container has lower z-index */
+}
+
+/* 🔗 AVATAR LINK - CLICKABLE TO EMOJI PICKER */
+.ga-avatar-link {
+  text-decoration: none;
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ga-avatar-link:hover {
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+.ga-avatar-link:focus {
+  outline: 3px solid #aed604;
+  outline-offset: 3px;
+}
+
+.ga-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 50%, #2d2d2d 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem; /* 🎯 BIGGER EMOJI - FILLS MORE OF THE CIRCLE! */
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ga-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* 🚨 NEEDS IDENTITY STATE - WIGGLE ANIMATION! */
+.ga-avatar.ga-avatar-needs-identity {
+  animation: identityWiggle 2s ease-in-out infinite;
+  border: 2px solid rgba(255, 87, 51, 0.6);
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 87, 51, 0.4);
+}
+
+@keyframes identityWiggle {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+  }
+  25% { 
+    transform: scale(1.03) rotate(-2deg);
+  }
+  50% { 
+    transform: scale(1.05) rotate(0deg);
+  }
+  75% { 
+    transform: scale(1.03) rotate(2deg);
+  }
+}
+
+/* 🎯 IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
+.ga-avatar.ga-avatar-has-identity {
+  border: 2px solid rgba(174, 214, 4, 0.6);
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(174, 214, 4, 0.3);
+  animation: chosenIdentityPulse 4s ease-in-out infinite;
+}
+
+@keyframes chosenIdentityPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.1),
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(174, 214, 4, 0.3);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.15),
+      0 6px 25px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(174, 214, 4, 0.5);
+  }
+}
+
+/* 🔴 NOTIFICATION BADGE - MOBILE-FIRST FIX */
+.ga-identity-notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 24px;
+  height: 24px;
+  background: #ff5733; /* 🔧 SOLID COLOR FALLBACK for mobile */
+  background-image: linear-gradient(135deg, #ff5733 0%, #e74c3c 100%); /* 🔧 Use background-image instead */
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  font-family: 'Poppins', sans-serif;
+  z-index: 100; /* 🔧 SUPER HIGH z-index */
+  border: 2px solid #1a1a1a;
+  box-shadow: 0 2px 8px rgba(255, 87, 51, 0.4);
+  animation: badgePulse 1.5s ease-in-out infinite;
+  -webkit-transform: translateZ(0); /* 🔧 Force GPU acceleration on mobile */
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden; /* 🔧 Prevent flickering */
+  backface-visibility: hidden;
+  text-decoration: none !important; /* 🔧 Remove any potential link styling */
+}
+
+@keyframes badgePulse {
+  0%, 100% { 
+    transform: scale(1) translateZ(0);
+    box-shadow: 
+      0 2px 8px rgba(255, 87, 51, 0.4),
+      inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  }
+  50% { 
+    transform: scale(1.1) translateZ(0);
+    box-shadow: 
+      0 4px 12px rgba(255, 87, 51, 0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* 🌟 GLOW PSEUDO-ELEMENT - IDENTITY NEEDED STATE */
+.ga-avatar-glow.ga-identity-needed::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, #ff5733, #e74c3c, #ff5733, #e74c3c);
+  background-size: 300% 300%;
+  border-radius: 50%;
+  z-index: -1; /* 🔧 CHANGED from 1 to -1 - keeps it behind everything! */
+  animation: urgentGlow 1.5s ease infinite;
+  opacity: 0.8;
+  pointer-events: none; /* 🔧 ADD THIS - ensures it doesn't block clicks */
+}
+
+@keyframes urgentGlow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    opacity: 0.6;
+  }
+  50% { 
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+/* 🌈 IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
+.ga-avatar-glow.ga-identity-chosen::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, 
+    #aed604, #cf11a0, #02a8d1, #aed604
+  );
+  background-size: 200% 200%;
+  border-radius: 50%;
+  z-index: -1;
+  animation: chosenIdentityGlow 3s ease infinite;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+@keyframes chosenIdentityGlow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    opacity: 0.6;
+  }
+  50% { 
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+/* Welcome Section - Below Avatar */
+.ga-welcome-section {
+  order: 2;
+  width: 100%;
+}
+
+/* 🎭 GORGEOUS USERNAME PROFILE CARD - MOBILE OPTIMIZED */
+.ga-greeting {
+  background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.9) 50%, rgba(20, 20, 20, 0.95) 100%);
+  border: 1px solid rgba(174, 214, 4, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(174, 214, 4, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  text-align: center;
+  gap: 0.5rem;
+  animation: breatheGently 4s ease-in-out infinite;
+  width: 100%;
+}
+
+@keyframes breatheGently {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 4px 16px rgba(174, 214, 4, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% { 
+    transform: scale(1.005);
+    box-shadow: 
+      0 10px 35px rgba(0, 0, 0, 0.35),
+      0 6px 20px rgba(174, 214, 4, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+.ga-greeting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, #aed604, #cf11a0, #02a8d1, #aed604);
+  background-size: 300% 300%;
+  border-radius: 16px;
+  padding: 1px;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  animation: profileCardGlow 12s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-greeting::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(42, 42, 42, 0.95) 100%);
+  border-radius: 15px;
+  backdrop-filter: blur(15px);
+  z-index: 2;
+}
+
+.ga-greeting > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* ✨ USERNAME WITH BRAND COLORS */
+.ga-username {
+  background: linear-gradient(135deg, #aed604 0%, #cf11a0 50%, #02a8d1 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: usernameFlow 8s ease-in-out infinite;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 1.2em;
+}
+
+@keyframes usernameFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 🌟 MEMBER STATUS BADGE - INSIDE THE CARD */
+.ga-status-badge-inside {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(26, 26, 26, 0.8) 100%);
+  color: rgba(192, 192, 192, 0.9);
+  border: 1px solid rgba(192, 192, 192, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-status-badge-inside::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.2), transparent);
+  animation: statusBadgeFlow 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-status-badge-inside > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes statusBadgeFlow {
+  0% { left: -100%; }
+  30% { left: 100%; }
+  30.1%, 100% { left: -100%; }
+}
+
+.ga-status-badge-inside:hover {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(26, 26, 26, 0.9) 100%);
+  color: #ffffff;
+  border-color: rgba(192, 192, 192, 0.5);
+  transform: scale(1.05);
+}
+
+/* 🎭 IDENTITY BIO DISPLAY */
+.ga-identity-bio-display {
+  font-size: 0.85rem;
+  background: linear-gradient(45deg, 
+    #c0c0c0 0%, 
+    #ffffff 25%, 
+    #e8e8e8 50%, 
+    #ffffff 75%, 
+    #c0c0c0 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: silverShimmer 3s ease-in-out infinite;
+  font-style: italic;
+  margin-top: 0.75rem;
+  line-height: 1.4;
+  padding: 0.6rem;
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  width: 100%;
+  text-align: center;
+  cursor: default;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes silverShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 🌟 IDENTITY NAME TAG */
+.ga-identity-name-tag {
+  font-size: 0.7rem;
+  color: rgba(174, 214, 4, 0.9);
+  font-weight: 600;
+  margin-left: 0.5rem;
+  animation: nameTagSlideIn 0.5s ease;
+}
+
+@keyframes nameTagSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 📊 Quick Stats - Full Width Row Below Username */
+.ga-quick-stats {
+  order: 3;
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.ga-stat-item {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  flex: 1;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+}
+
+.ga-stat-item::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  border-radius: 11px;
+  backdrop-filter: blur(10px);
+  z-index: 2;
+}
+
+.ga-stat-item > * {
+  position: relative;
+  z-index: 3;
+}
+
+.ga-stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(174, 214, 4, 0.3);
+}
+
+.ga-stat-item.halo:hover {
+  box-shadow: 0 8px 25px rgba(174, 214, 4, 0.4);
+}
+
+.ga-stat-item.wallet:hover {
+  box-shadow: 0 8px 25px rgba(207, 17, 160, 0.4);
+}
+
+.ga-stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #aed604;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 3;
+}
+
+/* 💰 SHIMMERING GOLD WALLET TEXT */
+.ga-stat-item.wallet .ga-stat-value {
+  background: linear-gradient(45deg, #ffd700, #ffffff, #fffacd, #ffd700, #ffff00, #ffd700);
+  background-size: 500% 500%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: chillGoldShimmer 25s ease-in-out infinite;
+  filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.3));
+}
+
+@keyframes chillGoldShimmer {
+  0%, 85% { background-position: 0% 50%; }
+  90% { background-position: 100% 50%; }
+  92% { background-position: 200% 50%; }
+  94% { background-position: 300% 50%; }
+  96% { background-position: 400% 50%; }
+  100% { background-position: 500% 50%; }
+}
+
+.ga-stat-item.wallet .ga-stat-label {
+  color: rgba(255, 215, 0, 0.9);
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.3);
+}
+
+.ga-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(174, 214, 4, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 3;
+}
+
+/* 📱 MOBILE: Vertical Bottom Section */
+.ga-header-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  text-align: center;
+}
+
+/* Progress Section - Full Width */
+.ga-progress-section {
+  width: 100%;
+  order: 1;
+}
+
+.ga-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* 🌟 PROGRESS TEXT PILL */
+.ga-progress-text {
+  background: linear-gradient(135deg, rgba(174, 214, 4, 0.15) 0%, rgba(207, 17, 160, 0.15) 50%, rgba(2, 168, 209, 0.05) 100%);
+  border: 1px solid rgba(174, 214, 4, 0.3);
+  border-radius: 15px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ga-progress-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(174, 214, 4, 0.3), transparent);
+  animation: progressTextShimmer 5s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-progress-text > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes progressTextShimmer {
+  0%, 72% { left: -100%; }
+  96% { left: 100%; }
+  96.1%, 100% { left: -100%; }
+}
+
+/* 🌟 PERCENTAGE PILL */
+.ga-progress-percent {
+  background: linear-gradient(135deg, rgba(174, 214, 4, 0.2) 0%, rgba(174, 214, 4, 0.1) 100%);
+  border: 1px solid rgba(174, 214, 4, 0.4);
+  border-radius: 12px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.75rem;
+  color: #aed604;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-progress-percent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(174, 214, 4, 0.3), transparent);
+  animation: percentShimmer 4s ease-in-out infinite 2s;
+  z-index: 1;
+}
+
+.ga-progress-percent > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes percentShimmer {
+  0%, 84% { left: -100%; }
+  108% { left: 100%; }
+  108.1%, 100% { left: -100%; }
+}
+
+/* 🌈 PROGRESS BAR */
+.ga-progress-bar {
+  height: 10px;
+  background: linear-gradient(135deg, 
+    rgba(174, 214, 4, 0.2) 0%, 
+    rgba(207, 17, 160, 0.15) 25%, 
+    rgba(2, 168, 209, 0.15) 50%, 
+    rgba(174, 214, 4, 0.1) 75%, 
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  animation: emptyBarShimmer 6s ease-in-out infinite;
+}
+
+@keyframes emptyBarShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.ga-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #aed604 0%, #cf11a0 25%, #02a8d1 50%, #aed604 75%, #c6f731 100%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  animation: rainbowProgressFlow 4s ease-in-out infinite;
+}
+
+@keyframes rainbowProgressFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.ga-progress-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shine 2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Max Level State */
+.ga-max-level {
+  width: 100%;
+  text-align: center;
+  order: 1;
+}
+
+.ga-max-text {
+  font-size: 1rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glow-text 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-text {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+
+/* Member Info Pills - Stacked Vertically */
+.ga-member-info {
+  order: 2;
+  width: 100%;
+}
+
+.ga-login-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+
+.ga-login-pill,
+.ga-ip-pill,
+.ga-member-pill {
+  border-radius: 15px;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 280px;
+  min-height: 45px;
+}
+
+/* 💜 MEMBER PILL */
+.ga-member-pill {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 50%, rgba(147, 51, 234, 0.05) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.ga-member-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3), transparent);
+  animation: shimmerWave1 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-member-pill:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(236, 72, 153, 0.25) 50%, rgba(147, 51, 234, 0.15) 100%);
+  border-color: rgba(168, 85, 247, 0.6);
+  transform: translateY(-1px);
+}
+
+.ga-member-pill-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a855f7, #ec4899, #9333ea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.3px;
+}
+
+.ga-login-pill > *,
+.ga-member-pill > *,
+.ga-ip-pill > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 💚 LOGIN PILL */
+.ga-login-pill {
+  background: linear-gradient(135deg, rgba(174, 214, 4, 0.15) 0%, rgba(174, 214, 4, 0.05) 100%);
+  border: 1px solid rgba(174, 214, 4, 0.3);
+}
+
+.ga-login-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(174, 214, 4, 0.3), transparent);
+  animation: shimmerWave2 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-login-pill:hover {
+  background: linear-gradient(135deg, rgba(174, 214, 4, 0.25) 0%, rgba(174, 214, 4, 0.15) 100%);
+  border-color: rgba(174, 214, 4, 0.5);
+  transform: translateY(-1px);
+}
+
+.ga-login-pill-icon,
+.ga-member-pill-icon,
+.ga-ip-pill-icon {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.ga-login-pill-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #aed604;
+  letter-spacing: 0.3px;
+}
+
+/* 🔵 IP PILL */
+.ga-ip-pill {
+  background: linear-gradient(135deg, rgba(2, 168, 209, 0.15) 0%, rgba(2, 168, 209, 0.05) 100%);
+  border: 1px solid rgba(2, 168, 209, 0.3);
+}
+
+.ga-ip-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(2, 168, 209, 0.3), transparent);
+  animation: shimmerWave3 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-ip-pill:hover {
+  background: linear-gradient(135deg, rgba(2, 168, 209, 0.25) 0%, rgba(2, 168, 209, 0.15) 100%);
+  border-color: rgba(2, 168, 209, 0.5);
+  transform: translateY(-1px);
+}
+
+.ga-ip-pill-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #02a8d1;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* 🌊 MEXICAN WAVE ANIMATIONS - 20% SLOWER & MORE SUBTLE */
+@keyframes shimmerWave1 {
+  0% { left: -100%; }
+  24% { left: 100%; }
+  24.1%, 100% { left: -100%; }
+}
+
+@keyframes shimmerWave2 {
+  0%, 6% { left: -100%; }
+  30% { left: 100%; }
+  30.1%, 100% { left: -100%; }
+}
+
+@keyframes shimmerWave3 {
+  0%, 12% { left: -100%; }
+  36% { left: 100%; }
+  36.1%, 100% { left: -100%; }
+}
+
+@keyframes profileCardGlow {
+  0%, 100% { 
+    background-position: 0% 50%; 
+    opacity: 0.6;
+  }
+  50% { 
+    background-position: 100% 50%; 
+    opacity: 0.8;
+  }
+}
+
+/* Status Badge Styles */
+.ga-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease;
+}
+
+.ga-status-badge:hover {
+  transform: scale(1.05);
+}
+
+.ga-status-badge.member {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ga-status-badge.member::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: luxury-shimmer 4s ease-in-out infinite;
+  z-index: 1;
+}
+
+.ga-status-badge.member > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes luxury-shimmer {
+  0% { left: -100%; }
+  60% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.ga-status-badge.vip-angel {
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+.ga-status-badge.elite-angel {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.ga-status-badge.legend {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* 🔧 MOBILE-SPECIFIC OVERRIDE - FORCE THAT BADGE TO SHOW! */
+@media (max-width: 767px) {
+  .ga-identity-notification-badge {
+    /* Force the badge to render properly on mobile */
+    background: #ff5733 !important;
+    border: 2px solid #1a1a1a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    z-index: 999 !important; /* 🔧 NUCLEAR z-index for mobile */
+    position: absolute !important;
+    display: flex !important;
+  }
+  
+  /* Ensure the parent container is properly positioned */
+  .ga-avatar-section {
+    position: relative;
+    z-index: 10;
+  }
+  
+  .ga-avatar-glow {
+    position: relative;
+    z-index: 5;
+  }
+  
+  /* Make sure the link doesn't interfere */
+  .ga-avatar-link {
+    position: relative;
+    z-index: 10;
+  }
+  
+  /* Keep the glow behind everything on mobile */
+  .ga-avatar-glow::after {
+    z-index: -1 !important;
+    pointer-events: none !important;
+  }
+  
+  /* 🔧 Remove any text decoration that might be causing the green line */
+  .ga-identity-notification-badge,
+  .ga-avatar-link .ga-identity-notification-badge {
+    text-decoration: none !important;
+    color: #ffffff !important;
+  }
+}
+
+/* 🎭 MOBILE EMOJI IDENTITY - MAKE IT MAGICAL! */
+@media (max-width: 767px) {
+  /* 🌟 BIGGER AVATAR ON MOBILE */
+  .ga-avatar-glow,
+  .ga-avatar {
+    width: 100px !important; /* Up from 80px */
+    height: 100px !important;
+  }
+  
+  .ga-avatar {
+    font-size: 4.2rem !important; /* 🎯 MUCH BIGGER EMOJI! */
+    /* 🌈 LED COLOR-SHIFTING BACKGROUND */
+    background: linear-gradient(45deg, 
+      #2a4a2a,  /* dark green */
+      #3a2a4a,  /* dark purple */
+      #2a3a4a,  /* dark blue */
+      #4a2a3a,  /* dark pink */
+      #2a4a2a   /* back to green */
+    ) !important;
+    background-size: 300% 300% !important;
+    animation: ledColorShift 10s ease-in-out infinite !important;
+    position: relative;
+    overflow: hidden;
+    /* Add subtle inner shadow for depth */
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(174, 214, 4, 0.2) !important;
+  }
+  
+  /* 🌟 BRIGHT LED SHIMMER OVERLAY */
+  .ga-avatar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(174, 214, 4, 0.3) 40%,
+      rgba(207, 17, 160, 0.3) 50%,
+      rgba(2, 168, 209, 0.3) 60%,
+      transparent 70%
+    );
+    animation: ledSweep 3s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* 💎 EMOJI STAYS ON TOP - SUPER HIGH Z-INDEX */
+  .ga-avatar > * {
+    position: relative;
+    z-index: 10 !important; /* 🎯 MUCH HIGHER - ABOVE EVERYTHING! */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* 💫 ADD SUBTLE SHADOW FOR POP */
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)); /* ✨ SUBTLE GLOW */
+  }
+  
+  /* 🌈 MAGICAL RAINBOW GLOW EFFECT */
+  .ga-avatar-glow::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: linear-gradient(45deg, 
+      #ff0080, #ff8c00, #ffd700, #00ff00, 
+      #00ffff, #0080ff, #8000ff, #ff0080
+    );
+    background-size: 300% 300%;
+    border-radius: 50%;
+    z-index: -1;
+    animation: epicRainbowPulse 6s ease-in-out infinite;
+    opacity: 0.8;
+    filter: blur(4px);
+  }
+  
+  /* 🔥 EXTRA GLOW LAYER FOR DEPTH */
+  .ga-avatar-glow::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    background: radial-gradient(circle, 
+      rgba(174, 214, 4, 0.4) 0%, 
+      rgba(207, 17, 160, 0.3) 25%, 
+      rgba(2, 168, 209, 0.2) 50%, 
+      transparent 70%
+    );
+    border-radius: 50%;
+    z-index: -2;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+  
+  /* 🚨 BIGGER, MORE PROMINENT NOTIFICATION BADGE */
+  .ga-identity-notification-badge {
+    width: 32px !important;
+    height: 32px !important;
+    top: -8px !important;
+    right: -8px !important;
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    background: #ff5733 !important;
+    border: 3px solid #1a1a1a !important;
+    box-shadow: 
+      0 0 10px rgba(255, 87, 51, 0.8),
+      0 4px 20px rgba(255, 87, 51, 0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    animation: urgentPulse 1.2s ease-in-out infinite !important;
+  }
+  
+  /* 🚨 NEEDS IDENTITY - URGENT LED GLOW */
+  .ga-avatar.ga-avatar-needs-identity {
+    background: linear-gradient(135deg, 
+      #4a2a2a,  /* dark red */
+      #5a3a3a,  /* medium red */
+      #4a2a3a,  /* red-pink */
+      #3a2a2a,  /* darker red */
+      #4a2a2a   /* back to start */
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: urgentLedPulse 2s ease-in-out infinite, identityWiggle 2s ease-in-out infinite !important;
+    border: 3px solid rgba(255, 87, 51, 0.8) !important;
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(255, 87, 51, 0.6),
+      0 8px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* 🌟 Make the whole avatar section more prominent */
+  .ga-avatar-section {
+    transform: scale(1.1);
+    margin: 0.5rem 0 1rem 0;
+  }
+  
+  /* 🎆 LED-STYLE PARTICLE EFFECT */
+  .ga-avatar-link {
+    position: relative;
+    display: block;
+  }
+  
+  .ga-avatar-link::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, 
+      transparent 30%, 
+      rgba(174, 214, 4, 0.1) 40%, 
+      transparent 50%
+    );
+    animation: ledPulse 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+/* 🎨 ENHANCED ANIMATIONS FOR DESKTOP */
+@keyframes ledColorShift {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 25%; }
+  50% { background-position: 200% 50%; }
+  75% { background-position: 300% 75%; }
+}
+
+@keyframes ledSweep {
+  0% { transform: translateX(-100%) rotate(0deg); }
+  100% { transform: translateX(100%) rotate(360deg); }
+}
+
+@keyframes epicRainbowPulse {
+  0%, 100% { 
+    background-position: 0% 50%;
+    opacity: 0.6;
+  }
+  50% { 
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes urgentPulse {
+  0%, 100% { 
+    transform: scale(1) translateZ(0);
+    box-shadow: 
+      0 0 10px rgba(255, 87, 51, 0.8),
+      0 4px 20px rgba(255, 87, 51, 0.6),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    transform: scale(1.1) translateZ(0);
+    box-shadow: 
+      0 0 15px rgba(255, 87, 51, 1),
+      0 6px 25px rgba(255, 87, 51, 0.8),
+      inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes urgentLedPulse {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes ledPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@media (min-width: 768px) {
+  .ga-header-card {
+    padding: 1.5rem;
+  }
+  
+  /* Tablet: Start transitioning to horizontal layout */
+  .ga-header-top {
+    flex-direction: row;
+    align-items: center;
+    text-align: center; /* Keep centered for tablet */
+    gap: 1.25rem;
+  }
+  
+  .ga-avatar-glow,
+  .ga-avatar {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .ga-avatar {
+    font-size: 2.7rem; /* 🎯 BIGGER FOR TABLET TOO */
+  }
+  
+  .ga-welcome-section {
+    flex: 1;
+  }
+  
+  .ga-greeting {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-align: center; /* Keep centered for tablet */
+    align-items: center; /* Keep centered for tablet */
+  }
+  
+  .ga-quick-stats {
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-direction: row;
+    width: auto;
+  }
+  
+  .ga-stat-item {
+    flex: none;
+    min-width: 70px;
+    padding: 0.6rem 0.8rem;
+    min-height: 65px;
+  }
+  
+  .ga-stat-value {
+    font-size: 1rem;
+  }
+  
+  .ga-header-bottom {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .ga-progress-section {
+    flex: 1;
+  }
+  
+  .ga-member-info {
+    width: auto;
+  }
+  
+  .ga-login-pills {
+    flex-direction: row;
+    gap: 0.5rem;
+    width: auto;
+  }
+  
+  .ga-login-pill,
+  .ga-ip-pill,
+  .ga-member-pill {
+    width: auto;
+    max-width: none;
+    padding: 0.35rem 0.9rem;
+    min-height: 38px;
+  }
+  
+  /* 🔴 NOTIFICATION BADGE - BIGGER ON TABLET */
+  .ga-identity-notification-badge {
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
+    top: -6px;
+    right: -6px;
+  }
+}
+
+/* 💻 DESKTOP: Full Horizontal Layout */
+@media (min-width: 1024px) {
+  .ga-header-card {
+    padding: 2rem;
+  }
+  
+  .ga-avatar-glow,
+  .ga-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .ga-avatar {
+    font-size: 3.5rem; /* 🎯 BIGGER FOR DESKTOP */
+    /* 🌈 LED COLOR-SHIFTING BACKGROUND FOR DESKTOP */
+    background: linear-gradient(45deg, 
+      #2a4a2a,  /* dark green */
+      #3a2a4a,  /* dark purple */
+      #2a3a4a,  /* dark blue */
+      #4a2a3a,  /* dark pink */
+      #2a4a2a   /* back to green */
+    ) !important;
+    background-size: 300% 300% !important;
+    animation: ledColorShift 10s ease-in-out infinite !important;
+    position: relative;
+    overflow: hidden;
+    /* Add subtle inner shadow for depth */
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(174, 214, 4, 0.2) !important;
+  }
+  
+  /* 🌟 BRIGHT LED SHIMMER OVERLAY FOR DESKTOP */
+  .ga-avatar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(174, 214, 4, 0.3) 40%,
+      rgba(207, 17, 160, 0.3) 50%,
+      rgba(2, 168, 209, 0.3) 60%,
+      transparent 70%
+    );
+    animation: ledSweep 3s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* 🚨 NEEDS IDENTITY - URGENT LED GLOW FOR DESKTOP */
+  .ga-avatar.ga-avatar-needs-identity {
+    background: linear-gradient(135deg, 
+      #4a2a2a,  /* dark red */
+      #5a3a3a,  /* medium red */
+      #4a2a3a,  /* red-pink */
+      #3a2a2a,  /* darker red */
+      #4a2a2a   /* back to start */
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: urgentLedPulse 2s ease-in-out infinite, identityWiggle 2s ease-in-out infinite !important;
+    border: 3px solid rgba(255, 87, 51, 0.8) !important;
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(255, 87, 51, 0.6),
+      0 8px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* 💎 EMOJI STAYS ON TOP - DESKTOP */
+  .ga-avatar > * {
+    position: relative;
+    z-index: 10 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+  }
+  
+  .ga-greeting {
+    font-size: 1.4rem;
+    padding: 0.875rem 1.5rem;
+    min-height: 58px;
+    text-align: center; /* Keep centered for desktop too */
+    align-items: center; /* Keep centered for desktop too */
+  }
+  
+  .ga-quick-stats {
+    gap: 0.75rem;
+  }
+  
+  .ga-stat-item {
+    min-width: 85px;
+    padding: 0.75rem 1rem;
+    min-height: 70px;
+  }
+  
+  .ga-stat-value {
+    font-size: 1.2rem;
+  }
+  
+  .ga-header-top {
+    gap: 1.5rem;
+  }
+  
+  /* 🔴 NOTIFICATION BADGE - BIGGEST ON DESKTOP */
+  .ga-identity-notification-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    top: -7px;
+    right: -7px;
+  }
+}
+
+/* 🖥️ ULTRA-WIDE: Maximum Luxury */
+@media (min-width: 1440px) {
+  .ga-header-card {
+    padding: 2.5rem;
+  }
+  
+  .ga-greeting {
+    font-size: 1.6rem;
+    padding: 1rem 1.75rem;
+    min-height: 62px;
+    text-align: center; /* Keep centered for ultra-wide too */
+    align-items: center; /* Keep centered for ultra-wide too */
+  }
+  
+  .ga-avatar {
+    width: 110px;
+    height: 110px;
+    font-size: 3.8rem; /* 🎯 MAXIMUM SIZE FOR ULTRA-WIDE */
+    /* 🌈 LED COLOR-SHIFTING BACKGROUND FOR ULTRA-WIDE */
+    background: linear-gradient(45deg, 
+      #2a4a2a,  /* dark green */
+      #3a2a4a,  /* dark purple */
+      #2a3a4a,  /* dark blue */
+      #4a2a3a,  /* dark pink */
+      #2a4a2a   /* back to green */
+    ) !important;
+    background-size: 300% 300% !important;
+    animation: ledColorShift 10s ease-in-out infinite !important;
+    position: relative;
+    overflow: hidden;
+    /* Add subtle inner shadow for depth */
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(174, 214, 4, 0.2) !important;
+  }
+  
+  /* 🌟 BRIGHT LED SHIMMER OVERLAY FOR ULTRA-WIDE */
+  .ga-avatar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(174, 214, 4, 0.3) 40%,
+      rgba(207, 17, 160, 0.3) 50%,
+      rgba(2, 168, 209, 0.3) 60%,
+      transparent 70%
+    );
+    animation: ledSweep 3s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* 🚨 NEEDS IDENTITY - URGENT LED GLOW FOR ULTRA-WIDE */
+  .ga-avatar.ga-avatar-needs-identity {
+    background: linear-gradient(135deg, 
+      #4a2a2a,  /* dark red */
+      #5a3a3a,  /* medium red */
+      #4a2a3a,  /* red-pink */
+      #3a2a2a,  /* darker red */
+      #4a2a2a   /* back to start */
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: urgentLedPulse 2s ease-in-out infinite, identityWiggle 2s ease-in-out infinite !important;
+    border: 3px solid rgba(255, 87, 51, 0.8) !important;
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(255, 87, 51, 0.6),
+      0 8px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* 💎 EMOJI STAYS ON TOP - ULTRA-WIDE */
+  .ga-avatar > * {
+    position: relative;
+    z-index: 10 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+  }
+  
+  .ga-avatar-glow {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .ga-stat-item {
+    min-width: 100px;
+  }
+  
+  .ga-stat-value {
+    font-size: 1.4rem;
+  }
+  
+  /* 🔴 NOTIFICATION BADGE - ULTRA-WIDE SIZE */
+  .ga-identity-notification-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+    top: -8px;
+    right: -8px;
+  }
+}
+
+/* Fix for WordPress default styles */
+.greenangel-dark-wrap .wrap {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Responsive tables */
+@media (max-width: 767px) {
+  .angel-content-dark table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 🎭 ACCESSIBILITY IMPROVEMENTS */
+.ga-avatar-link:focus-visible {
+  outline: 3px solid #aed604;
+  outline-offset: 3px;
+  border-radius: 50%;
+}
+
+/* 🎨 REDUCED MOTION SUPPORT */
+@media (prefers-reduced-motion: reduce) {
+  .ga-avatar.ga-avatar-needs-identity {
+    animation: none;
+  }
+  
+  .ga-identity-notification-badge {
+    animation: none;
+  }
+  
+  .ga-avatar-glow::after {
+    animation: none;
+  }
+  
+  .ga-greeting {
+    animation: none;
+  }
+  
+  .ga-username {
+    animation: none;
+  }
+  
+  .ga-progress-fill {
+    transition: width 0.3s ease !important;
+  }
+  
+  .ga-stat-item {
+    transition: none !important;
+  }
+  
+  .ga-avatar {
+    transition: none !important;
+  }
+}

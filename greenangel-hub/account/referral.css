@@ -1,0 +1,693 @@
+/* 🌿 GREEN ANGEL HUB v2.0 - ELEGANT REFERRAL CONSOLE */
+/* Sophisticated, premium styling with refined dark aesthetics */
+
+.ga-referral-console {
+  margin-bottom: 1.5rem;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 🎮 PREMIUM CONSOLE CONTAINER */
+.ga-referral-container {
+  background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 1px solid rgba(174, 214, 4, 0.2);
+  border-radius: 20px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: slideInFromLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* Subtle LED Strip Effect */
+.ga-referral-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(174, 214, 4, 0.4) 20%, 
+    rgba(207, 17, 160, 0.4) 40%, 
+    rgba(2, 168, 209, 0.4) 60%, 
+    rgba(174, 214, 4, 0.4) 80%, 
+    transparent 100%
+  );
+  opacity: 0.6;
+  animation: ledStrip 12s linear infinite;
+}
+
+@keyframes ledStrip {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* 🎯 CONSOLE HEADER - REFINED STYLING */
+.ga-console-header {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ga-console-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.ga-console-icon {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  animation: subtlePulse 4s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% { 
+    opacity: 0.8; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.02);
+  }
+}
+
+.ga-console-text {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.7) 0%, 
+    rgba(255, 255, 255, 0.95) 20%, 
+    rgba(174, 214, 4, 0.6) 40%, 
+    rgba(255, 255, 255, 0.95) 60%, 
+    rgba(255, 255, 255, 0.7) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: subtleShimmer 10s ease-in-out infinite;
+}
+
+@keyframes subtleShimmer {
+  0%, 100% { background-position: -100% 0; }
+  50% { background-position: 100% 0; }
+}
+
+.ga-console-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-align: right;
+}
+
+/* 🌟 MOBILE HEADER ALIGNMENT */
+@media (max-width: 767px) {
+  .ga-console-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .ga-console-title {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .ga-console-subtitle {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* 🎯 SHARING GRID - SIDE BY SIDE */
+.ga-sharing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 3;
+}
+
+/* 🚀 SHARE CARDS - ELEGANT & REFINED */
+.ga-share-card {
+  background: linear-gradient(145deg, 
+    rgba(20, 20, 20, 0.98) 0%, 
+    rgba(30, 30, 30, 0.95) 25%, 
+    rgba(25, 25, 25, 0.98) 50%, 
+    rgba(35, 35, 35, 0.95) 75%, 
+    rgba(20, 20, 20, 0.98) 100%
+  );
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* 🔗 REFERRAL CARD - SUBTLE GREEN ACCENT */
+.ga-share-card.referral {
+  border: 1px solid rgba(174, 214, 4, 0.3);
+  background: linear-gradient(145deg, 
+    rgba(15, 20, 10, 0.98) 0%, 
+    rgba(25, 30, 20, 0.95) 25%, 
+    rgba(20, 25, 15, 0.98) 50%, 
+    rgba(30, 35, 25, 0.95) 75%, 
+    rgba(15, 20, 10, 0.98) 100%
+  );
+}
+
+.ga-share-card.referral:hover {
+  border-color: rgba(174, 214, 4, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 👑 ANGEL CARD - SUBTLE PINK ACCENT */
+.ga-share-card.angel {
+  border: 1px solid rgba(207, 17, 160, 0.3);
+  background: linear-gradient(145deg, 
+    rgba(20, 10, 15, 0.98) 0%, 
+    rgba(30, 20, 25, 0.95) 25%, 
+    rgba(25, 15, 20, 0.98) 50%, 
+    rgba(35, 25, 30, 0.95) 75%, 
+    rgba(20, 10, 15, 0.98) 100%
+  );
+}
+
+.ga-share-card.angel:hover {
+  border-color: rgba(207, 17, 160, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 🎨 CARD HEADERS - CLEAN & SOPHISTICATED */
+.ga-card-header {
+  margin-bottom: 1.5rem;
+  background: linear-gradient(145deg, 
+    rgba(10, 10, 10, 0.95) 0%, 
+    rgba(20, 20, 20, 0.9) 50%, 
+    rgba(15, 15, 15, 0.95) 100%
+  );
+  border-radius: 12px;
+  padding: 0.85rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ga-card-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 3;
+}
+
+.ga-card-icon {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.ga-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0;
+}
+
+/* 🌟 REFERRAL HEADER STYLING */
+.ga-share-card.referral .ga-card-header {
+  border-color: rgba(174, 214, 4, 0.2);
+}
+
+.ga-share-card.referral .ga-card-title {
+  color: rgba(174, 214, 4, 0.9);
+}
+
+.ga-share-card.referral .ga-card-icon {
+  color: rgba(174, 214, 4, 0.8);
+}
+
+/* 👑 ANGEL HEADER STYLING */
+.ga-share-card.angel .ga-card-header {
+  border-color: rgba(207, 17, 160, 0.2);
+}
+
+.ga-share-card.angel .ga-card-title {
+  color: rgba(207, 17, 160, 0.9);
+}
+
+.ga-share-card.angel .ga-card-icon {
+  color: rgba(207, 17, 160, 0.8);
+}
+
+/* 🔗 LINK/CODE DISPLAYS - CONSISTENT & CLEAN */
+.ga-link-display,
+.ga-code-display {
+  background: rgba(5, 5, 5, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  /* CONSISTENT HEIGHT */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* TEXT OVERFLOW HANDLING */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ✨ REVEAL BOX STATES */
+.ga-reveal-box {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.ga-reveal-box:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(5, 5, 5, 0.9);
+}
+
+.ga-share-card.referral .ga-reveal-box:hover {
+  border-color: rgba(174, 214, 4, 0.3);
+}
+
+.ga-share-card.angel .ga-reveal-box:hover {
+  border-color: rgba(207, 17, 160, 0.3);
+}
+
+.ga-placeholder-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.8rem;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.ga-hidden-content {
+  display: none;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Revealed state */
+.ga-reveal-box.revealed .ga-hidden-content {
+  position: static;
+  transform: none;
+  width: 100%;
+}
+
+/* Active states */
+.ga-reveal-box.revealing {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(5, 5, 5, 0.95);
+}
+
+.ga-share-card.referral .ga-reveal-box.revealing {
+  border-color: rgba(174, 214, 4, 0.4);
+}
+
+.ga-share-card.angel .ga-reveal-box.revealing {
+  border-color: rgba(207, 17, 160, 0.4);
+}
+
+/* Content colors */
+.ga-link-display:not(.empty) {
+  color: rgba(174, 214, 4, 0.9);
+}
+
+.ga-code-display:not(.empty) {
+  color: rgba(207, 17, 160, 0.9);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.ga-link-display.empty,
+.ga-code-display.empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: normal;
+  text-align: center;
+}
+
+.ga-empty-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+/* 🕐 COUNTDOWN TIMER - REFINED */
+.ga-countdown-timer {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: linear-gradient(135deg, 
+    rgba(10, 10, 10, 0.9) 0%, 
+    rgba(25, 25, 25, 0.95) 100%
+  );
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+  z-index: 10;
+  min-width: 25px;
+  text-align: center;
+}
+
+.ga-countdown-timer.warning {
+  color: rgba(255, 107, 107, 0.9);
+  border-color: rgba(255, 107, 107, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(25, 5, 5, 0.9) 0%, 
+    rgba(40, 10, 10, 0.95) 100%
+  );
+}
+
+/* ⚡ ACTION ROW */
+.ga-action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* 🎯 COPY BUTTONS - ELEGANT & REFINED */
+.ga-copy-btn {
+  border-radius: 10px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  transition: all 0.3s ease;
+  letter-spacing: 0.2px;
+  position: relative;
+  z-index: 3;
+  backdrop-filter: blur(10px);
+  text-align: center;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex: 1;
+  text-transform: uppercase;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  outline: none;
+}
+
+/* Primary Button (Referral) */
+.ga-copy-btn.primary {
+  background: linear-gradient(135deg, 
+    rgba(174, 214, 4, 0.2) 0%, 
+    rgba(139, 195, 74, 0.15) 50%, 
+    rgba(174, 214, 4, 0.1) 100%
+  );
+  border: 1px solid rgba(174, 214, 4, 0.3);
+}
+
+.ga-copy-btn.primary:hover {
+  background: linear-gradient(135deg, 
+    rgba(174, 214, 4, 0.3) 0%, 
+    rgba(139, 195, 74, 0.2) 50%, 
+    rgba(174, 214, 4, 0.15) 100%
+  );
+  border-color: rgba(174, 214, 4, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Accent Button (Angel) */
+.ga-copy-btn.accent {
+  background: linear-gradient(135deg, 
+    rgba(207, 17, 160, 0.2) 0%, 
+    rgba(233, 30, 99, 0.15) 50%, 
+    rgba(207, 17, 160, 0.1) 100%
+  );
+  border: 1px solid rgba(207, 17, 160, 0.3);
+}
+
+.ga-copy-btn.accent:hover {
+  background: linear-gradient(135deg, 
+    rgba(207, 17, 160, 0.3) 0%, 
+    rgba(233, 30, 99, 0.2) 50%, 
+    rgba(207, 17, 160, 0.15) 100%
+  );
+  border-color: rgba(207, 17, 160, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Disabled State */
+.ga-copy-btn.disabled {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ga-copy-btn.disabled:hover {
+  transform: none;
+}
+
+/* Success State */
+.ga-copy-btn.success {
+  background: linear-gradient(135deg, 
+    rgba(76, 175, 80, 0.25) 0%, 
+    rgba(76, 175, 80, 0.15) 100%
+  );
+  border-color: rgba(76, 175, 80, 0.4);
+  color: rgba(76, 175, 80, 0.9);
+  animation: successPulse 0.3s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.ga-btn-icon,
+.ga-btn-text {
+  transition: all 0.3s ease;
+}
+
+/* 📱 MINI SHARE BUTTONS - ELEGANT & REFINED */
+.ga-share-mini {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ga-mini-btn {
+  background: linear-gradient(135deg, 
+    rgba(20, 20, 20, 0.9) 0%, 
+    rgba(30, 30, 30, 0.8) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.ga-mini-btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(30, 30, 30, 0.9) 0%, 
+    rgba(40, 40, 40, 0.8) 100%
+  );
+  transform: translateY(-1px);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ga-mini-btn.whatsapp:hover {
+  border-color: rgba(37, 211, 102, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(37, 211, 102, 0.1) 0%, 
+    rgba(37, 211, 102, 0.05) 100%
+  );
+}
+
+.ga-mini-btn.email:hover {
+  border-color: rgba(234, 67, 53, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(234, 67, 53, 0.1) 0%, 
+    rgba(234, 67, 53, 0.05) 100%
+  );
+}
+
+/* 📝 CARD DESCRIPTION */
+.ga-card-desc {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  font-style: italic;
+  margin: 0;
+}
+
+/* 📱 MOBILE RESPONSIVE */
+@media (max-width: 767px) {
+  .ga-sharing-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .ga-referral-container {
+    padding: 1.25rem;
+  }
+  
+  .ga-share-card {
+    padding: 1.25rem;
+  }
+  
+  .ga-card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .ga-card-title {
+    font-size: 0.8rem;
+  }
+  
+  .ga-copy-btn {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.7rem;
+  }
+  
+  .ga-mini-btn {
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 💻 TABLET & DESKTOP */
+@media (min-width: 768px) {
+  .ga-referral-container {
+    padding: 2rem;
+  }
+  
+  .ga-sharing-grid {
+    gap: 2rem;
+  }
+  
+  .ga-share-card {
+    padding: 2rem;
+  }
+}
+
+/* 🎨 ACCESSIBILITY & REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .ga-referral-container,
+  .ga-share-card,
+  .ga-copy-btn,
+  .ga-mini-btn,
+  .ga-console-icon {
+    animation: none !important;
+  }
+  
+  .ga-referral-container::before {
+    display: none;
+  }
+  
+  * {
+    transition: transform 0.2s ease, opacity 0.2s ease !important;
+  }
+}
+
+/* 🌈 HIGH CONTRAST MODE */
+@media (prefers-contrast: high) {
+  .ga-share-card {
+    border-width: 2px !important;
+    background: #000000 !important;
+  }
+  
+  .ga-card-title {
+    color: #ffffff !important;
+  }
+  
+  .ga-copy-btn {
+    border-width: 2px !important;
+  }
+}
