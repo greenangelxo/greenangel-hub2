@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     
-    // 🛡️ CRITICAL ERROR PREVENTION
+    // Critical error prevention
     try {
         // Stop any existing animations that might be causing conflicts
         $('*').stop(true, true);
@@ -168,7 +168,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // 🚀 COSMIC LOADING OVERLAY SYSTEM
+    // Cosmic loading overlay system
     function createCosmicLoadingOverlay(messages, isRegistration = false) {
         const overlay = $(`
             <div class="cosmic-loading-overlay">
@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
         return overlay;
     }
     
-    // 🌌 COSMIC PARTICLE SYSTEM
+    // Cosmic particle system
     function createCosmicParticles() {
         const particleContainer = $('.cosmic-particles');
         const particles = ['✨', '🌟', '💫', '⭐', '💎', '🔮'];
@@ -223,7 +223,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // 🎭 COSMIC LOADING SEQUENCE
+    // Cosmic loading sequence
     function startCosmicLoadingSequence(messages, isRegistration) {
         const mainText = $('.cosmic-main-text');
         const subText = $('.cosmic-sub-text');
@@ -271,7 +271,7 @@ jQuery(document).ready(function($) {
         }, 150);
     }
     
-    // 🎉 COSMIC LOADING COMPLETION
+    // Cosmic loading completion
     function completeCosmicLoading(isRegistration) {
         const overlay = $('.cosmic-loading-overlay');
         const content = $('.cosmic-loading-content');
@@ -332,7 +332,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // 🌈 FADE OUT COSMIC OVERLAY - SMOOTH TRANSITION TO NEW PAGE
+    // Fade out cosmic overlay during page transition
     function fadeOutCosmicOverlay(redirectUrl) {
         const overlay = $('.cosmic-loading-overlay');
         
@@ -356,7 +356,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // 🎮 ENHANCED TAB SWITCHING WITH LED EFFECTS - SAFE VERSION
+    // Tab switching with LED effects
     $('.angel-tab').on('click', function() {
         try {
             const targetTab = $(this).data('tab');
@@ -403,7 +403,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // 💫 ENHANCED PASSWORD VISIBILITY TOGGLE
+    // Password visibility toggle
     $('.angel-password-toggle').on('click', function() {
         const targetId = $(this).data('target');
         const passwordField = $(`#${targetId}`);
@@ -427,7 +427,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // ✨ ENHANCED ANGEL CODE VALIDATION WITH LED FEEDBACK
+    // Angel code validation with LED feedback
     let codeValidationTimeout;
     $('#reg-angel-code').on('input', function() {
         const code = $(this).val().trim();
@@ -517,7 +517,7 @@ jQuery(document).ready(function($) {
         $(this).val(value);
     });
     
-    // 🚀 ENHANCED LOGIN FORM SUBMISSION WITH COSMIC MAGIC
+    // Login form submission with cosmic overlay
     $('#angel-login-form').on('submit', function(e) {
         e.preventDefault();
         
@@ -570,7 +570,7 @@ jQuery(document).ready(function($) {
         }, 2000); // Minimum loading time for effect
     });
     
-    // 🎲 ENHANCED DISPLAY NAME DICE GAME WITH LED EFFECTS
+    // Display name dice game with LED effects
     let rollsLeft = 5;
     let selectedName = '';
 
@@ -598,7 +598,7 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // Enhanced Stoner Angel Name Arrays
+    // Display name word lists
     const emotions = [
         'Happy', 'Giggly', 'Blissful', 'Chill', 'Mellow', 'Peaceful',
         'Groovy', 'Jazzy', 'Funky', 'Bouncy', 'Bubbly', 'Jolly',
@@ -665,7 +665,7 @@ jQuery(document).ready(function($) {
         sessionStorage.setItem('angelDiceGame', JSON.stringify(sessionData));
     }
 
-    // 🎲 ENHANCED DICE ROLL WITH LED EFFECTS
+    // Dice roll with LED effects
     $('#roll-dice-btn').on('click', function() {
         if (rollsLeft <= 0) return;
         
@@ -740,7 +740,7 @@ jQuery(document).ready(function($) {
         }, 80); // Slower for more dramatic effect
     });
 
-    // 🎉 DICE SUCCESS PARTICLE EFFECT
+    // Dice success particle effect
     function createDiceSuccessEffect() {
         const particles = ['✨', '🌟', '💫', '⭐'];
         const diceButton = $('#roll-dice-btn');
@@ -787,7 +787,7 @@ jQuery(document).ready(function($) {
         sessionStorage.removeItem('angelDiceGame');
     });
     
-    // 🌟 ENHANCED REGISTRATION FORM SUBMISSION WITH COSMIC MAGIC
+    // Registration form submission with cosmic overlay
     $('#angel-register-form').off('submit').on('submit', function(e) {
         e.preventDefault();
         console.log('🌟 Registration form submitted - starting cosmic magic!');
@@ -909,7 +909,7 @@ jQuery(document).ready(function($) {
         });
     });
     
-    // 🔒 ENHANCED FORGOT PASSWORD FUNCTIONALITY - SAFE VERSION
+    // Forgot password functionality
     $('#forgot-password-link').on('click', function(e) {
         e.preventDefault();
         
@@ -967,7 +967,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // Handle back to login with enhanced animation - SAFE VERSION
+    // Back to login with animation
     $(document).on('click', '#back-to-login', function(e) {
         e.preventDefault();
         
@@ -1098,7 +1098,7 @@ jQuery(document).ready(function($) {
         });
     }
     
-    // 🎨 ADD DYNAMIC CSS FOR ENHANCED ANIMATIONS INCLUDING COSMIC LOADING
+    // Add dynamic CSS for animations including cosmic loading
     const enhancedStyles = $('<style>');
     enhancedStyles.text(`
         @keyframes shake {
@@ -1154,7 +1154,7 @@ jQuery(document).ready(function($) {
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
         }
         
-        /* 🌌 COSMIC LOADING OVERLAY */
+        /* Cosmic loading overlay */
         .cosmic-loading-overlay {
             position: fixed;
             top: 0;
@@ -1197,7 +1197,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* 🌟 COSMIC BACKGROUND EFFECTS */
+        /* Cosmic background effects */
         .cosmic-background {
             position: absolute;
             top: 0;
@@ -1232,7 +1232,7 @@ jQuery(document).ready(function($) {
             100% { background-position: 400% 50%; }
         }
 
-        /* ✨ COSMIC PARTICLES */
+        /* Cosmic particles */
         .cosmic-particles {
             position: absolute;
             width: 100%;
@@ -1267,7 +1267,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* 🌟 COSMIC LOADING CONTENT */
+        /* Cosmic loading content */
         .cosmic-loading-content {
             display: flex;
             flex-direction: column;
@@ -1278,7 +1278,7 @@ jQuery(document).ready(function($) {
             padding: 0 20px;
         }
 
-        /* 💎 COSMIC LOGO */
+        /* Cosmic logo */
         .cosmic-logo {
             position: relative;
             width: 120px;
@@ -1350,7 +1350,7 @@ jQuery(document).ready(function($) {
             50% { transform: scale(1.3); }
         }
 
-        /* 📝 COSMIC LOADING TEXT */
+        /* Cosmic loading text */
         .cosmic-loading-text {
             margin-bottom: 2rem;
         }
@@ -1385,7 +1385,7 @@ jQuery(document).ready(function($) {
             line-height: 1.4;
         }
 
-        /* 📊 COSMIC PROGRESS BAR */
+        /* Cosmic progress bar */
         .cosmic-progress-bar {
             width: 100%;
             height: 6px;
@@ -1442,7 +1442,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* 💥 SUCCESS PARTICLES */
+        /* Success particles */
         .success-particle {
             position: absolute;
             font-size: 1.5rem;
@@ -1452,7 +1452,7 @@ jQuery(document).ready(function($) {
             z-index: 1003;
         }
 
-        /* 📱 MOBILE RESPONSIVE FOR COSMIC LOADING */
+        /* Mobile responsive for cosmic loading */
         @media (max-width: 640px) {
             .cosmic-loading-content {
                 padding: 0 15px;
@@ -1506,7 +1506,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* 🎨 HIGH CONTRAST MODE */
+        /* High contrast mode */
         @media (prefers-contrast: high) {
             .cosmic-loading-overlay {
                 background: rgba(0, 0, 0, 0.95);
@@ -1524,7 +1524,7 @@ jQuery(document).ready(function($) {
     `);
     $('head').append(enhancedStyles);
     
-    // 🌟 INITIALIZE ENHANCED EFFECTS
+    // Initialize enhanced effects
     setTimeout(() => {
         $('.angel-auth-container').addClass('initialized');
     }, 100);
