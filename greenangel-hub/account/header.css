@@ -130,7 +130,7 @@
   }
 }
 
-/* 🎯 IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
+/* 🎯 Identity chosen state glow effect */
 .ga-avatar.ga-avatar-has-identity {
   border: 2px solid rgba(174, 214, 4, 0.6);
   box-shadow: 
@@ -228,7 +228,7 @@
   }
 }
 
-/* 🌈 IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
+/* 🌈 Identity chosen state glow effect */
 .ga-avatar-glow.ga-identity-chosen::after {
   content: '';
   position: absolute;
@@ -264,7 +264,7 @@
   width: 100%;
 }
 
-/* 🎭 GORGEOUS USERNAME PROFILE CARD - MOBILE OPTIMIZED */
+/* 🎭 Username profile card - mobile optimized */
 .ga-greeting {
   background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.9) 50%, rgba(20, 20, 20, 0.95) 100%);
   border: 1px solid rgba(174, 214, 4, 0.3);
@@ -1041,7 +1041,7 @@
   }
 }
 
-/* 🎭 MOBILE EMOJI IDENTITY - MAKE IT MAGICAL! */
+/* 🎭 Mobile emoji identity styles */
 @media (max-width: 767px) {
   /* 🌟 BIGGER AVATAR ON MOBILE */
   .ga-avatar-glow,
@@ -1100,7 +1100,7 @@
     filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)); /* ✨ SUBTLE GLOW */
   }
   
-  /* 🌈 MAGICAL RAINBOW GLOW EFFECT */
+  /* 🌈 Rainbow glow effect */
   .ga-avatar-glow::after {
     content: '';
     position: absolute;

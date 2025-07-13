@@ -1,8 +1,8 @@
 <?php
 /**
- * 🌿 GREEN ANGEL HUB v2.0 - BREATHTAKING NAVIGATION TILES
- * App-style navigation with immersive, alive UI that feels absolutely magical ✨
- * NOW WRAPPED IN GORGEOUS PREMIUM CONTAINER!
+ * 🌿 Green Angel Hub v2.0 - navigation tiles
+ * App-style navigation with responsive UI
+ * Wrapped in premium container
  */
 
 // Prevent direct access
@@ -51,7 +51,7 @@ function ga_render_navigation_tiles($user_id) {
     ob_start();
     ?>
     
-    <!-- 🌟 GORGEOUS TILES CONTAINER - PREMIUM CARD WRAPPER -->
+    <!-- 🌟 Tiles container -->
     <div class="ga-tiles-section">
         <div class="ga-tiles-container">
             
@@ -174,7 +174,7 @@ function ga_render_navigation_tiles($user_id) {
         </div>
     </div>
     
-    <!-- 🚨 GORGEOUS LOGOUT CONFIRMATION MODAL -->
+    <!-- 🚨 Logout confirmation modal -->
     <div id="logoutModal" class="ga-logout-modal">
         <div class="ga-logout-modal-content">
             <div class="ga-logout-modal-icon">⛔</div>
@@ -283,7 +283,7 @@ function ga_render_navigation_tiles($user_id) {
     </script>
     
     <script>
-    // ✨ MAGICAL INTERACTIVE ENHANCEMENTS
+    // ✨ Interactive enhancements
     document.addEventListener('DOMContentLoaded', function() {
         const tiles = document.querySelectorAll('.ga-nav-tile, .ga-stat-tile.clickable');
         

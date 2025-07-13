@@ -1,8 +1,8 @@
 <?php
 /**
  * 🌟 GREEN ANGEL EMOJI IDENTITY PICKER v2.0 - MODULAR EDITION
- * The most gorgeous emoji selection experience ever created!
- * Mobile-first LED console aesthetic with premium feel
+ * Modular emoji selection interface
+ * Mobile-first LED console aesthetic
  * NOW FULLY MODULAR WITH SEPARATE CSS/JS FILES! 🔥
  * LOCKED SYSTEM: Choose once, lock for 30 days! 🔒
  */
@@ -54,7 +54,7 @@ function greenangel_emoji_picker_shortcode($atts) {
         }
     }
     
-    // 🔥 SPICY CURATED EMOJI COLLECTION - NO BORING STUFF!
+    // 🔥 Curated emoji collection
     $emoji_categories = [
         'mystical' => [
             'name' => 'Mystical ✨',
@@ -134,7 +134,7 @@ function greenangel_emoji_picker_shortcode($atts) {
         <!-- LED Strip Header (matching our dashboard style) -->
         <div class="emoji-picker-led-strip"></div>
         
-        <!-- 🔙 GORGEOUS FLOATING BACK BUTTON - SLEEK BOTTOM LEFT -->
+        <!-- 🔙 Floating back button -->
         <div class="emoji-back-button-container">
             <a href="<?php echo esc_url($back_url); ?>" class="emoji-back-button">
                 <span class="back-arrow">←</span>

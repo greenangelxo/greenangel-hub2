@@ -177,7 +177,7 @@ function greenangel_render_dashboard_tab() {
             <span class="desc">View, credit and manage balances</span>
         </a>
 
-        <!-- 👥 NEW: GORGEOUS CUSTOMERS MODULE! -->
+        <!-- 👥 Customers module -->
         <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=customers'); ?>" class="dashboard-module">
             <span class="icon">👥</span>
             <span class="title">Customers</span>

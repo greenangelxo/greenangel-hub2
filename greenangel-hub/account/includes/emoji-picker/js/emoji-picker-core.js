@@ -412,7 +412,7 @@
     }
     
     /**
-     * ✨ SELECT EMOJI WITH GORGEOUS EFFECTS
+     * ✨ Handle emoji selection animations
      */
     function selectEmoji(emoji, element) {
         // Double-check lock status
