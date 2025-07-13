@@ -1,7 +1,7 @@
-/* 🌟 GREEN ANGEL EMOJI IDENTITY PICKER - CORE STYLES WITH GORGEOUS LOCKED STATE */
+/* 🌟 Green Angel emoji identity picker core styles with lock state */
 /* Mobile-first responsive design with premium feel */
-/* Matches our existing dashboard aesthetic perfectly */
-/* NOW WITH STUNNING LOCKED STATE STYLING! 🔒✨ */
+/* Matches existing dashboard aesthetic */
+/* Includes locked state styling */
 
 /* 🌐 Global Variables */
 :root {
@@ -19,7 +19,7 @@
   --emoji-lock-border: rgba(255, 152, 0, 0.3);
 }
 
-/* 🔙 GORGEOUS FLOATING BACK BUTTON - RESPONSIVE POSITIONING */
+/* 🔙 Floating back button positioning */
 .emoji-back-button-container {
   position: fixed;
   bottom: 20px;
@@ -203,7 +203,7 @@
   z-index: 2;
 }
 
-/* 🌟 GORGEOUS HEADER SECTION */
+/* 🌟 Header section */
 .emoji-header {
   background: linear-gradient(145deg, var(--emoji-dark-bg) 0%, var(--emoji-card-bg) 50%, var(--emoji-dark-bg) 100%);
   border: 1px solid var(--emoji-border);

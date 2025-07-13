@@ -42,7 +42,7 @@ function ga_render_notifications_section($user_id) {
     ob_start();
     ?>
     
-    <!-- 🌟 GORGEOUS NOTIFICATIONS SECTION - NOW POSITIONED AFTER HEADER -->
+    <!-- 🌟 Notifications section positioned after header -->
     <div class="ga-notifications-section ga-notifications-top-position">
         <!-- 🌑 DARK NOTIFICATIONS HEADER -->
         <div class="ga-notifications-header <?php echo $has_urgent ? 'expanded' : ''; ?>" onclick="toggleNotifications()" id="notificationsHeader">

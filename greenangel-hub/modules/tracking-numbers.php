@@ -951,7 +951,7 @@ function greenangel_render_tracking_numbers() {
             padding: 20px;
         }
         
-        /* POSTCODE PROMINENCE! */
+        /* Postcode section */
         .postcode-section {
             text-align: center;
             margin-bottom: 20px;

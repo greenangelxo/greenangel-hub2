@@ -28,7 +28,7 @@ require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/angel-wallet.php'
 require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/functions.php';
 require_once plugin_dir_path(__FILE__) . 'includes/wallet-products.php';
 
-// 👥 NEW CUSTOMER MODULE - The crown jewel of your admin interface!
+// 👥 Customers module
 require_once plugin_dir_path(__FILE__) . 'modules/customers/customers.php';
 require_once plugin_dir_path(__FILE__) . 'modules/customers/functions.php';
 
@@ -513,7 +513,7 @@ function greenangel_hub_page(){
             'delivery-settings' => '🚚 Delivery Settings',
             'stock-check' => '📊 Stock Check',
             'wallet' => '💸 Wallet',
-            'customers' => '👥 Customers',  // NEW GORGEOUS CUSTOMER MODULE! 
+            'customers' => '👥 Customers',  // Customers module
             'tools' => '🛠️ Tools'
         ];
         
@@ -559,7 +559,7 @@ function greenangel_hub_page(){
         case 'wallet':
             greenangel_render_wallet_tab();
             break;
-        case 'customers':  // THE GORGEOUS NEW CUSTOMER MODULE! ✨👼💎
+        case 'customers':  // Customers module
             greenangel_render_customers_tab();
             break;
         case 'emoji-picker':

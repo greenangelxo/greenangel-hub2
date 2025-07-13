@@ -32,7 +32,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* LED strip on the container for gorgeous effect */
+/* LED strip styling */
 .ga-notifications-section::before {
   content: '';
   position: absolute;
@@ -762,7 +762,7 @@
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
-/* 🌟 GORGEOUS SLIDE-IN ANIMATION ON PAGE LOAD */
+/* 🌟 Slide-in animation on page load */
 @keyframes slideInFromTop {
   from {
     opacity: 0;

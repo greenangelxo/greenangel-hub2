@@ -440,7 +440,7 @@
   );
 }
 
-/* 🎨 CARD TYPE BORDERS - MAGICAL LED COLORS WITH SHIMMER */
+/* 🎨 Card type borders with LED colors */
 .ga-activity-card.order-card {
   border-left: 4px solid rgba(2, 168, 209, 0.8);
   background: linear-gradient(145deg, 
@@ -453,7 +453,7 @@
   overflow: hidden;
 }
 
-/* ✨ MAGICAL SHIMMER EFFECT ON LEFT BORDER */
+/* ✨ Shimmer effect on left border */
 .ga-activity-card.order-card::before {
   content: '';
   position: absolute;

@@ -1,6 +1,6 @@
-/* 🌿 GREEN ANGEL HUB v2.0 - WILD & PLAYFUL NAVIGATION TILES */
-/* Each tile has its own PERSONALITY and NEON SOUL! ✨ */
-/* NOW WRAPPED IN GORGEOUS PREMIUM CONTAINER! */
+/* 🌿 Green Angel Hub v2.0 - navigation tiles */
+/* Each tile styled with neon accents */
+/* Wrapped in premium container */
 
 .ga-tiles-section {
   margin-bottom: 2rem;
@@ -9,7 +9,7 @@
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* 🌟 GORGEOUS PREMIUM CONTAINER - MATCHES HEADER & NOTIFICATIONS */
+/* Premium container styling */
 .ga-tiles-container {
   background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
   border: 1px solid rgba(174, 214, 4, 0.2);
@@ -62,7 +62,7 @@
   }
 }
 
-/* 🎯 GORGEOUS HEADER SECTION - PERFECT MATCH TO NOTIFICATIONS STYLE */
+/* Header section styling */
 .ga-tiles-header {
   margin-bottom: 1.5rem;
   text-align: left;
@@ -382,7 +382,7 @@
   letter-spacing: 1px;
 }
 
-/* 🏠 ADDRESS BOOK - GORGEOUS BABY BLUE PERSONALITY */
+/* Address book tile styling */
 .ga-nav-tile[data-tile="addresses"] {
   border: 2px solid rgba(129, 212, 250, 0.6);
   background: linear-gradient(145deg, 
@@ -553,7 +553,7 @@
   );
 }
 
-/* 🚨 GORGEOUS LOGOUT MODAL */
+/* Logout modal */
 .ga-logout-modal {
   position: fixed;
   top: 0;

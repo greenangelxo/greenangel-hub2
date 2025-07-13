@@ -1313,7 +1313,7 @@
     max-height: 500px;
     overflow-y: auto;
     
-    /* 🎨 GORGEOUS CUSTOM SCROLLBAR */
+    /* Custom scrollbar */
     scrollbar-width: thin;
     scrollbar-color: #aed604 #222;
 }

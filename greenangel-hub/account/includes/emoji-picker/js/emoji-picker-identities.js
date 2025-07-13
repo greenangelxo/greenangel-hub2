@@ -1,9 +1,9 @@
 /**
  * 🌟 GREEN ANGEL EMOJI PICKER - IDENTITY DESCRIPTIONS WITH LOCK ENFORCEMENT
- * Handles the spicy emoji bios and vibes system
- * Mobile-first with gorgeous animations
- * ALL THE SPICY BIOS - GENDER NEUTRAL! 🔥
- * LOCKED SYSTEM: Respects 30-day lock, shows lock warnings when needed!
+ * Manages emoji bios with lock enforcement
+ * Mobile-first with animations
+ * Gender-neutral identity descriptions
+ * Enforces a 30-day selection lock
  */
 
 (function() {
@@ -13,7 +13,7 @@
     let isLocked = false;
     let daysRemaining = 0;
     
-    // 🎭 EMOJI IDENTITY DATABASE - ALL THE SPICY VIBES (GENDER NEUTRAL)
+    // 🎭 Emoji identity database (gender neutral)
     const emojiIdentities = {
         // 🧿 MYSTICAL EMOJIS ✨
         '✨': { name: 'Sparklecore', bio: 'You leave glitter in your wake and chaos in your step. Literally can\'t go unnoticed.' },
@@ -99,7 +99,7 @@
         '🐢': { name: 'Slow Motion', bio: 'Steady wins the race. Your persistence is legendary, your timing perfect.' },
         '🦀': { name: 'Crab Walks', bio: 'You move sideways through life and somehow always reach your destination.' },
         
-        // 🌶️ SPICY EMOJIS 🔞
+        // 🌶️ Spicy emojis
         '🌶️': { name: 'Spice Master', bio: 'You add heat to everything you touch. Life\'s too bland without you.' },
         '🍆': { name: 'Eggplant Royalty', bio: 'Mysterious, versatile, and absolutely essential. You know what you\'re about.' },
         '🍌': { name: 'Banana Drama', bio: 'Sweet, curved, and slightly unhinged. You\'re comedy gold with appeal.' },

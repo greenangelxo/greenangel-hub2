@@ -218,7 +218,7 @@ function ga_render_header_section($user_id) {
                 <?php endif; ?>
                 
                 <div class="ga-member-info">
-                    <!-- 🌟 GORGEOUS SHIMMERING PILLS -->
+                    <!-- 🌟 Shimmering pills -->
                     <div class="ga-login-pills">
                         <div class="ga-member-pill">
                             <span class="ga-member-pill-icon">💖</span>
@@ -268,7 +268,7 @@ function ga_render_header_section($user_id) {
             });
         });
         
-        // 🌟 Add magical click effect to avatar
+        // Add click animation to avatar
         const avatar = document.querySelector('.ga-avatar');
         if (avatar) {
             avatar.addEventListener('click', function() {
