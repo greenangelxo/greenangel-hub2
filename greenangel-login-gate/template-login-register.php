@@ -136,7 +136,7 @@
                     </div>
                 </div>
                 
-                <!-- Display name dice game -->
+                <!-- 🎲 DISPLAY NAME DICE GAME 🎲 -->
                 <div class="angel-field-group">
                     <label for="roll-dice-btn" class="angel-label">Choose Your Display Name</label>
                     <div class="angel-name-dice-game">

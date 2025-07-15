@@ -1,40 +1,11 @@
 jQuery(document).ready(function($) {
     
-    // Critical error prevention
+    // 🛡️ BASIC ERROR PREVENTION
     try {
         // Stop any existing animations that might be causing conflicts
         $('*').stop(true, true);
-        
-        // Disable jQuery migrate warnings
-        if (typeof jQuery.migrateMute !== 'undefined') {
-            jQuery.migrateMute = true;
-        }
-        
-        // Override problematic jQuery animation methods
-        const originalAnimate = $.fn.animate;
-        $.fn.animate = function(properties, duration, easing, complete) {
-            try {
-                // Validate properties object
-                if (!properties || typeof properties !== 'object') {
-                    return this;
-                }
-                
-                // Filter out problematic properties
-                const safeProperties = {};
-                for (let prop in properties) {
-                    if (properties.hasOwnProperty(prop) && typeof properties[prop] !== 'undefined') {
-                        safeProperties[prop] = properties[prop];
-                    }
-                }
-                
-                return originalAnimate.call(this, safeProperties, duration, easing, complete);
-            } catch (e) {
-                console.warn('Animation prevented due to error:', e);
-                return this;
-            }
-        };
     } catch (e) {
-        console.warn('Animation override failed:', e);
+        console.warn('Animation cleanup failed:', e);
     }
 
     // Nonces from forms
@@ -168,7 +139,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // Cosmic loading overlay system
+    // 🚀 COSMIC LOADING OVERLAY SYSTEM
     function createCosmicLoadingOverlay(messages, isRegistration = false) {
         const overlay = $(`
             <div class="cosmic-loading-overlay">
@@ -204,7 +175,7 @@ jQuery(document).ready(function($) {
         return overlay;
     }
     
-    // Cosmic particle system
+    // 🌌 COSMIC PARTICLE SYSTEM
     function createCosmicParticles() {
         const particleContainer = $('.cosmic-particles');
         const particles = ['✨', '🌟', '💫', '⭐', '💎', '🔮'];
@@ -223,7 +194,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // Cosmic loading sequence
+    // 🎭 COSMIC LOADING SEQUENCE
     function startCosmicLoadingSequence(messages, isRegistration) {
         const mainText = $('.cosmic-main-text');
         const subText = $('.cosmic-sub-text');
@@ -271,7 +242,7 @@ jQuery(document).ready(function($) {
         }, 150);
     }
     
-    // Cosmic loading completion
+    // 🎉 COSMIC LOADING COMPLETION
     function completeCosmicLoading(isRegistration) {
         const overlay = $('.cosmic-loading-overlay');
         const content = $('.cosmic-loading-content');
@@ -332,7 +303,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // Fade out cosmic overlay during page transition
+    // 🌈 FADE OUT COSMIC OVERLAY - SMOOTH TRANSITION TO NEW PAGE
     function fadeOutCosmicOverlay(redirectUrl) {
         const overlay = $('.cosmic-loading-overlay');
         
@@ -356,7 +327,7 @@ jQuery(document).ready(function($) {
         }
     }
     
-    // Tab switching with LED effects
+    // 🎮 ENHANCED TAB SWITCHING WITH LED EFFECTS - SAFE VERSION
     $('.angel-tab').on('click', function() {
         try {
             const targetTab = $(this).data('tab');
@@ -403,7 +374,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // Password visibility toggle
+    // 💫 ENHANCED PASSWORD VISIBILITY TOGGLE
     $('.angel-password-toggle').on('click', function() {
         const targetId = $(this).data('target');
         const passwordField = $(`#${targetId}`);
@@ -427,7 +398,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // Angel code validation with LED feedback
+    // ✨ ENHANCED ANGEL CODE VALIDATION WITH LED FEEDBACK
     let codeValidationTimeout;
     $('#reg-angel-code').on('input', function() {
         const code = $(this).val().trim();
@@ -517,7 +488,7 @@ jQuery(document).ready(function($) {
         $(this).val(value);
     });
     
-    // Login form submission with cosmic overlay
+    // 🚀 ENHANCED LOGIN FORM SUBMISSION WITH COSMIC MAGIC
     $('#angel-login-form').on('submit', function(e) {
         e.preventDefault();
         
@@ -570,35 +541,68 @@ jQuery(document).ready(function($) {
         }, 2000); // Minimum loading time for effect
     });
     
-    // Display name dice game with LED effects
+    // 🎲 ENHANCED DISPLAY NAME DICE GAME WITH LED EFFECTS
     let rollsLeft = 5;
     let selectedName = '';
 
-    // Check if we have existing session data
+    // Check if we have existing session data - with defensive checks
     const sessionKey = 'angelDiceSession_' + Date.now().toString(36);
-    let diceSession = sessionStorage.getItem('angelDiceGame');
+    let diceSession = null;
+    
+    try {
+        diceSession = sessionStorage.getItem('angelDiceGame');
+    } catch (error) {
+        console.warn('⚠️ Cannot access sessionStorage:', error);
+    }
 
     if (diceSession) {
         try {
             const sessionData = JSON.parse(diceSession);
-            rollsLeft = sessionData.rollsLeft;
-            selectedName = sessionData.selectedName;
             
-            // Update UI if we have a selected name
-            if (selectedName) {
-                $('#dice-display-name').addClass('has-name');
-                $('#dice-display-name .dice-name-text').text(selectedName);
-                $('#reg-display-name-hidden').val(selectedName);
+            // Validate session data structure
+            if (sessionData && typeof sessionData === 'object') {
+                // Safely restore rollsLeft with fallback
+                if (typeof sessionData.rollsLeft === 'number' && sessionData.rollsLeft >= 0) {
+                    rollsLeft = sessionData.rollsLeft;
+                }
+                
+                // Safely restore selectedName with validation
+                if (typeof sessionData.selectedName === 'string' && sessionData.selectedName.length > 0) {
+                    selectedName = sessionData.selectedName;
+                }
+                
+                // Update UI if we have a selected name
+                if (selectedName) {
+                    const displayDiv = $('#dice-display-name');
+                    const nameText = displayDiv.find('.dice-name-text');
+                    const hiddenInput = $('#reg-display-name-hidden');
+                    
+                    if (displayDiv.length > 0) {
+                        displayDiv.addClass('has-name');
+                    }
+                    
+                    if (nameText.length > 0) {
+                        nameText.text(selectedName);
+                    }
+                    
+                    if (hiddenInput.length > 0) {
+                        hiddenInput.val(selectedName);
+                    }
+                }
+                
+                // Update button state
+                updateDiceButton();
+            } else {
+                console.warn('⚠️ Invalid session data structure');
+                sessionStorage.removeItem('angelDiceGame');
             }
-            
-            // Update button state
-            updateDiceButton();
         } catch (e) {
+            console.warn('⚠️ Error parsing dice session data:', e);
             sessionStorage.removeItem('angelDiceGame');
         }
     }
 
-    // Display name word lists
+    // Enhanced Stoner Angel Name Arrays
     const emotions = [
         'Happy', 'Giggly', 'Blissful', 'Chill', 'Mellow', 'Peaceful',
         'Groovy', 'Jazzy', 'Funky', 'Bouncy', 'Bubbly', 'Jolly',
@@ -627,158 +631,265 @@ jQuery(document).ready(function($) {
         'THC', 'CBD', 'Terp', 'Grinder', 'Papers', 'Stash'
     ];
 
-    // Generate random name
+    // Generate random name with defensive checks
     function generateRandomName() {
-        const emotion = emotions[Math.floor(Math.random() * emotions.length)];
-        const weedWord = cannabisWords[Math.floor(Math.random() * cannabisWords.length)];
-        return emotion + weedWord;
-    }
-
-    // Update dice button state with LED effects
-    function updateDiceButton() {
-        const btn = $('#roll-dice-btn');
-        const countSpan = btn.find('.dice-count');
-        
-        if (rollsLeft <= 0) {
-            btn.addClass('exhausted');
-            btn.find('.dice-text').text('No More Rolls!');
-            countSpan.text('Name locked in');
-            btn.prop('disabled', true);
+        try {
+            // Defensive checks for arrays
+            if (!emotions || !Array.isArray(emotions) || emotions.length === 0) {
+                console.warn('⚠️ Emotions array is not available, using fallback');
+                return 'MagicalStoner';
+            }
             
-            // Add exhausted LED effect
-            btn.css({
-                'background': 'linear-gradient(135deg, #333333 0%, #444444 100%)',
-                'border-color': 'rgba(255, 255, 255, 0.1)'
-            });
-        } else {
-            countSpan.text(rollsLeft + ' rolls left');
+            if (!cannabisWords || !Array.isArray(cannabisWords) || cannabisWords.length === 0) {
+                console.warn('⚠️ Cannabis words array is not available, using fallback');
+                return 'HappyToker';
+            }
+            
+            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
+            const weedWord = cannabisWords[Math.floor(Math.random() * cannabisWords.length)];
+            return emotion + weedWord;
+        } catch (error) {
+            console.error('❌ Error generating random name:', error);
+            // Return a safe fallback name
+            return 'CosmicAngel';
         }
     }
 
-    // Save session data
-    function saveSession() {
-        const sessionData = {
-            rollsLeft: rollsLeft,
-            selectedName: selectedName,
-            timestamp: Date.now()
-        };
-        sessionStorage.setItem('angelDiceGame', JSON.stringify(sessionData));
+    // Update dice button state with LED effects - with defensive checks
+    function updateDiceButton() {
+        try {
+            const btn = $('#roll-dice-btn');
+            
+            // Check if button exists
+            if (!btn || btn.length === 0) {
+                console.warn('⚠️ Dice button not found in DOM');
+                return;
+            }
+            
+            const countSpan = btn.find('.dice-count');
+            
+            if (rollsLeft <= 0) {
+                btn.addClass('exhausted');
+                btn.find('.dice-text').text('No More Rolls!');
+                
+                // Check if count span exists before updating
+                if (countSpan.length > 0) {
+                    countSpan.text('Name locked in');
+                }
+                
+                btn.prop('disabled', true);
+                
+                // Add exhausted LED effect
+                btn.css({
+                    'background': 'linear-gradient(135deg, #333333 0%, #444444 100%)',
+                    'border-color': 'rgba(255, 255, 255, 0.1)'
+                });
+            } else {
+                // Check if count span exists before updating
+                if (countSpan.length > 0) {
+                    countSpan.text(rollsLeft + ' rolls left');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error updating dice button:', error);
+        }
     }
 
-    // Dice roll with LED effects
-    $('#roll-dice-btn').on('click', function() {
-        if (rollsLeft <= 0) return;
-        
-        const btn = $(this);
-        const displayDiv = $('#dice-display-name');
-        const nameText = displayDiv.find('.dice-name-text');
-        const countSpan = btn.find('.dice-count');
-        
-        // Enhanced rolling animation with LED effects
-        btn.addClass('rolling');
-        displayDiv.addClass('rolling');
-        
-        // Add LED pulse effect during roll
-        btn.css({
-            'box-shadow': '0 0 30px rgba(255, 255, 255, 0.2)',
-            'border-color': 'rgba(255, 255, 255, 0.4)'
-        });
-        
-        // Simulate rolling effect with enhanced visuals
-        let rollCount = 0;
-        const rollInterval = setInterval(function() {
-            const tempName = generateRandomName();
-            nameText.text(tempName);
-            rollCount++;
+    // Save session data - with defensive checks
+    function saveSession() {
+        try {
+            const sessionData = {
+                rollsLeft: rollsLeft,
+                selectedName: selectedName,
+                timestamp: Date.now()
+            };
             
-            // Add flicker effect during rolling
-            displayDiv.css('opacity', 0.7 + Math.random() * 0.3);
-            
-            if (rollCount >= 12) { // Longer roll animation
-                clearInterval(rollInterval);
-                
-                // Generate final name
-                selectedName = generateRandomName();
-                nameText.text(selectedName);
-                $('#reg-display-name-hidden').val(selectedName);
-                
-                // Enhanced success animation
-                displayDiv.removeClass('rolling').addClass('has-name selected');
-                displayDiv.css({
-                    'opacity': 1,
-                    'border-color': 'rgba(255, 255, 255, 0.3)',
-                    'box-shadow': '0 0 20px rgba(255, 255, 255, 0.1)'
-                });
-                
-                btn.removeClass('rolling');
-                btn.css({
-                    'box-shadow': '',
-                    'border-color': ''
-                });
-                
-                // Decrement rolls
-                rollsLeft--;
-                
-                // Save to session
-                saveSession();
-                
-                // Update button
-                updateDiceButton();
-                
-                // Enhanced flash effect
-                setTimeout(function() {
-                    displayDiv.removeClass('selected');
-                    displayDiv.css({
-                        'box-shadow': '',
-                        'border-color': 'rgba(255, 255, 255, 0.1)'
-                    });
-                }, 500);
-                
-                // Success particles effect
-                createDiceSuccessEffect();
+            // Validate sessionData before saving
+            if (sessionData && typeof sessionData === 'object') {
+                sessionStorage.setItem('angelDiceGame', JSON.stringify(sessionData));
+            } else {
+                console.warn('⚠️ Invalid session data, not saving');
             }
-        }, 80); // Slower for more dramatic effect
+        } catch (error) {
+            console.warn('⚠️ Error saving dice session:', error);
+        }
+    }
+
+    // 🎲 ENHANCED DICE ROLL WITH LED EFFECTS - WITH DEFENSIVE CHECKS
+    $('#roll-dice-btn').on('click', function() {
+        try {
+            if (rollsLeft <= 0) return;
+            
+            const btn = $(this);
+            const displayDiv = $('#dice-display-name');
+            const nameText = displayDiv.find('.dice-name-text');
+            const countSpan = btn.find('.dice-count');
+            
+            // Check if required DOM elements exist
+            if (!btn || btn.length === 0) {
+                console.warn('⚠️ Dice button not found');
+                return;
+            }
+            
+            if (!displayDiv || displayDiv.length === 0) {
+                console.warn('⚠️ Dice display div not found');
+                return;
+            }
+            
+            if (!nameText || nameText.length === 0) {
+                console.warn('⚠️ Dice name text element not found');
+                return;
+            }
+            
+            // Enhanced rolling animation with LED effects
+            btn.addClass('rolling');
+            displayDiv.addClass('rolling');
+            
+            // Add LED pulse effect during roll
+            btn.css({
+                'box-shadow': '0 0 30px rgba(255, 255, 255, 0.2)',
+                'border-color': 'rgba(255, 255, 255, 0.4)'
+            });
+            
+            // Simulate rolling effect with enhanced visuals
+            let rollCount = 0;
+            const rollInterval = setInterval(function() {
+                try {
+                    const tempName = generateRandomName();
+                    nameText.text(tempName);
+                    rollCount++;
+                    
+                    // Add flicker effect during rolling
+                    displayDiv.css('opacity', 0.7 + Math.random() * 0.3);
+                    
+                    if (rollCount >= 12) { // Longer roll animation
+                        clearInterval(rollInterval);
+                        
+                        // Generate final name
+                        selectedName = generateRandomName();
+                        nameText.text(selectedName);
+                        
+                        // Check if hidden input exists before setting value
+                        const hiddenInput = $('#reg-display-name-hidden');
+                        if (hiddenInput.length > 0) {
+                            hiddenInput.val(selectedName);
+                        }
+                        
+                        // Enhanced success animation
+                        displayDiv.removeClass('rolling').addClass('has-name selected');
+                        displayDiv.css({
+                            'opacity': 1,
+                            'border-color': 'rgba(255, 255, 255, 0.3)',
+                            'box-shadow': '0 0 20px rgba(255, 255, 255, 0.1)'
+                        });
+                        
+                        btn.removeClass('rolling');
+                        btn.css({
+                            'box-shadow': '',
+                            'border-color': ''
+                        });
+                        
+                        // Decrement rolls
+                        rollsLeft--;
+                        
+                        // Save to session
+                        saveSession();
+                        
+                        // Update button
+                        updateDiceButton();
+                        
+                        // Enhanced flash effect
+                        setTimeout(function() {
+                            displayDiv.removeClass('selected');
+                            displayDiv.css({
+                                'box-shadow': '',
+                                'border-color': 'rgba(255, 255, 255, 0.1)'
+                            });
+                        }, 500);
+                        
+                        // Success particles effect
+                        createDiceSuccessEffect();
+                    }
+                } catch (error) {
+                    console.error('❌ Error in dice roll animation:', error);
+                    clearInterval(rollInterval);
+                    btn.removeClass('rolling');
+                    displayDiv.removeClass('rolling');
+                }
+            }, 80); // Slower for more dramatic effect
+            
+        } catch (error) {
+            console.error('❌ Error in dice button click handler:', error);
+        }
     });
 
-    // Dice success particle effect
+    // 🎉 DICE SUCCESS PARTICLE EFFECT - WITH DEFENSIVE CHECKS
     function createDiceSuccessEffect() {
-        const particles = ['✨', '🌟', '💫', '⭐'];
-        const diceButton = $('#roll-dice-btn');
-        
-        if (!diceButton.length) return;
-        
-        const rect = diceButton[0].getBoundingClientRect();
-        
-        for (let i = 0; i < 6; i++) {
-            const particle = $('<div>');
-            particle.text(particles[Math.floor(Math.random() * particles.length)]);
-            particle.css({
-                'position': 'fixed',
-                'left': rect.left + rect.width / 2 + 'px',
-                'top': rect.top + rect.height / 2 + 'px',
-                'font-size': '1.2rem',
-                'pointer-events': 'none',
-                'z-index': '9999',
-                'color': 'rgba(255, 255, 255, 0.8)',
-                'text-shadow': '0 0 10px rgba(255, 255, 255, 0.5)'
-            });
+        try {
+            const particles = ['✨', '🌟', '💫', '⭐'];
+            const diceButton = $('#roll-dice-btn');
             
-            // Random direction
-            const angle = (Math.PI * 2 * i) / 6;
-            const distance = 40 + Math.random() * 30;
-            const endX = Math.cos(angle) * distance;
-            const endY = Math.sin(angle) * distance;
+            // Check if particles array exists and has content
+            if (!particles || !Array.isArray(particles) || particles.length === 0) {
+                console.warn('⚠️ Particles array not available for dice success effect');
+                return;
+            }
             
-            $('body').append(particle);
+            // Check if dice button exists
+            if (!diceButton || diceButton.length === 0) {
+                console.warn('⚠️ Dice button not found for success effect');
+                return;
+            }
             
-            particle.animate({
-                'left': '+=' + endX + 'px',
-                'top': '+=' + endY + 'px',
-                'opacity': 0,
-                'font-size': '0.8rem'
-            }, 1500, 'easeOutQuart', function() {
-                particle.remove();
-            });
+            // Check if getBoundingClientRect is available
+            if (!diceButton[0] || typeof diceButton[0].getBoundingClientRect !== 'function') {
+                console.warn('⚠️ Cannot get dice button position for success effect');
+                return;
+            }
+            
+            const rect = diceButton[0].getBoundingClientRect();
+            
+            for (let i = 0; i < 6; i++) {
+                const particle = $('<div>');
+                particle.text(particles[Math.floor(Math.random() * particles.length)]);
+                
+                // Random direction
+                const angle = (Math.PI * 2 * i) / 6;
+                const distance = 40 + Math.random() * 30;
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                
+                particle.css({
+                    'position': 'fixed',
+                    'left': rect.left + rect.width / 2 + 'px',
+                    'top': rect.top + rect.height / 2 + 'px',
+                    'font-size': '1.2rem',
+                    'pointer-events': 'none',
+                    'z-index': '9999',
+                    'color': 'rgba(255, 255, 255, 0.8)',
+                    'text-shadow': '0 0 10px rgba(255, 255, 255, 0.5)',
+                    'transition': 'all 1.5s ease-out',
+                    'transform': 'translate(-50%, -50%)'
+                });
+                
+                $('body').append(particle);
+                
+                // Use CSS transitions instead of jQuery animation
+                setTimeout(() => {
+                    particle.css({
+                        'transform': `translate(calc(-50% + ${endX}px), calc(-50% + ${endY}px)) scale(0.5)`,
+                        'opacity': '0',
+                        'font-size': '0.8rem'
+                    });
+                }, 50);
+                
+                // Clean up after animation completes
+                setTimeout(() => {
+                    particle.remove();
+                }, 1600);
+            }
+        } catch (error) {
+            console.error('❌ Error creating dice success effect:', error);
         }
     }
 
@@ -787,7 +898,7 @@ jQuery(document).ready(function($) {
         sessionStorage.removeItem('angelDiceGame');
     });
     
-    // Registration form submission with cosmic overlay
+    // 🌟 ENHANCED REGISTRATION FORM SUBMISSION WITH COSMIC MAGIC
     $('#angel-register-form').off('submit').on('submit', function(e) {
         e.preventDefault();
         console.log('🌟 Registration form submitted - starting cosmic magic!');
@@ -909,7 +1020,7 @@ jQuery(document).ready(function($) {
         });
     });
     
-    // Forgot password functionality
+    // 🔒 ENHANCED FORGOT PASSWORD FUNCTIONALITY - SAFE VERSION
     $('#forgot-password-link').on('click', function(e) {
         e.preventDefault();
         
@@ -967,7 +1078,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // Back to login with animation
+    // Handle back to login with enhanced animation - SAFE VERSION
     $(document).on('click', '#back-to-login', function(e) {
         e.preventDefault();
         
@@ -1098,7 +1209,7 @@ jQuery(document).ready(function($) {
         });
     }
     
-    // Add dynamic CSS for animations including cosmic loading
+    // 🎨 ADD DYNAMIC CSS FOR ENHANCED ANIMATIONS INCLUDING COSMIC LOADING
     const enhancedStyles = $('<style>');
     enhancedStyles.text(`
         @keyframes shake {
@@ -1154,7 +1265,7 @@ jQuery(document).ready(function($) {
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
         }
         
-        /* Cosmic loading overlay */
+        /* 🌌 COSMIC LOADING OVERLAY */
         .cosmic-loading-overlay {
             position: fixed;
             top: 0;
@@ -1197,7 +1308,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* Cosmic background effects */
+        /* 🌟 COSMIC BACKGROUND EFFECTS */
         .cosmic-background {
             position: absolute;
             top: 0;
@@ -1232,7 +1343,7 @@ jQuery(document).ready(function($) {
             100% { background-position: 400% 50%; }
         }
 
-        /* Cosmic particles */
+        /* ✨ COSMIC PARTICLES */
         .cosmic-particles {
             position: absolute;
             width: 100%;
@@ -1267,7 +1378,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* Cosmic loading content */
+        /* 🌟 COSMIC LOADING CONTENT */
         .cosmic-loading-content {
             display: flex;
             flex-direction: column;
@@ -1278,7 +1389,7 @@ jQuery(document).ready(function($) {
             padding: 0 20px;
         }
 
-        /* Cosmic logo */
+        /* 💎 COSMIC LOGO */
         .cosmic-logo {
             position: relative;
             width: 120px;
@@ -1350,7 +1461,7 @@ jQuery(document).ready(function($) {
             50% { transform: scale(1.3); }
         }
 
-        /* Cosmic loading text */
+        /* 📝 COSMIC LOADING TEXT */
         .cosmic-loading-text {
             margin-bottom: 2rem;
         }
@@ -1385,7 +1496,7 @@ jQuery(document).ready(function($) {
             line-height: 1.4;
         }
 
-        /* Cosmic progress bar */
+        /* 📊 COSMIC PROGRESS BAR */
         .cosmic-progress-bar {
             width: 100%;
             height: 6px;
@@ -1442,7 +1553,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* Success particles */
+        /* 💥 SUCCESS PARTICLES */
         .success-particle {
             position: absolute;
             font-size: 1.5rem;
@@ -1452,7 +1563,7 @@ jQuery(document).ready(function($) {
             z-index: 1003;
         }
 
-        /* Mobile responsive for cosmic loading */
+        /* 📱 MOBILE RESPONSIVE FOR COSMIC LOADING */
         @media (max-width: 640px) {
             .cosmic-loading-content {
                 padding: 0 15px;
@@ -1506,7 +1617,7 @@ jQuery(document).ready(function($) {
             }
         }
 
-        /* High contrast mode */
+        /* 🎨 HIGH CONTRAST MODE */
         @media (prefers-contrast: high) {
             .cosmic-loading-overlay {
                 background: rgba(0, 0, 0, 0.95);
@@ -1524,7 +1635,7 @@ jQuery(document).ready(function($) {
     `);
     $('head').append(enhancedStyles);
     
-    // Initialize enhanced effects
+    // 🌟 INITIALIZE ENHANCED EFFECTS
     setTimeout(() => {
         $('.angel-auth-container').addClass('initialized');
     }, 100);

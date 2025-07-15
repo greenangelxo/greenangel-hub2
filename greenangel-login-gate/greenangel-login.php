@@ -46,6 +46,7 @@ class GreenAngelLogin {
         
         // Plugin lifecycle hooks
         register_activation_hook(__FILE__, array($this, 'activate_plugin'));
+        register_activation_hook(__FILE__, array($this, 'migrate_codes_database'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
         
         // Shortcode and template hooks
@@ -78,6 +79,74 @@ class GreenAngelLogin {
             wp_schedule_event(time(), 'daily', 'greenangel_cleanup_expired_codes');
         }
         add_action('greenangel_cleanup_expired_codes', array($this, 'cleanup_expired_codes'));
+    }
+    
+    /**
+     * 🎯 NEW: Database migration to unify angel code systems
+     */
+    public function migrate_codes_database() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'greenangel_codes';
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        // First, let's see what columns exist currently
+        $columns = $wpdb->get_results("DESCRIBE {$table_name}");
+        $existing_columns = array();
+        foreach ($columns as $column) {
+            $existing_columns[] = $column->Field;
+        }
+        
+        // Create the unified table structure
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            code varchar(100) NOT NULL,
+            label varchar(255) DEFAULT NULL,
+            type varchar(50) DEFAULT 'promo',
+            active tinyint(1) DEFAULT 1,
+            expires_at datetime DEFAULT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            created_by int(11) DEFAULT NULL,
+            notes text DEFAULT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY code (code),
+            KEY active (active),
+            KEY expires_at (expires_at),
+            KEY created_by (created_by),
+            KEY type (type)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        
+        // Migrate data if coming from old login system structure
+        if (in_array('is_active', $existing_columns) && !in_array('active', $existing_columns)) {
+            error_log('🔄 Migrating from old login system structure...');
+            
+            // Add new columns if they don't exist
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS active tinyint(1) DEFAULT 1");
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS label varchar(255) DEFAULT NULL");
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS type varchar(50) DEFAULT 'promo'");
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS expires_at datetime DEFAULT NULL");
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS created_at datetime DEFAULT CURRENT_TIMESTAMP");
+            $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN IF NOT EXISTS updated_at datetime DEFAULT CURRENT_TIMESTAMP");
+            
+            // Migrate existing data
+            $wpdb->query("UPDATE {$table_name} SET active = is_active WHERE active IS NULL");
+            $wpdb->query("UPDATE {$table_name} SET expires_at = expires_date WHERE expires_at IS NULL AND expires_date IS NOT NULL");
+            $wpdb->query("UPDATE {$table_name} SET created_at = created_date WHERE created_at IS NULL AND created_date IS NOT NULL");
+            $wpdb->query("UPDATE {$table_name} SET updated_at = COALESCE(used_date, created_date, NOW()) WHERE updated_at IS NULL");
+            
+            // Set default type based on existing data patterns
+            $wpdb->query("UPDATE {$table_name} SET type = 'affiliate' WHERE type IS NULL AND (notes LIKE '%affiliate%' OR notes LIKE '%referral%')");
+            $wpdb->query("UPDATE {$table_name} SET type = 'main' WHERE type IS NULL AND (notes LIKE '%main%' OR notes LIKE '%primary%')");
+            $wpdb->query("UPDATE {$table_name} SET type = 'promo' WHERE type IS NULL");
+            
+            error_log('✅ Migration completed!');
+        }
+        
+        error_log('🎯 Angel codes database unified successfully!');
     }
     
     /**
@@ -153,7 +222,7 @@ class GreenAngelLogin {
     }
     
     /**
-     * Enhanced database table creation with better indexing
+     * 🎯 UPDATED: Create unified angel codes table
      */
     private function create_angel_codes_table() {
         global $wpdb;
@@ -164,21 +233,20 @@ class GreenAngelLogin {
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             code varchar(100) NOT NULL,
-            is_active tinyint(1) DEFAULT 1,
-            used_by int(11) DEFAULT NULL,
-            created_date datetime DEFAULT CURRENT_TIMESTAMP,
-            used_date datetime DEFAULT NULL,
-            expires_date datetime DEFAULT NULL,
+            label varchar(255) DEFAULT NULL,
+            type varchar(50) DEFAULT 'promo',
+            active tinyint(1) DEFAULT 1,
+            expires_at datetime DEFAULT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             created_by int(11) DEFAULT NULL,
-            max_uses int(11) DEFAULT 1,
-            current_uses int(11) DEFAULT 0,
             notes text DEFAULT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY code (code),
-            KEY is_active (is_active),
-            KEY used_by (used_by),
-            KEY expires_date (expires_date),
-            KEY created_by (created_by)
+            KEY active (active),
+            KEY expires_at (expires_at),
+            KEY created_by (created_by),
+            KEY type (type)
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -363,7 +431,7 @@ class GreenAngelLogin {
     }
     
     /**
-     * Enhanced angel code validation with rate limiting
+     * 🎯 UPDATED: Enhanced angel code validation with unlimited uses
      */
     public function validate_angel_code() {
         // Enhanced nonce verification
@@ -408,13 +476,12 @@ class GreenAngelLogin {
             return;
         }
         
-        // Enhanced code lookup with expiration check
+        // NEW: Enhanced code lookup with unified structure (unlimited use!)
         $result = $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table_name 
              WHERE UPPER(code) = %s 
-             AND is_active = 1 
-             AND (expires_date IS NULL OR expires_date > NOW())
-             AND (max_uses = 0 OR current_uses < max_uses)",
+             AND active = 1 
+             AND (expires_at IS NULL OR expires_at > NOW())",
             $code
         ));
         
@@ -422,7 +489,9 @@ class GreenAngelLogin {
             // Log successful validation
             $this->log_action('code_validation', 'success', array(
                 'code' => $code,
-                'ip' => $ip_address
+                'ip' => $ip_address,
+                'code_type' => $result->type ?? '',
+                'code_label' => $result->label ?? ''
             ));
             
             wp_send_json_success(array('message' => __('✨ Valid angel code!', 'greenangel-login')));
@@ -495,16 +564,15 @@ class GreenAngelLogin {
         // Increment rate limiting counter
         set_transient($rate_limit_key, $attempts + 1, HOUR_IN_SECONDS);
         
-        // Validate angel code
+        // 🎯 UPDATED: Validate angel code with unified structure
         global $wpdb;
         $table_name = $wpdb->prefix . 'greenangel_codes';
         
         $code_result = $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table_name 
              WHERE UPPER(code) = %s 
-             AND is_active = 1 
-             AND (expires_date IS NULL OR expires_date > NOW())
-             AND (max_uses = 0 OR current_uses < max_uses)",
+             AND active = 1 
+             AND (expires_at IS NULL OR expires_at > NOW())",
             $angel_code
         ));
         
@@ -571,18 +639,23 @@ class GreenAngelLogin {
             update_user_meta($user_id, $key, $value);
         }
         
-        // Update angel code usage
-        $wpdb->update(
-            $table_name,
-            array(
-                'current_uses' => $code_result->current_uses + 1,
-                'used_date' => current_time('mysql'),
-                'used_by' => $user_id
-            ),
-            array('id' => $code_result->id),
-            array('%d', '%s', '%d'),
-            array('%d')
-        );
+        // 🎯 UPDATED: Log successful code usage (but don't track limits - unlimited use!)
+        $this->log_action('registration', 'code_used', array(
+            'user_id' => $user_id,
+            'email' => $email,
+            'code_used' => $angel_code,
+            'code_type' => $code_result->type ?? '',
+            'code_label' => $code_result->label ?? '',
+            'ip' => $ip_address
+        ));
+        
+        // Also log in the admin system's log table for consistency
+        $wpdb->insert($wpdb->prefix . 'greenangel_code_logs', [
+            'user_id'   => $user_id,
+            'email'     => $email,
+            'code_used' => $angel_code,
+            'timestamp' => current_time('mysql'),
+        ]);
         
         // Create WooCommerce customer if WooCommerce is active
         if (class_exists('WooCommerce')) {
@@ -1307,10 +1380,10 @@ class GreenAngelLogin {
         $codes_table = $wpdb->prefix . 'greenangel_codes';
         $wpdb->query(
             "UPDATE $codes_table 
-             SET is_active = 0 
-             WHERE expires_date IS NOT NULL 
-             AND expires_date < NOW() 
-             AND is_active = 1"
+             SET active = 0 
+             WHERE expires_at IS NOT NULL 
+             AND expires_at < NOW() 
+             AND active = 1"
         );
         
         // Clean up old logs (keep last 30 days)

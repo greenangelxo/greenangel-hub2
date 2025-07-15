@@ -1,5 +1,5 @@
-/* Green Angel Login - RGB LED edition */
-/* Vibrant RGB color styling */
+/* ⚡ GREEN ANGEL LOGIN - VIBRANT RGB LED EDITION */
+/* Bright, electric RGB colors with amazing LED vibes */
 
 /* Reset and base styles */
 .angel-login-body,
@@ -20,7 +20,7 @@ body .wll-launcher-button-container {
     display: none !important;
 }
 
-/* Hide all scrollbars */
+/* 🌈 HIDE ALL SCROLLBARS - BULLETPROOF SOLUTION */
 /* Hide scrollbars for all browsers */
 html {
     scrollbar-width: none !important; /* Firefox */
@@ -74,7 +74,7 @@ body::-webkit-scrollbar,
     margin: 0 auto;
 }
 
-/* Main console with RGB LED and subtle shimmer */
+/* ⚡ MAIN CONSOLE - VIBRANT RGB LED WITH SUBTLE SHIMMER */
 .angel-auth-container {
     background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -87,7 +87,7 @@ body::-webkit-scrollbar,
     overflow: hidden;
 }
 
-/* Subtle reflective shimmer effect */
+/* 🌟 SUBTLE REFLECTIVE SHIMMER - CHIC AF */
 .angel-auth-container::after {
     content: '';
     position: absolute;
@@ -113,7 +113,7 @@ body::-webkit-scrollbar,
     50% { transform: rotate(45deg) translateX(100%); opacity: 1; }
 }
 
-/* RGB LED strip with gradient colors */
+/* ⚡ VIBRANT RGB LED STRIP - ELECTRIC COLORS */
 .angel-auth-container::before {
     content: '';
     position: absolute;
@@ -139,7 +139,7 @@ body::-webkit-scrollbar,
     100% { background-position: 300% 50%; }
 }
 
-/* Brand section */
+/* Brand section - WELCOME ANGEL */
 .angel-brand {
     text-align: center;
     margin-bottom: 32px;
@@ -167,7 +167,7 @@ body::-webkit-scrollbar,
     letter-spacing: 0.5px;
 }
 
-/* Tab navigation with RGB styling */
+/* ⚡ TAB NAVIGATION - VIBRANT RGB STYLE */
 .angel-tabs {
     display: flex;
     background: #0f0f0f;
@@ -220,7 +220,7 @@ body::-webkit-scrollbar,
     background-clip: padding-box;
 }
 
-/* Active tab with RGB border */
+/* ⚡ ACTIVE TAB WITH VIBRANT RGB BORDER */
 .angel-tab.active {
     background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
     color: #ffffff;
@@ -256,7 +256,7 @@ body::-webkit-scrollbar,
     100% { background-position: 200% 50%; }
 }
 
-/* RGB hover effect with pulse */
+/* ⚡ VIBRANT RGB HOVER EFFECT - BREATHING PULSE */
 .angel-tab:hover:not(.active) {
     color: rgba(255, 255, 255, 0.8);
     background: rgba(255, 255, 255, 0.05);
@@ -316,7 +316,7 @@ body::-webkit-scrollbar,
     margin: 0;
 }
 
-/* Input styling with RGB mode */
+/* ⚡ INPUT STYLING - VIBRANT RGB MODE */
 .angel-input,
 .angel-select {
     background: #1a1a1a;
@@ -412,7 +412,7 @@ body::-webkit-scrollbar,
     font-weight: bold;
 }
 
-/* Button styling with RGB LED pulse */
+/* ⚡ BUTTON STYLING - VIBRANT RGB LED WITH BREATHING PULSE */
 .angel-button {
     background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
     border: 2px solid transparent;
@@ -429,7 +429,7 @@ body::-webkit-scrollbar,
     background-clip: padding-box;
 }
 
-/* RGB LED border animation */
+/* ⚡ VIBRANT RGB LED BORDER ANIMATION */
 .angel-button::before {
     content: '';
     position: absolute;
@@ -467,7 +467,7 @@ body::-webkit-scrollbar,
     100% { background-position: 300% 50%; }
 }
 
-/* RGB breathing pulse on hover */
+/* ⚡ VIBRANT RGB BREATHING PULSE ON HOVER */
 .angel-button:hover {
     transform: translateY(-2px);
     background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
@@ -534,7 +534,7 @@ body::-webkit-scrollbar,
     50% { opacity: 0.8; color: #ff1493; }
 }
 
-/* Invitation notice with RGB border */
+/* ⚡ VIBRANT RGB INVITATION PORTAL - INSET CONSOLE STYLE */
 .angel-invitation-notice {
     background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -599,7 +599,7 @@ body::-webkit-scrollbar,
     font-weight: 500;
 }
 
-/* IP display with RGB border */
+/* ⚡ EPIC RGB IP DISPLAY - THICKER BORDER */
 .ip-display {
     background: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 100%);
     border: 1px solid transparent;
@@ -777,7 +777,7 @@ body::-webkit-scrollbar,
     color: #ff4500;
 }
 
-/* Display name dice game */
+/* 🎲 DISPLAY NAME DICE GAME - VIBRANT RGB GAMING CONSOLE */
 .angel-name-dice-game {
     background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
     border: 1px solid rgba(255, 20, 147, 0.4);
@@ -788,7 +788,7 @@ body::-webkit-scrollbar,
     overflow: hidden;
 }
 
-/* RGB LED strip at top of dice game */
+/* ⚡ VIBRANT RGB LED STRIP AT TOP OF DICE GAME */
 .angel-name-dice-game::before {
     content: '';
     position: absolute;
@@ -895,7 +895,7 @@ body::-webkit-scrollbar,
     transition: left 0.6s ease;
 }
 
-/* Dice button RGB pulse */
+/* ⚡ VIBRANT RGB DICE BUTTON BREATHING PULSE */
 .angel-dice-button:hover {
     transform: translateY(-2px);
     background: linear-gradient(135deg, #404040 0%, #555555 100%);
