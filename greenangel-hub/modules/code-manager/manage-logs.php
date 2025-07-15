@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel — Log Management for Angel Codes
+// Green Angel — Log Management for Angel Codes
 
 function esc_csv($value) {
     $value = str_replace('"', '""', $value);

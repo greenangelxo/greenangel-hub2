@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel – Server-side enforcement for Angel Code on all registrations
+// Green Angel – Server-side enforcement for Angel Code on all registrations
 // Store validated code for later logging
 $GLOBALS['greenangel_verified_code'] = null;
 /**

@@ -1,29 +1,27 @@
 <?php
-// 🌿 Enqueue orders preview styles
+// Enqueue orders preview styles
 add_action('wp_enqueue_scripts', 'greenangel_enqueue_orders_preview_styles');
 function greenangel_enqueue_orders_preview_styles() {
     if (!is_singular()) return; // Only load on pages/posts
     global $post;
     
-    // 🔍 DEBUG: Let's see what's happening
-    error_log('🌿 DEBUG: Checking for shortcode on page: ' . $post->post_title);
-    error_log('🌿 DEBUG: Post content preview: ' . substr($post->post_content, 0, 200));
+    // Check for shortcode presence
     
     if (has_shortcode($post->post_content, 'greenangel_orders_preview')) {
-        error_log('🌿 DEBUG: Shortcode found! Enqueueing CSS...');
+        // Shortcode found, enqueue CSS
         wp_enqueue_style(
             'greenangel-orders-preview',
             plugin_dir_url(__FILE__) . 'orders-preview.css',
             [],
             '1.0'
         );
-        error_log('🌿 DEBUG: CSS URL: ' . plugin_dir_url(__FILE__) . 'orders-preview.css');
+        // CSS enqueued successfully
     } else {
-        error_log('🌿 DEBUG: Shortcode NOT found!');
+        // Shortcode not found on this page
     }
 }
 
-// 🌿 BACKUP: Always load on specific pages (temporary debug)
+// Force load CSS on pages containing shortcode output
 add_action('wp_enqueue_scripts', 'greenangel_force_enqueue_orders_styles', 20);
 function greenangel_force_enqueue_orders_styles() {
     // Force load CSS on any page containing our shortcode output
@@ -33,10 +31,10 @@ function greenangel_force_enqueue_orders_styles() {
         [],
         time() // Cache busting
     );
-    error_log('🌿 DEBUG: Force-enqueued CSS with timestamp: ' . time());
+    // CSS force-enqueued with cache busting
 }
 
-// 🌿 Green Angel Hub – Orders Preview
+// Green Angel Hub – Orders Preview
 if (!defined('ABSPATH')) exit;
 
 function greenangel_render_orders_list() {
@@ -64,7 +62,7 @@ function greenangel_render_orders_list() {
     ?>
     <div class="greenangel-orders-wrapper">
         <div class="greenangel-orders-container">
-            <!-- 🌿 Order Status Guide Panel -->
+            <!-- Order Status Guide Panel -->
             <div class="ga-panel">
                 <div class="greenangel-status-guide">
                     <div class="guide-title-pill">📋 ORDER STATUS GUIDE</div>
@@ -96,7 +94,7 @@ function greenangel_render_orders_list() {
                 </div>
             </div>
             
-            <!-- 🌿 Orders List Panel -->
+            <!-- Orders List Panel -->
             <div class="ga-orders-panel">
                 <?php if (empty($orders)) : ?>
                     <p class="greenangel-no-orders">No orders found.</p>
@@ -106,7 +104,7 @@ function greenangel_render_orders_list() {
                         $global_index = 0;
                         foreach ($orders_by_year as $year => $year_orders) : 
                     ?>
-                        <!-- 🌟 YEAR SEPARATOR PILL -->
+                        <!-- Year separator pill -->
                         <div class="greenangel-year-separator" data-index="<?php echo $global_index; ?>" style="<?php echo $global_index >= 10 ? 'display:none;' : ''; ?>">
                             <div class="year-pill"><?php echo esc_html($year); ?></div>
                         </div>
@@ -120,7 +118,7 @@ function greenangel_render_orders_list() {
                             $status_slug = $order->get_status();
                             $view_url = esc_url($order->get_view_order_url());
                             
-                            // 🔍 DELIVERY DATE DETECTION - Handles both storage patterns!
+                            // Delivery date detection - handles both storage patterns
                             $delivery_date = null;
                             
                             // Method 1: Try newer format (_delivery_date)
@@ -191,12 +189,12 @@ function greenangel_render_orders_list() {
                                 <span class="order-date"><?php echo esc_html($order_date); ?></span>
                             </div>
                             
-                            <!-- 🌿 Debug removed - delivery dates working perfectly! -->
+                            <!-- Delivery date display -->
                             
                             <div class="order-status-center">
                                 <div class="order-status <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status); ?></div>
                                 
-                                <!-- 🚀 DELIVERY DATE PILL OR PLACEHOLDER -->
+                                <!-- Delivery date pill or placeholder -->
                                 <?php if ($formatted_delivery_date) : ?>
                                     <div class="delivery-date-pill">
                                         Delivery: <?php echo esc_html($formatted_delivery_date); ?>
@@ -229,8 +227,7 @@ function greenangel_render_orders_list() {
         const cards = document.querySelectorAll('.greenangel-order-card, .greenangel-year-separator');
         let visibleCount = 10;
         
-        // DEBUG: log computed style of card #0
-        console.log('DEBUG: card #0 computed display =', getComputedStyle(cards[0]).display);
+        // Initialize card display logic
         
         // Force-hide cards 11+ with !important
         cards.forEach((card,i) => {

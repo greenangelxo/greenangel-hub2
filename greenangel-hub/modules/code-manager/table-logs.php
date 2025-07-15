@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel – Angel Code Log Viewer (Clean Version)
+// Green Angel – Angel Code Log Viewer (Clean Version)
 function greenangel_render_code_log_table() {
     global $wpdb;
     $table = $wpdb->prefix . 'greenangel_code_logs';

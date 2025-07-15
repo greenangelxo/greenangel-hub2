@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel — Toggle & Delete Angel Codes
+// Green Angel — Toggle & Delete Angel Codes
 
 add_action('admin_post_greenangel_toggle_code', function () {
     if (!current_user_can('manage_woocommerce') || empty($_GET['id'])) return;

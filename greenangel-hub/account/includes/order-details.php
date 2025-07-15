@@ -2,7 +2,12 @@
 /**
  * 🌿 Green Angel - Single Order View
  * Location: plugins/greenangel-hub/account/includes/order-details.php
+ * 
+ * 🔧 OVERRIDE TEMPORARILY DISABLED - REMOVE THE RETURN BELOW TO RE-ENABLE
  */
+
+// 🚫 DISABLE OVERRIDE - Comment out this line to re-enable your custom view
+// return;
 
 // First, remove ALL possible Woo view-order hooks
 remove_action('woocommerce_account_view-order_endpoint', 'woocommerce_account_view_order', 10);
@@ -89,6 +94,33 @@ function greenangel_override_view_order_page($order_id) {
         echo '<div class="ga-inner-panel">';
         echo '<h4 class="ga-panel-title">Order Notes</h4>';
         echo '<p>' . wp_kses_post($order->get_customer_note()) . '</p>';
+        echo '</div>';
+    }
+    
+    // 💰 ORDER ACTIONS - Pay/Cancel buttons ONLY for LTC Litecoin orders
+    $actions = wc_get_account_orders_actions($order);
+    $payment_method = $order->get_payment_method_title();
+    
+    if (!empty($actions)) {
+        echo '<div class="ga-inner-panel">';
+        echo '<h4 class="ga-panel-title">Actions</h4>';
+        echo '<div class="ga-order-actions">';
+        
+        foreach ($actions as $key => $action) {
+            // Skip the "view" action since we're already viewing the order
+            if ($key === 'view') continue;
+            
+            // Only show PAY button for LTC Litecoin orders
+            if ($key === 'pay' && $payment_method !== 'LTC Litecoin') {
+                continue;
+            }
+            
+            echo '<a href="' . esc_url($action['url']) . '" class="ga-action-button ga-action-' . esc_attr($key) . '">';
+            echo esc_html($action['name']);
+            echo '</a>';
+        }
+        
+        echo '</div>';
         echo '</div>';
     }
     

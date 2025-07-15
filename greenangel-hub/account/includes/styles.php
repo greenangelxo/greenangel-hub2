@@ -189,6 +189,59 @@ function greenangel_hide_woo_order_elements() {
             margin-left: 0.5rem;
         }
         
+        /* 💰 Order Actions Styling */
+        .ga-order-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .ga-action-button {
+            display: block;
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none !important;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Pay button - make it pop! */
+        .ga-action-pay {
+            background: linear-gradient(135deg, #aed604 0%, #c6f731 100%);
+            color: #222222 !important;
+        }
+        
+        .ga-action-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(174, 214, 4, 0.3);
+        }
+        
+        /* Cancel button - subtle but clear */
+        .ga-action-cancel {
+            background: linear-gradient(135deg, #666 0%, #777 100%);
+            color: #ffffff !important;
+        }
+        
+        .ga-action-cancel:hover {
+            background: linear-gradient(135deg, #f44336 0%, #ff6b6b 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* Any other action buttons */
+        .ga-action-button:not(.ga-action-pay):not(.ga-action-cancel) {
+            background: #444;
+            color: #aed604 !important;
+        }
+        
+        .ga-action-button:not(.ga-action-pay):not(.ga-action-cancel):hover {
+            background: #555;
+            color: #c6f731 !important;
+        }
+        
         /* Responsive styles */
         @media (min-width: 768px) {
             .greenangel-dashboard-wrapper {

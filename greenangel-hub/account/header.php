@@ -1,8 +1,8 @@
 <?php
 /**
- * 🌿 GREEN ANGEL HUB v2.0 - HEADER PROFILE BANNER
+ * GREEN ANGEL HUB v2.0 - HEADER PROFILE BANNER
  * Mobile-first, compact, colorful and absolutely stunning
- * NOW WITH EMOJI IDENTITY SYSTEM! 🎭
+ * NOW WITH EMOJI IDENTITY SYSTEM!
  * ENHANCED: Full dashboard ↔ emoji picker integration!
  */
 
@@ -29,17 +29,17 @@ function ga_render_header_section($user_id) {
     $display_name = esc_html(strlen($raw_display) > $max_length ? 
         mb_substr($raw_display, 0, $max_length - 1) . '…' : $raw_display);
     
-    // 🎭 ENHANCED EMOJI IDENTITY SYSTEM!
+    // ENHANCED EMOJI IDENTITY SYSTEM!
     $user_emoji = get_user_meta($user_id, 'angel_identity_emoji', true);
     $user_identity_name = get_user_meta($user_id, 'angel_identity_name', true);
     $user_identity_bio = get_user_meta($user_id, 'angel_identity_bio', true);
     $identity_set_date = get_user_meta($user_id, 'angel_identity_set_date', true);
     
-    // 🎯 SMART IDENTITY DETECTION!
+    // SMART IDENTITY DETECTION!
     $has_chosen_identity = !empty($user_emoji) && $user_emoji !== '💎';
     $current_emoji = $user_emoji ?: '💎'; // Default to diamond
     
-    // 🎭 GET EMOJI PICKER URL - PLUGIN-WIRED LINK!
+    // GET EMOJI PICKER URL - PLUGIN-WIRED LINK!
     $emoji_picker_url = ga_get_emoji_picker_url();
     
     // WooCommerce customer data
@@ -218,7 +218,7 @@ function ga_render_header_section($user_id) {
                 <?php endif; ?>
                 
                 <div class="ga-member-info">
-                    <!-- 🌟 Shimmering pills -->
+                    <!-- GORGEOUS SHIMMERING PILLS -->
                     <div class="ga-login-pills">
                         <div class="ga-member-pill">
                             <span class="ga-member-pill-icon">💖</span>
@@ -256,7 +256,7 @@ function ga_render_header_section($user_id) {
             }, 1000);
         }
         
-        // 🎨 Add subtle hover enhancement to stats
+        // Add subtle hover enhancement to stats
         const statItems = document.querySelectorAll('.ga-stat-item');
         statItems.forEach(item => {
             item.addEventListener('mouseenter', function() {
@@ -268,7 +268,7 @@ function ga_render_header_section($user_id) {
             });
         });
         
-        // Add click animation to avatar
+        // Add magical click effect to avatar
         const avatar = document.querySelector('.ga-avatar');
         if (avatar) {
             avatar.addEventListener('click', function() {
@@ -282,7 +282,7 @@ function ga_render_header_section($user_id) {
             });
         }
         
-        // 🎭 SMART TOOLTIP SYSTEM
+        // SMART TOOLTIP SYSTEM
         const avatarLink = document.querySelector('.ga-avatar-link');
         if (avatarLink) {
             const hasIdentity = <?php echo $has_chosen_identity ? 'true' : 'false'; ?>;
@@ -298,9 +298,9 @@ function ga_render_header_section($user_id) {
         }
     });
     
-    // 🎯 IDENTITY REFRESH FUNCTION - Called from emoji picker on return
+    // IDENTITY REFRESH FUNCTION - Called from emoji picker on return
     window.refreshDashboardIdentity = function(emoji, identityName, identityBio) {
-        console.log('🎭 Refreshing dashboard identity:', { emoji, identityName, identityBio });
+        console.log('Refreshing dashboard identity:', { emoji, identityName, identityBio });
         
         // Update avatar emoji
         const avatarEmoji = document.querySelector('.ga-avatar');
@@ -385,7 +385,7 @@ function ga_render_header_section($user_id) {
         createIdentityUpdateCelebration();
     };
     
-    // 🎉 IDENTITY UPDATE CELEBRATION
+    // IDENTITY UPDATE CELEBRATION
     function createIdentityUpdateCelebration() {
         const particles = ['✨', '🌟', '💫', '⭐'];
         const avatar = document.querySelector('.ga-avatar');
@@ -419,7 +419,7 @@ function ga_render_header_section($user_id) {
         }
     }
     
-    // 🎭 Add dynamic CSS for enhanced animations
+    // Add dynamic CSS for enhanced animations
     const enhancedStyles = document.createElement('style');
     enhancedStyles.textContent = `
         @keyframes identityBounce {
@@ -493,7 +493,7 @@ function ga_render_header_section($user_id) {
 }
 
 /**
- * 🎭 GET EMOJI PICKER URL - PLUGIN-WIRED FUNCTION!
+ * GET EMOJI PICKER URL - PLUGIN-WIRED FUNCTION!
  */
 function ga_get_emoji_picker_url() {
     // Try to get the page ID from the plugin's stored option
@@ -535,7 +535,7 @@ function ga_get_emoji_picker_url() {
 }
 
 /**
- * 🌿 HELPER: Format Large Numbers
+ * HELPER: Format Large Numbers
  */
 function ga_format_number($number) {
     if ($number >= 1000000) {
@@ -547,7 +547,7 @@ function ga_format_number($number) {
 }
 
 /**
- * 💫 HELPER: Cute Time Ago for Notifications
+ * HELPER: Cute Time Ago for Notifications
  */
 function ga_cute_time_ago($datetime) {
     $time = time() - strtotime($datetime);

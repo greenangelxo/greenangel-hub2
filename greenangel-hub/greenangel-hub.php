@@ -10,7 +10,7 @@ Author URI: https://greenangelshop.com
 
 use Wlr\App\Models\Users;
 
-// 🌿 Load modules
+// Load modules
 require_once plugin_dir_path(__FILE__) . 'modules/dashboard.php';
 require_once plugin_dir_path(__FILE__) . 'modules/ship-today.php';
 require_once plugin_dir_path(__FILE__) . 'orders/orders-preview.php';
@@ -28,17 +28,20 @@ require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/angel-wallet.php'
 require_once plugin_dir_path(__FILE__) . 'modules/angel-wallet/functions.php';
 require_once plugin_dir_path(__FILE__) . 'includes/wallet-products.php';
 
-// 👥 Customers module
+// Maintenance Mode - Angelic Sleep System
+require_once plugin_dir_path(__FILE__) . 'modules/maintenance/maintenance.php';
+
+// NEW CUSTOMER MODULE - The crown jewel of your admin interface!
 require_once plugin_dir_path(__FILE__) . 'modules/customers/customers.php';
 require_once plugin_dir_path(__FILE__) . 'modules/customers/functions.php';
 
-// 🎨 NEW MODULAR EMOJI PICKER SYSTEM
+// NEW MODULAR EMOJI PICKER SYSTEM
 // Load the new modular emoji picker interface (replaces old single files)
 $emoji_modular_interface = plugin_dir_path(__FILE__) . 'account/includes/emoji-picker/emoji-picker-interface.php';
 if (file_exists($emoji_modular_interface)) {
     require_once $emoji_modular_interface;
     
-    // 🎨 Simple emoji picker page creator function (inline since we're modular now)
+    // Simple emoji picker page creator function (inline since we're modular now)
     if (!function_exists('greenangel_create_emoji_picker_page')) {
         function greenangel_create_emoji_picker_page() {
             // Check if we already created this page
@@ -75,7 +78,7 @@ if (file_exists($emoji_modular_interface)) {
         }
     }
     
-    // 🎨 Simple admin tab renderer function (inline since we're modular now)
+    // Simple admin tab renderer function (inline since we're modular now)
     if (!function_exists('greenangel_render_emoji_picker_tab')) {
         function greenangel_render_emoji_picker_tab() {
             echo '<h2>🎨 Emoji Picker - Modular Edition</h2>';
@@ -117,7 +120,7 @@ if (file_exists($emoji_modular_interface)) {
         }
     }
 } else {
-    // 🎨 FALLBACK: Load old emoji picker files if modular system not found
+    // FALLBACK: Load old emoji picker files if modular system not found
     $emoji_picker_page_file = plugin_dir_path(__FILE__) . 'account/includes/emoji-picker-page.php';
     if (file_exists($emoji_picker_page_file)) {
         require_once $emoji_picker_page_file;
@@ -129,11 +132,11 @@ if (file_exists($emoji_modular_interface)) {
     }
 }
 
-// ✅ Load DB installer - KEEP YOUR EXISTING SYSTEM!
+// Load DB installer - KEEP YOUR EXISTING SYSTEM!
 require_once plugin_dir_path(__FILE__) . 'includes/db-install.php';
 add_action('plugins_loaded', 'greenangel_create_code_tables');
 
-// 🪄 Automatically create the custom account page if not exists
+// Automatically create the custom account page if not exists
 register_activation_hook(__FILE__, 'greenangel_create_account_page');
 function greenangel_create_account_page() {
     $slug = 'angel-hub';
@@ -148,7 +151,7 @@ function greenangel_create_account_page() {
     }
 }
 
-// 💸 Auto-Create the Angel Wallet Page
+// Auto-Create the Angel Wallet Page
 register_activation_hook(__FILE__, 'greenangel_create_angel_wallet_page');
 function greenangel_create_angel_wallet_page() {
     if (get_option('greenangel_angel_wallet_page_id')) return;
@@ -167,15 +170,15 @@ function greenangel_create_angel_wallet_page() {
     }
 }
 
-// 🎨 Auto-Create the Emoji Picker Page (now uses modular system)
+// Auto-Create the Emoji Picker Page (now uses modular system)
 if (function_exists('greenangel_create_emoji_picker_page')) {
     register_activation_hook(__FILE__, 'greenangel_create_emoji_picker_page');
 }
 
-// 💳 Auto-Create Wallet Top-up Products
+// Auto-Create Wallet Top-up Products
 register_activation_hook(__FILE__, 'greenangel_create_wallet_topup_products');
 
-// 🔁 SAFE Redirect - only redirect logged-in users to existing Angel Hub page
+// SAFE Redirect - only redirect logged-in users to existing Angel Hub page
 add_action('template_redirect', function () {
     // Only run on account pages for logged-in users
     if (!is_user_logged_in() || !is_account_page()) {
@@ -213,7 +216,7 @@ add_action('template_redirect', function () {
     }
 });
 
-// 🌈 Add to WP Admin menu
+// Add to WP Admin menu
 add_action('admin_menu', 'greenangel_hub_menu');
 function greenangel_hub_menu() {
     add_menu_page(
@@ -227,7 +230,7 @@ function greenangel_hub_menu() {
     );
 }
 
-// 💅 Admin styling + hide notices
+// Admin styling + hide notices
 add_action('admin_head','greenangel_admin_styles');
 function greenangel_admin_styles() { ?>
     <style>
@@ -244,7 +247,7 @@ function greenangel_admin_styles() { ?>
     </style>
 <?php }
 
-// 🌌 Main Admin Page Renderer
+// Main Admin Page Renderer
 function greenangel_hub_page(){
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'dashboard';
     
@@ -513,7 +516,8 @@ function greenangel_hub_page(){
             'delivery-settings' => '🚚 Delivery Settings',
             'stock-check' => '📊 Stock Check',
             'wallet' => '💸 Wallet',
-            'customers' => '👥 Customers',  // Customers module
+            'customers' => '👥 Customers',
+            'maintenance' => '🌙 Maintenance',  // NEW MAINTENANCE TAB
             'tools' => '🛠️ Tools'
         ];
         
@@ -559,8 +563,11 @@ function greenangel_hub_page(){
         case 'wallet':
             greenangel_render_wallet_tab();
             break;
-        case 'customers':  // Customers module
+        case 'customers':  // Customer management module
             greenangel_render_customers_tab();
+            break;
+        case 'maintenance':  // Maintenance mode module
+            greenangel_render_maintenance_tab();
             break;
         case 'emoji-picker':
             // Only call function if it exists

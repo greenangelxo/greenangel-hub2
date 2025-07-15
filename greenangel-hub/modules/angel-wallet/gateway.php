@@ -404,6 +404,11 @@ function greenangel_load_wallet_gateway() {
         public function is_available() {
             if (!is_user_logged_in()) return false;
             
+            // ✅ Hide Angel Wallet when buying top-ups (makes no sense!)
+            if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+                return false;
+            }
+            
             $user_id = get_current_user_id();
             $balance = floatval(get_user_meta($user_id, 'angel_wallet_balance', true));
             $cart_total = floatval(WC()->cart->get_total('edit'));

@@ -1,6 +1,6 @@
-/* 🌿 GREEN ANGEL HUB v2.0 - HEADER PROFILE BANNER */
+/* GREEN ANGEL HUB v2.0 - HEADER PROFILE BANNER */
 /* Mobile-first VERTICAL design, then responsive up */
-/* NOW WITH EMOJI IDENTITY SYSTEM! 🎭 */
+/* NOW WITH EMOJI IDENTITY SYSTEM! */
 /* ENHANCED: Full dashboard ↔ emoji picker integration! */
 
 .ga-header-new {
@@ -47,7 +47,7 @@
   text-align: center;
 }
 
-/* 🎭 AVATAR SECTION - NOW WITH EMOJI IDENTITY SYSTEM! */
+/* AVATAR SECTION - NOW WITH EMOJI IDENTITY SYSTEM! */
 .ga-avatar-section {
   order: 1;
   flex-shrink: 0;
@@ -90,7 +90,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem; /* 🎯 BIGGER EMOJI - FILLS MORE OF THE CIRCLE! */
+  font-size: 2.5rem; /* BIGGER EMOJI - FILLS MORE OF THE CIRCLE! */
   position: relative;
   z-index: 2;
   transition: transform 0.3s ease;
@@ -130,7 +130,7 @@
   }
 }
 
-/* 🎯 Identity chosen state glow effect */
+/* IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
 .ga-avatar.ga-avatar-has-identity {
   border: 2px solid rgba(174, 214, 4, 0.6);
   box-shadow: 
@@ -200,7 +200,7 @@
   }
 }
 
-/* 🌟 GLOW PSEUDO-ELEMENT - IDENTITY NEEDED STATE */
+/* GLOW PSEUDO-ELEMENT - IDENTITY NEEDED STATE */
 .ga-avatar-glow.ga-identity-needed::after {
   content: '';
   position: absolute;
@@ -228,7 +228,7 @@
   }
 }
 
-/* 🌈 Identity chosen state glow effect */
+/* IDENTITY CHOSEN STATE - GORGEOUS LED GLOW! */
 .ga-avatar-glow.ga-identity-chosen::after {
   content: '';
   position: absolute;
@@ -264,7 +264,7 @@
   width: 100%;
 }
 
-/* 🎭 Username profile card - mobile optimized */
+/* GORGEOUS USERNAME PROFILE CARD - MOBILE OPTIMIZED */
 .ga-greeting {
   background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(25, 25, 25, 0.9) 50%, rgba(20, 20, 20, 0.95) 100%);
   border: 1px solid rgba(174, 214, 4, 0.3);
@@ -366,7 +366,7 @@
   50% { background-position: 100% 50%; }
 }
 
-/* 🌟 MEMBER STATUS BADGE - INSIDE THE CARD */
+/* MEMBER STATUS BADGE - INSIDE THE CARD */
 .ga-status-badge-inside {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(26, 26, 26, 0.8) 100%);
   color: rgba(192, 192, 192, 0.9);
@@ -413,7 +413,7 @@
   transform: scale(1.05);
 }
 
-/* 🎭 IDENTITY BIO DISPLAY */
+/* IDENTITY BIO DISPLAY */
 .ga-identity-bio-display {
   font-size: 0.85rem;
   background: linear-gradient(45deg, 
@@ -447,7 +447,7 @@
   50% { background-position: 100% 50%; }
 }
 
-/* 🌟 IDENTITY NAME TAG */
+/* IDENTITY NAME TAG */
 .ga-identity-name-tag {
   font-size: 0.7rem;
   color: rgba(174, 214, 4, 0.9);
@@ -600,7 +600,7 @@
   gap: 0.5rem;
 }
 
-/* 🌟 PROGRESS TEXT PILL */
+/* PROGRESS TEXT PILL */
 .ga-progress-text {
   background: linear-gradient(135deg, rgba(174, 214, 4, 0.15) 0%, rgba(207, 17, 160, 0.15) 50%, rgba(2, 168, 209, 0.05) 100%);
   border: 1px solid rgba(174, 214, 4, 0.3);
@@ -642,7 +642,7 @@
   96.1%, 100% { left: -100%; }
 }
 
-/* 🌟 PERCENTAGE PILL */
+/* PERCENTAGE PILL */
 .ga-progress-percent {
   background: linear-gradient(135deg, rgba(174, 214, 4, 0.2) 0%, rgba(174, 214, 4, 0.1) 100%);
   border: 1px solid rgba(174, 214, 4, 0.4);
@@ -681,7 +681,7 @@
   108.1%, 100% { left: -100%; }
 }
 
-/* 🌈 PROGRESS BAR */
+/* PROGRESS BAR */
 .ga-progress-bar {
   height: 10px;
   background: linear-gradient(135deg, 
@@ -1041,9 +1041,9 @@
   }
 }
 
-/* 🎭 Mobile emoji identity styles */
+/* MOBILE EMOJI IDENTITY - MAKE IT MAGICAL! */
 @media (max-width: 767px) {
-  /* 🌟 BIGGER AVATAR ON MOBILE */
+  /* BIGGER AVATAR ON MOBILE */
   .ga-avatar-glow,
   .ga-avatar {
     width: 100px !important; /* Up from 80px */
@@ -1051,8 +1051,8 @@
   }
   
   .ga-avatar {
-    font-size: 4.2rem !important; /* 🎯 MUCH BIGGER EMOJI! */
-    /* 🌈 LED COLOR-SHIFTING BACKGROUND */
+    font-size: 4.2rem !important; /* MUCH BIGGER EMOJI! */
+    /* LED COLOR-SHIFTING BACKGROUND */
     background: linear-gradient(45deg, 
       #2a4a2a,  /* dark green */
       #3a2a4a,  /* dark purple */
@@ -1072,7 +1072,7 @@
       0 0 40px rgba(174, 214, 4, 0.2) !important;
   }
   
-  /* 🌟 BRIGHT LED SHIMMER OVERLAY */
+  /* BRIGHT LED SHIMMER OVERLAY */
   .ga-avatar::before {
     content: '';
     position: absolute;
@@ -1095,12 +1095,12 @@
   /* 💎 EMOJI STAYS ON TOP - SUPER HIGH Z-INDEX */
   .ga-avatar > * {
     position: relative;
-    z-index: 10 !important; /* 🎯 MUCH HIGHER - ABOVE EVERYTHING! */
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* 💫 ADD SUBTLE SHADOW FOR POP */
+    z-index: 10 !important; /* MUCH HIGHER - ABOVE EVERYTHING! */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* ADD SUBTLE SHADOW FOR POP */
     filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)); /* ✨ SUBTLE GLOW */
   }
   
-  /* 🌈 Rainbow glow effect */
+  /* MAGICAL RAINBOW GLOW EFFECT */
   .ga-avatar-glow::after {
     content: '';
     position: absolute;
@@ -1175,7 +1175,7 @@
       0 8px 40px rgba(0, 0, 0, 0.5) !important;
   }
   
-  /* 🌟 Make the whole avatar section more prominent */
+  /* Make the whole avatar section more prominent */
   .ga-avatar-section {
     transform: scale(1.1);
     margin: 0.5rem 0 1rem 0;
@@ -1206,7 +1206,7 @@
   }
 }
 
-/* 🎨 ENHANCED ANIMATIONS FOR DESKTOP */
+/* ENHANCED ANIMATIONS FOR DESKTOP */
 @keyframes ledColorShift {
   0%, 100% { background-position: 0% 50%; }
   25% { background-position: 100% 25%; }
@@ -1282,7 +1282,7 @@
   }
   
   .ga-avatar {
-    font-size: 2.7rem; /* 🎯 BIGGER FOR TABLET TOO */
+    font-size: 2.7rem; /* BIGGER FOR TABLET TOO */
   }
   
   .ga-welcome-section {
@@ -1366,8 +1366,8 @@
   }
   
   .ga-avatar {
-    font-size: 3.5rem; /* 🎯 BIGGER FOR DESKTOP */
-    /* 🌈 LED COLOR-SHIFTING BACKGROUND FOR DESKTOP */
+    font-size: 3.5rem; /* BIGGER FOR DESKTOP */
+    /* LED COLOR-SHIFTING BACKGROUND FOR DESKTOP */
     background: linear-gradient(45deg, 
       #2a4a2a,  /* dark green */
       #3a2a4a,  /* dark purple */
@@ -1387,7 +1387,7 @@
       0 0 40px rgba(174, 214, 4, 0.2) !important;
   }
   
-  /* 🌟 BRIGHT LED SHIMMER OVERLAY FOR DESKTOP */
+  /* BRIGHT LED SHIMMER OVERLAY FOR DESKTOP */
   .ga-avatar::before {
     content: '';
     position: absolute;
@@ -1487,8 +1487,8 @@
   .ga-avatar {
     width: 110px;
     height: 110px;
-    font-size: 3.8rem; /* 🎯 MAXIMUM SIZE FOR ULTRA-WIDE */
-    /* 🌈 LED COLOR-SHIFTING BACKGROUND FOR ULTRA-WIDE */
+    font-size: 3.8rem; /* MAXIMUM SIZE FOR ULTRA-WIDE */
+    /* LED COLOR-SHIFTING BACKGROUND FOR ULTRA-WIDE */
     background: linear-gradient(45deg, 
       #2a4a2a,  /* dark green */
       #3a2a4a,  /* dark purple */
@@ -1508,7 +1508,7 @@
       0 0 40px rgba(174, 214, 4, 0.2) !important;
   }
   
-  /* 🌟 BRIGHT LED SHIMMER OVERLAY FOR ULTRA-WIDE */
+  /* BRIGHT LED SHIMMER OVERLAY FOR ULTRA-WIDE */
   .ga-avatar::before {
     content: '';
     position: absolute;
@@ -1595,14 +1595,14 @@
   }
 }
 
-/* 🎭 ACCESSIBILITY IMPROVEMENTS */
+/* ACCESSIBILITY IMPROVEMENTS */
 .ga-avatar-link:focus-visible {
   outline: 3px solid #aed604;
   outline-offset: 3px;
   border-radius: 50%;
 }
 
-/* 🎨 REDUCED MOTION SUPPORT */
+/* REDUCED MOTION SUPPORT */
 @media (prefers-reduced-motion: reduce) {
   .ga-avatar.ga-avatar-needs-identity {
     animation: none;

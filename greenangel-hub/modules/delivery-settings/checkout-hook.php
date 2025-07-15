@@ -1,6 +1,11 @@
 <?php
-// Show delivery date field at checkout
+// Show delivery date field at checkout - FIXED VERSION
 add_action('woocommerce_after_order_notes', function($checkout) {
+    // ✅ SIMPLE FIX: Check if cart contains only top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Don't show delivery date for wallet top-ups
+    }
+    
     echo '<div id="greenangel_delivery_date_wrap">';
     woocommerce_form_field('delivery_date', [
         'type' => 'text',
@@ -12,8 +17,57 @@ add_action('woocommerce_after_order_notes', function($checkout) {
     echo '</div>';
 });
 
-// Force validation of delivery date field
+// 🚨 ENHANCED VALIDATION FOR WOOFUNNELS - Multiple validation checkpoints
+// Priority 1: WooFunnels specific validation hooks
+add_action('wfacp_checkout_process_before', function() {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
+    error_log('🚚 WFACP validation triggered');
+    if (empty($_POST['delivery_date'])) {
+        error_log('🚨 WFACP - NO DELIVERY DATE');
+        wc_add_notice(__('🚚 Please select a delivery date before completing your order.'), 'error');
+    }
+}, 5);
+
+// Priority 2: High priority WooCommerce validation
 add_action('woocommerce_checkout_process', function() {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
+    error_log('🚚 Standard WC validation triggered');
+    if (empty($_POST['delivery_date'])) {
+        error_log('🚨 WC Standard - NO DELIVERY DATE');
+        wc_add_notice(__('🚚 Please select a delivery date before completing your order.'), 'error');
+    }
+}, 1); // VERY HIGH PRIORITY
+
+// Priority 3: Alternative validation hook
+add_action('woocommerce_after_checkout_validation', function($data, $errors) {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
+    error_log('🚚 After validation hook triggered');
+    $delivery_date = $data['delivery_date'] ?? $_POST['delivery_date'] ?? '';
+    if (empty($delivery_date)) {
+        error_log('🚨 After validation - NO DELIVERY DATE');
+        $errors->add('delivery_date', __('🚚 Please select a delivery date before completing your order.'));
+    }
+}, 5, 2);
+
+// Force validation of delivery date field - FIXED VERSION
+add_action('woocommerce_checkout_process', function() {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
     if (empty($_POST['delivery_date'])) {
         wc_add_notice(__('Please select a delivery date before completing your order.'), 'error');
     }
@@ -21,11 +75,25 @@ add_action('woocommerce_checkout_process', function() {
 
 // Save the delivery date to the order
 add_action('woocommerce_checkout_create_order', function($order, $data) {
+    // Priority 4: Nuclear option - Block order creation if no delivery date - FIXED VERSION
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        error_log('✅ Top-up only order - skipping delivery date requirement');
+        return; // Skip delivery date requirement for wallet top-ups
+    }
+    
+    error_log('🚚 Order creation hook triggered');
+    $delivery_date = $_POST['delivery_date'] ?? '';
+    if (empty($delivery_date)) {
+        error_log('🚨 Order creation - NO DELIVERY DATE - THROWING EXCEPTION');
+        throw new Exception('🚚 Delivery date is required. Please go back and select a delivery date.');
+    }
+    
     if (!empty($_POST['delivery_date'])) {
         $date = sanitize_text_field($_POST['delivery_date']);
         $order->update_meta_data('_delivery_date', $date);
+        error_log('✅ DELIVERY DATE SAVED TO ORDER: ' . $date);
     }
-}, 10, 2);
+}, 5, 2);
 
 // Show the delivery date in the admin panel
 add_action('woocommerce_admin_order_data_after_shipping_address', function($order) {
@@ -177,11 +245,92 @@ add_filter('woocommerce_email_order_meta_fields', function($fields, $sent_to_adm
     return $fields;
 }, 10, 3);
 
+// 🚨 WooFunnels AJAX validation hooks - FIXED VERSION
+add_action('wp_ajax_wfacp_checkout_form_process', function() {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
+    if (empty($_POST['delivery_date'])) {
+        wp_send_json_error(['message' => '🚚 Please select a delivery date.']);
+    }
+}, 1);
 
+add_action('wp_ajax_nopriv_wfacp_checkout_form_process', function() {
+    // ✅ SIMPLE FIX: Don't validate delivery date for wallet top-ups
+    if (function_exists('greenangel_cart_contains_only_topups') && greenangel_cart_contains_only_topups()) {
+        return; // Skip validation for wallet top-ups
+    }
+    
+    if (empty($_POST['delivery_date'])) {
+        wp_send_json_error(['message' => '🚚 Please select a delivery date.']);
+    }
+}, 1);
+
+// 🚨 Emergency fallback - cancel orders without delivery dates - FIXED VERSION
+add_action('woocommerce_new_order', function($order_id) {
+    $order = wc_get_order($order_id);
+    if (!$order) return;
+    
+    // ✅ SIMPLE FIX: Don't cancel top-up orders
+    if (function_exists('greenangel_cart_contains_only_topups')) {
+        // Check if this order contains only top-ups by examining order items
+        $items = $order->get_items();
+        $is_topup_only = true;
+        
+        foreach ($items as $item) {
+            $product = $item->get_product();
+            if (!$product) continue;
+            
+            $product_id = $product->get_id();
+            $is_topup = false;
+            
+            // Same logic as in wallet-shipping.php
+            if (has_term('top-up', 'product_cat', $product_id)) {
+                $is_topup = true;
+            }
+            
+            $product_name = strtolower($product->get_name());
+            if (strpos($product_name, 'top-up') !== false || 
+                strpos($product_name, 'wallet') !== false ||
+                strpos($product_name, 'credit') !== false ||
+                preg_match('/£\d+\s*(top.?up|credit|wallet)/i', $product_name)) {
+                $is_topup = true;
+            }
+            
+            $product_sku = strtolower($product->get_sku());
+            if (strpos($product_sku, 'topup') !== false || 
+                strpos($product_sku, 'wallet') !== false ||
+                strpos($product_sku, 'credit') !== false) {
+                $is_topup = true;
+            }
+            
+            if (!$is_topup) {
+                $is_topup_only = false;
+                break;
+            }
+        }
+        
+        if ($is_topup_only) {
+            error_log('✅ Top-up only order - skipping delivery date check: ' . $order_id);
+            return; // Don't cancel top-up orders
+        }
+    }
+    
+    $delivery_date = $order->get_meta('_delivery_date');
+    if (empty($delivery_date)) {
+        error_log('🚨 EMERGENCY - Order created without delivery date, cancelling: ' . $order_id);
+        $order->update_status('cancelled', 'Automatically cancelled - no delivery date provided');
+        $order->add_order_note('Order automatically cancelled because no delivery date was selected at checkout.');
+    }
+}, 5);
 
 // Enqueue Flatpickr + inject delivery settings
 add_action('wp_enqueue_scripts', function() {
+    // ✅ FIXED: Load on checkout page, but NOT on order-received/thank-you pages
     if (!is_checkout()) return;
+    if (is_wc_endpoint_url('order-received')) return; // Block thank you page specifically
     wp_enqueue_script('flatpickr', 'https://cdn.jsdelivr.net/npm/flatpickr', [], null, true);
     wp_enqueue_style('flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css');
     
@@ -196,10 +345,29 @@ add_action('wp_enqueue_scripts', function() {
     ];
     wp_add_inline_script('flatpickr', 'window.greenAngelDelivery = ' . json_encode($settings) . ';', 'before');
     
-    // Initialise Flatpickr with delivery limit checking
+    // Initialise Flatpickr with delivery limit checking - ENHANCED WITH TOP-UP CHECK
     wp_add_inline_script('flatpickr', <<<JS
 document.addEventListener("DOMContentLoaded", function() {
     console.log('=== GREEN ANGEL DELIVERY SETUP ===');
+    
+    // ✅ EMERGENCY FIX: Don't run on order confirmation/thank you pages - but be more specific
+    if (window.location.href.includes('order-received') || 
+        document.querySelector('.woocommerce-order-received') ||
+        document.querySelector('.woocommerce-thankyou-order-received')) {
+        console.log('✅ On order confirmation page - skipping delivery setup completely');
+        return;
+    }
+    
+    // ✅ IMPROVED FIX: Only skip delivery setup if we're DEFINITELY sure it's top-up only
+    const isDefinitelyTopupOnly = document.body.classList.contains('topup-only-cart') &&
+                                 document.querySelector('.angel-instant-notice');
+    
+    if (isDefinitelyTopupOnly) {
+        console.log('✅ Confirmed top-up only cart - skipping delivery date setup');
+        return;
+    }
+    
+    console.log('🚚 Setting up delivery date picker for regular products');
     
     if (!window.greenAngelDelivery) {
         console.error('greenAngelDelivery data not found!');
@@ -300,7 +468,15 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Initialize Flatpickr with proper settings
     checkDeliveryCapacity(datesToCheck).then(() => {
-        const fp = flatpickr("input[name='delivery_date']", {
+        const deliveryField = document.querySelector("input[name='delivery_date']");
+        if (!deliveryField) {
+            console.error('❌ Delivery date field not found!');
+            return;
+        }
+        
+        console.log('✅ Found delivery field, initializing Flatpickr...');
+        
+        const fp = flatpickr(deliveryField, {
             dateFormat: "Y-m-d",
             altInput: true,
             altFormat: "l, j F Y",
@@ -337,6 +513,105 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         
         console.log('✅ Delivery date picker initialized successfully');
+    });
+    
+    // 🚨 ENHANCED JAVASCRIPT VALIDATION FOR WOOFUNNELS - UPDATED WITH TOP-UP CHECK
+    console.log('🚚 Adding WooFunnels validation script');
+    
+    // Find ALL possible submit buttons (WooFunnels uses different ones)
+    let submitButtons = Array.from(document.querySelectorAll(
+        'button[type="submit"], ' +
+        'input[type="submit"], ' +
+        '.wfacp-next-btn-wrap button, ' +
+        '#place_order, ' +
+        '[id*="place"], ' +
+        '[class*="place"], ' +
+        '[class*="order"], ' +
+        '.place-order button'
+    ));
+    
+    // Also find buttons by text content
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        if (text.includes('place order') || text.includes('complete') || text.includes('submit')) {
+            submitButtons.push(button);
+        }
+    });
+    
+    console.log('🚚 Found submit buttons:', submitButtons.length);
+    
+    submitButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            console.log('🚚 Submit button clicked:', this);
+            
+            // ✅ EMERGENCY FIX: Better top-up detection for validation
+            const checkoutContent = document.body.innerHTML;
+            const hasInstantDelivery = checkoutContent.includes('Instant Delivery');
+            const hasTopupNotice = checkoutContent.includes('Angel Wallet Top-Up');
+            const hasTopupClass = document.body.classList.contains('topup-only-cart');
+            const isTopupCart = hasInstantDelivery || hasTopupNotice || hasTopupClass || isDefinitelyTopupOnly;
+            
+            if (isTopupCart) {
+                console.log('✅ Top-up cart detected - skipping ALL delivery validation');
+                return true; // Allow submission
+            }
+            
+            const deliveryField = document.querySelector('[name="delivery_date"]');
+            console.log('🚚 Delivery field:', deliveryField);
+            console.log('🚚 Delivery value:', deliveryField ? deliveryField.value : 'FIELD NOT FOUND');
+            
+            if (!deliveryField || !deliveryField.value || deliveryField.value.trim() === '') {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                console.error('🚨 BLOCKING SUBMIT - NO DELIVERY DATE');
+                alert('🚚 Please select a delivery date before placing your order.');
+                
+                // Scroll to delivery date section
+                const deliverySection = document.querySelector('#greenangel_delivery_date_wrap, [data-id*="delivery"], .delivery');
+                if (deliverySection) {
+                    deliverySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                return false;
+            }
+            
+            console.log('✅ Delivery validation passed:', deliveryField.value);
+        });
+    });
+    
+    // Also intercept form submissions
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            console.log('🚚 Form submit intercepted:', this);
+            
+            // ✅ EMERGENCY FIX: Better top-up detection for form validation
+            const checkoutContent = document.body.innerHTML;
+            const hasInstantDelivery = checkoutContent.includes('Instant Delivery');
+            const hasTopupNotice = checkoutContent.includes('Angel Wallet Top-Up');
+            const hasTopupClass = document.body.classList.contains('topup-only-cart');
+            const isTopupCart = hasInstantDelivery || hasTopupNotice || hasTopupClass || isDefinitelyTopupOnly;
+            
+            if (isTopupCart) {
+                console.log('✅ Top-up cart - skipping form delivery validation');
+                return true; // Allow submission
+            }
+            
+            const deliveryField = this.querySelector('[name="delivery_date"]');
+            if (deliveryField && (!deliveryField.value || deliveryField.value.trim() === '')) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                console.error('🚨 BLOCKING FORM SUBMIT - NO DELIVERY DATE');
+                alert('🚚 Please select a delivery date before placing your order.');
+                
+                return false;
+            }
+        });
     });
 });
 JS);

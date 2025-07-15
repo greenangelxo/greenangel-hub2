@@ -1,7 +1,7 @@
-/* 🌿 GREEN ANGEL HUB v2.0 - SHARED FOUNDATION */
+/* GREEN ANGEL HUB v2.0 - SHARED FOUNDATION */
 
 :root {
-  /* 🎨 Brand Colors */
+  /* Brand Colors */
   --ga-primary: #aed604;
   --ga-primary-light: #c6f731;
   --ga-primary-dark: #9bc003;
@@ -13,7 +13,7 @@
   --ga-warning: #ff9800;
   --ga-error: #f44336;
   
-  /* 🌙 Dark Theme */
+  /* Dark Theme */
   --ga-bg-primary: #1a1a1a;
   --ga-bg-secondary: #2a2a2a;
   --ga-bg-tertiary: #333333;
@@ -34,7 +34,7 @@
   --ga-space-xl: 2rem;
   --ga-space-2xl: 2.5rem;
   
-  /* 🎭 Borders & Radius */
+  /* Borders & Radius */
   --ga-radius-sm: 8px;
   --ga-radius-md: 12px;
   --ga-radius-lg: 16px;
@@ -43,13 +43,13 @@
   --ga-border-color: #444;
   --ga-border-hover: var(--ga-primary);
   
-  /* ✨ Shadows */
+  /* Shadows */
   --ga-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
   --ga-shadow-md: 0 4px 15px rgba(0, 0, 0, 0.2);
   --ga-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.25);
   --ga-shadow-glow: 0 4px 15px rgba(174, 214, 4, 0.3);
   
-  /* 🎬 Transitions */
+  /* Transitions */
   --ga-transition-fast: 0.2s ease;
   --ga-transition-smooth: 0.3s ease;
   --ga-transition-slow: 0.5s ease;
@@ -63,7 +63,7 @@
   --ga-max-width: 1400px;
 }
 
-/* 🌿 Base Styles */
+/* Base Styles */
 .ga-hub {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: transparent;
@@ -77,7 +77,7 @@
   box-sizing: border-box;
 }
 
-/* 🎨 Gradient Utilities */
+/* Gradient Utilities */
 .ga-gradient-primary {
   background: linear-gradient(135deg, var(--ga-primary) 0%, var(--ga-primary-light) 100%);
 }
@@ -98,7 +98,7 @@
   background: linear-gradient(135deg, var(--ga-bg-glass) 0%, rgba(42, 42, 42, 0.8) 100%);
 }
 
-/* 🏗️ Layout Utilities */
+/* Layout Utilities */
 .ga-container {
   width: 100%;
   max-width: var(--ga-max-width);
@@ -137,7 +137,7 @@
   flex-direction: column;
 }
 
-/* 🎴 Card Components */
+/* Card Components */
 .ga-card {
   background: var(--ga-gradient-dark);
   border: 1px solid var(--ga-border-color);
@@ -166,7 +166,7 @@
   transform: scale(0.98);
 }
 
-/* ✨ Shimmer Effect (NO GLOW!) */
+/* Shimmer Effect (NO GLOW!) */
 .ga-shimmer {
   position: relative;
   overflow: hidden;
@@ -191,7 +191,7 @@
   height: 300px;
 }
 
-/* 🎯 Button Base */
+/* Button Base */
 .ga-btn {
   display: inline-flex;
   align-items: center;
@@ -236,7 +236,7 @@
   border-color: var(--ga-primary);
 }
 
-/* 🏷️ Pills & Tags */
+/* Pills & Tags */
 .ga-pill {
   display: inline-block;
   padding: 0.4rem 0.8rem;
@@ -281,7 +281,7 @@
   font-weight: 500;
 }
 
-/* 🎭 Animations */
+/* Animations */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -325,7 +325,7 @@
   50% { opacity: 0.7; }
 }
 
-/* 🎨 State Classes */
+/* State Classes */
 .ga-hidden { display: none !important; }
 .ga-loading { animation: pulse 1.5s infinite; }
 .ga-disabled { opacity: 0.5; cursor: not-allowed !important; }
@@ -368,7 +368,7 @@
   .ga-grid-desktop-5 { grid-template-columns: repeat(5, 1fr); }
 }
 
-/* 🎯 Focus & Accessibility */
+/* Focus & Accessibility */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -384,7 +384,7 @@
   }
 }
 
-/* 🔧 DASHBOARD LEVEL SPACING CONTROL - Add this to your main CSS or shared.css */
+/* DASHBOARD LEVEL SPACING CONTROL - Add this to your main CSS or shared.css */
 
 /* Remove default margins from all sections and control spacing at dashboard level */
 .ga-hub .ga-header-new,
@@ -402,14 +402,14 @@
 }
 
 .ga-hub .ga-notifications-section {
-  margin-bottom: 1.25rem !important; /* 🔧 Slightly more breathing room */
+  margin-bottom: 1.25rem !important; /* Slightly more breathing room */
 }
 
 .ga-hub .ga-tiles-section {
   margin-bottom: 1.5rem !important;
 }
 
-/* 🔧 FIX: Make Angel Hub title same size as Notifications */
+/* FIX: Make Angel Hub title same size as Notifications */
 .ga-tiles-title .ga-tiles-text {
   font-size: 1rem !important; /* Match notifications text size */
 }

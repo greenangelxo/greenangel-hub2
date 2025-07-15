@@ -1,9 +1,9 @@
 <?php
-// 🌿 Green Angel Hub – NFC Card Manager Module
+// Green Angel Hub – NFC Card Manager Module
 
 use Wlr\App\Models\Users;
 
-// 🔁 Save Card Assignment
+// Save Card Assignment
 add_action('admin_post_greenangel_save_card_status', 'greenangel_save_card_status');
 function greenangel_save_card_status() {
     if (!current_user_can('manage_woocommerce')) {

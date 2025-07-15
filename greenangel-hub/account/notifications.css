@@ -1,4 +1,4 @@
-/* ✨ AUTO-DISMISS ANIMATION */
+/* AUTO-DISMISS ANIMATION */
 .ga-notification.dismissing {
   animation: slideOutDark 0.3s ease forwards;
 }
@@ -18,7 +18,7 @@
 /* Premium LED-inspired design with subtle shimmer effects */
 /* NOW BEAUTIFULLY POSITIONED AFTER HEADER SECTION */
 
-/* 🌟 FULLY ROUNDED NOTIFICATIONS CONTAINER - PERFECT FLOW */
+/* FULLY ROUNDED NOTIFICATIONS CONTAINER - PERFECT FLOW */
 .ga-notifications-section {
   background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
   border: 1px solid rgba(174, 214, 4, 0.2);
@@ -32,7 +32,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* LED strip styling */
+/* LED strip on the container for gorgeous effect */
 .ga-notifications-section::before {
   content: '';
   position: absolute;
@@ -58,7 +58,7 @@
   100% { transform: translateX(100%); }
 }
 
-/* 🌟 SPECIAL POSITIONING CLASS FOR TOP PLACEMENT */
+/* SPECIAL POSITIONING CLASS FOR TOP PLACEMENT */
 .ga-notifications-top-position {
   margin-top: 0;
   margin-bottom: 1rem;
@@ -318,7 +318,7 @@
   opacity: 0.7;
 }
 
-/* 🎨 NOTIFICATION TYPE COLORS - LED INSPIRED */
+/* NOTIFICATION TYPE COLORS - LED INSPIRED */
 .ga-notification.type-points { 
   border-left-color: #aed604;
 }
@@ -351,7 +351,7 @@
   background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(42, 42, 42, 0.95) 100%);
 }
 
-/* 🎭 NOTIFICATION ICON - LED STYLE */
+/* NOTIFICATION ICON - LED STYLE */
 .ga-notification-icon {
   font-size: 1.5rem;
   flex-shrink: 0;
@@ -488,7 +488,7 @@
   box-shadow: 0 0 8px rgba(244, 67, 54, 0.3);
 }
 
-/* 🎯 ACTION BUTTONS - PREMIUM DARK */
+/* ACTION BUTTONS - PREMIUM DARK */
 .ga-notification-actions {
   display: flex;
   gap: var(--ga-space-xs);
@@ -642,7 +642,7 @@
   left: 100%;
 }
 
-/* 🌟 CONFIRMATION MODAL */
+/* CONFIRMATION MODAL */
 .ga-modal-overlay {
   position: fixed;
   top: 0;
@@ -762,7 +762,7 @@
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
-/* 🌟 Slide-in animation on page load */
+/* GORGEOUS SLIDE-IN ANIMATION ON PAGE LOAD */
 @keyframes slideInFromTop {
   from {
     opacity: 0;
@@ -855,7 +855,7 @@
   }
 }
 
-/* 🌟 ULTRA WIDE - MAXIMUM LUXURY */
+/* ULTRA WIDE - MAXIMUM LUXURY */
 @media (min-width: 1440px) {
   .ga-notifications-header {
     padding: 1.5rem 2rem;

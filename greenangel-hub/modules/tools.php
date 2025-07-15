@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel Hub – Tools Module with Notification Center
+// Green Angel Hub – Tools Module with Notification Center
 
 function greenangel_copy_login_form() {
     $source = plugin_dir_path(__FILE__) . 'assets/form-login.php';

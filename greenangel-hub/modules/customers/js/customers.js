@@ -1,6 +1,6 @@
 /**
  * 🎮 Customer Module JavaScript
- * Interactive functionality for the customer management interface
+ * Interactive functionality for the gorgeous customer management interface
  */
 
 jQuery(document).ready(function($) {

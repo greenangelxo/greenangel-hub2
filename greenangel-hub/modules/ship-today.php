@@ -1,9 +1,9 @@
 <?php
-// 🌱 Green Angel Hub – Ship Today Module (Updated for Format Crossover)
+// Green Angel Hub – Ship Today Module (Updated for Format Crossover)
 
 define('GREENANGEL_SHIP_TODAY_LOG', plugin_dir_path(__FILE__) . '/../logs/ship-today-log.txt');
 
-// 🧠 UI Callback
+// UI Callback
 function greenangel_render_ship_today_tab() {
     ?>
     <style>
@@ -319,7 +319,7 @@ add_action('wp_ajax_greenangel_ship_today_run', function() {
     wp_die();
 });
 
-// 🔍 AJAX: Load Log
+// AJAX: Load Log
 add_action('wp_ajax_greenangel_ship_today_log', function() {
     if (!current_user_can('manage_woocommerce')) wp_die('Permission denied');
     echo file_exists(GREENANGEL_SHIP_TODAY_LOG) ? file_get_contents(GREENANGEL_SHIP_TODAY_LOG) : '';

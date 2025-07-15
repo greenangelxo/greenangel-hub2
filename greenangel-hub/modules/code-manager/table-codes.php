@@ -1,5 +1,5 @@
 <?php
-// 🌿 Green Angel – Angel Code Table
+// Green Angel – Angel Code Table
 require_once plugin_dir_path(__FILE__) . 'manage-code.php';
 
 function greenangel_render_code_table() {

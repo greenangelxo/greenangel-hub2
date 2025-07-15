@@ -2,14 +2,14 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-// 🌿 Green Angel – Registration Handler via Angel Code
+// Green Angel – Registration Handler via Angel Code
 function greenangel_handle_registration() {
-    error_log("💥 Running registration handler...");
+    error_log("Running registration handler...");
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
     global $wpdb;
 
-    // 🧼 Sanitize inputs
+    // Sanitize inputs
     $email         = sanitize_email($_POST['email'] ?? '');
     $password      = $_POST['password'] ?? '';
     $angel_code    = sanitize_text_field($_POST['angel_code'] ?? '');
@@ -17,12 +17,12 @@ function greenangel_handle_registration() {
     $birth_year    = absint($_POST['birth_year'] ?? 0);
     $first_name    = sanitize_text_field($_POST['first_name'] ?? '');
     $last_name     = sanitize_text_field($_POST['last_name'] ?? '');
-    $display_name  = sanitize_text_field($_POST['display_name'] ?? ($first_name . ' ' . $last_name)); // 💫 New line
+    $display_name  = sanitize_text_field($_POST['display_name'] ?? ($first_name . ' ' . $last_name)); // New line
 
     // Store the email to persist across redirect
     setcookie('greenangel_reg_email', $email, time() + 300, '/');
 
-    // ✅ Validate inputs
+    // Validate inputs
     if (!$email || !$password || !$angel_code || !$birth_month || !$birth_year || !$first_name || !$last_name) {
         error_log("❌ Missing fields: email=" . ($email ? 'yes' : 'no') . ", password=" . ($password ? 'yes' : 'no') . ", code=" . ($angel_code ? 'yes' : 'no') . ", birth_month=" . ($birth_month ? 'yes' : 'no') . ", birth_year=" . ($birth_year ? 'yes' : 'no') . ", first_name=" . ($first_name ? 'yes' : 'no') . ", last_name=" . ($last_name ? 'yes' : 'no'));
         wp_safe_redirect(add_query_arg('greenangel_error', 'missing_fields', wc_get_page_permalink('myaccount')));
@@ -37,7 +37,7 @@ function greenangel_handle_registration() {
         exit;
     }
 
-    // 🔎 Check Angel Code in DB
+    // 🎯 UPDATED: Check Angel Code in DB using unified structure
     $table = $wpdb->prefix . 'greenangel_codes';
     $code = $wpdb->get_row($wpdb->prepare("
         SELECT * FROM $table
@@ -89,7 +89,7 @@ function greenangel_handle_registration() {
     update_user_meta($user_id, 'shipping_first_name', $first_name);
     update_user_meta($user_id, 'shipping_last_name', $last_name);
 
-    // 📜 Log Angel Code usage
+    // 📜 Log Angel Code usage (unlimited use - no tracking needed!)
     $wpdb->insert($wpdb->prefix . 'greenangel_code_logs', [
         'user_id'    => $user_id,
         'email'      => $email,
@@ -107,7 +107,7 @@ function greenangel_handle_registration() {
     wp_set_auth_cookie($user_id, true); // true for "remember me"
     do_action('wp_login', $email, get_user_by('ID', $user_id));
 
-    error_log("✅ Registration successful! User created with ID $user_id, email $email, using code $angel_code");
+    error_log("✅ Registration successful! User created with ID $user_id, email $email, using code $angel_code (UNLIMITED USE)");
     // ✅ Redirect to Woo My Account with success message
     wp_safe_redirect(add_query_arg('greenangel_success', '1', wc_get_page_permalink('myaccount')));
     exit;

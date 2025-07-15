@@ -1,4 +1,4 @@
-/* 🌿 GREEN ANGEL HUB v2.0 - ELEGANT REFERRAL CONSOLE */
+/* GREEN ANGEL HUB v2.0 - ELEGANT REFERRAL CONSOLE */
 /* Sophisticated, premium styling with refined dark aesthetics */
 
 .ga-referral-console {
@@ -6,7 +6,7 @@
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* 🎮 PREMIUM CONSOLE CONTAINER */
+/* PREMIUM CONSOLE CONTAINER */
 .ga-referral-container {
   background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
   border: 1px solid rgba(174, 214, 4, 0.2);
@@ -59,7 +59,7 @@
   }
 }
 
-/* 🎯 CONSOLE HEADER - REFINED STYLING */
+/* CONSOLE HEADER - REFINED STYLING */
 .ga-console-header {
   margin-bottom: 1.5rem;
   text-align: left;
@@ -127,7 +127,7 @@
   text-align: right;
 }
 
-/* 🌟 MOBILE HEADER ALIGNMENT */
+/* MOBILE HEADER ALIGNMENT */
 @media (max-width: 767px) {
   .ga-console-header {
     flex-direction: column;
@@ -146,7 +146,7 @@
   }
 }
 
-/* 🎯 SHARING GRID - SIDE BY SIDE */
+/* SHARING GRID - SIDE BY SIDE */
 .ga-sharing-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -155,7 +155,7 @@
   z-index: 3;
 }
 
-/* 🚀 SHARE CARDS - ELEGANT & REFINED */
+/* SHARE CARDS - ELEGANT & REFINED */
 .ga-share-card {
   background: linear-gradient(145deg, 
     rgba(20, 20, 20, 0.98) 0%, 
@@ -209,7 +209,7 @@
   transform: translateY(-2px);
 }
 
-/* 🎨 CARD HEADERS - CLEAN & SOPHISTICATED */
+/* CARD HEADERS - CLEAN & SOPHISTICATED */
 .ga-card-header {
   margin-bottom: 1.5rem;
   background: linear-gradient(145deg, 
@@ -249,7 +249,7 @@
   margin: 0;
 }
 
-/* 🌟 REFERRAL HEADER STYLING */
+/* REFERRAL HEADER STYLING */
 .ga-share-card.referral .ga-card-header {
   border-color: rgba(174, 214, 4, 0.2);
 }
@@ -304,7 +304,7 @@
   text-overflow: ellipsis;
 }
 
-/* ✨ REVEAL BOX STATES */
+/* REVEAL BOX STATES */
 .ga-reveal-box {
   position: relative;
   transition: all 0.3s ease;
@@ -430,7 +430,7 @@
   );
 }
 
-/* ⚡ ACTION ROW */
+/* ACTION ROW */
 .ga-action-row {
   display: flex;
   align-items: center;

@@ -1,7 +1,7 @@
 <?php
-// 🌿 Green Angel Hub – Tracking Numbers Module
+// Green Angel Hub – Tracking Numbers Module
 
-// 🚚 TRACKING COLUMN TAKEOVER - Using same pattern as delivery date column!
+// TRACKING COLUMN TAKEOVER - Using same pattern as delivery date column!
 // Add Tracking column to orders list (USING MODERN WOOCOMMERCE HOOK)
 add_filter('woocommerce_shop_order_list_table_columns', function($columns) {
     // Insert after order_total column (or wherever you want it)
@@ -121,7 +121,7 @@ function greenangel_process_tracking_submission_enhanced($order_id, $tracking_nu
 }
 // END OF TRACKING COLUMN TAKEOVER CODE
 
-// 🔁 Save Individual Tracking Number
+// Save Individual Tracking Number
 add_action('admin_post_greenangel_save_tracking', 'greenangel_save_tracking');
 function greenangel_save_tracking() {
     if (!current_user_can('manage_woocommerce')) {
@@ -142,7 +142,7 @@ function greenangel_save_tracking() {
     exit;
 }
 
-// 🔁 Bulk Save Tracking Numbers
+// Bulk Save Tracking Numbers
 add_action('admin_post_greenangel_bulk_save_tracking', 'greenangel_bulk_save_tracking');
 function greenangel_bulk_save_tracking() {
     if (!current_user_can('manage_woocommerce')) {
@@ -951,7 +951,7 @@ function greenangel_render_tracking_numbers() {
             padding: 20px;
         }
         
-        /* Postcode section */
+        /* POSTCODE PROMINENCE! */
         .postcode-section {
             text-align: center;
             margin-bottom: 20px;

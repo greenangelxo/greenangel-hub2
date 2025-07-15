@@ -1,8 +1,8 @@
 <?php
 /**
- * 🌿 Green Angel Hub v2.0 - navigation tiles
- * App-style navigation with responsive UI
- * Wrapped in premium container
+ * GREEN ANGEL HUB v2.0 - BREATHTAKING NAVIGATION TILES
+ * App-style navigation with immersive, alive UI that feels absolutely magical ✨
+ * NOW WRAPPED IN GORGEOUS PREMIUM CONTAINER!
  */
 
 // Prevent direct access
@@ -51,11 +51,11 @@ function ga_render_navigation_tiles($user_id) {
     ob_start();
     ?>
     
-    <!-- 🌟 Tiles container -->
+    <!-- GORGEOUS TILES CONTAINER - PREMIUM CARD WRAPPER -->
     <div class="ga-tiles-section">
         <div class="ga-tiles-container">
             
-            <!-- 🎯 Navigation Header -->
+            <!-- Navigation Header -->
             <div class="ga-tiles-header">
                 <div class="ga-tiles-title">
                     <span class="ga-tiles-icon">🎯</span>
@@ -174,7 +174,7 @@ function ga_render_navigation_tiles($user_id) {
         </div>
     </div>
     
-    <!-- 🚨 Logout confirmation modal -->
+    <!-- 🚨 GORGEOUS LOGOUT CONFIRMATION MODAL -->
     <div id="logoutModal" class="ga-logout-modal">
         <div class="ga-logout-modal-content">
             <div class="ga-logout-modal-icon">⛔</div>
@@ -283,11 +283,11 @@ function ga_render_navigation_tiles($user_id) {
     </script>
     
     <script>
-    // ✨ Interactive enhancements
+    // ✨ MAGICAL INTERACTIVE ENHANCEMENTS
     document.addEventListener('DOMContentLoaded', function() {
         const tiles = document.querySelectorAll('.ga-nav-tile, .ga-stat-tile.clickable');
         
-        // 📱 Enhanced touch feedback for mobile
+        // Enhanced touch feedback for mobile
         tiles.forEach(tile => {
             // Skip logout tile since it has special handling
             if (tile.dataset.tile === 'logout') return;
@@ -321,7 +321,7 @@ function ga_render_navigation_tiles($user_id) {
             });
         });
         
-        // 🔒 Enhanced locked tile interaction
+        // Enhanced locked tile interaction
         const lockedTiles = document.querySelectorAll('.ga-nav-tile.ga-locked');
         lockedTiles.forEach(tile => {
             tile.addEventListener('click', function(e) {
@@ -340,7 +340,7 @@ function ga_render_navigation_tiles($user_id) {
             });
         });
         
-        // 🎯 Add tile-specific hover enhancements
+        // Add tile-specific hover enhancements
         const tileMappings = {
             'shop': { color: '#4caf50', emoji: '🛍️' },
             'halo': { color: '#aed604', emoji: '✨' },
@@ -365,7 +365,7 @@ function ga_render_navigation_tiles($user_id) {
             }
         });
         
-        // 🌟 Staggered animation on page load with improved timing
+        // Staggered animation on page load with improved timing
         const allTiles = document.querySelectorAll('.ga-nav-tile, .ga-stat-tile');
         
         // Check if we've already animated (prevent re-animation on scroll)
@@ -391,7 +391,7 @@ function ga_render_navigation_tiles($user_id) {
             });
         }
         
-        // 🎨 Remove will-change after animations complete to prevent mobile issues
+        // Remove will-change after animations complete to prevent mobile issues
         setTimeout(() => {
             tiles.forEach(tile => {
                 tile.style.willChange = 'auto';
@@ -427,7 +427,7 @@ function ga_render_navigation_tiles($user_id) {
         setTimeout(() => ripple.remove(), 600);
     }
     
-    // 🔒 Show elegant locked tooltip
+    // Show elegant locked tooltip
     function showLockedTooltip(element) {
         // Remove any existing tooltips
         const existingTooltip = element.querySelector('.ga-locked-tooltip');
@@ -484,7 +484,7 @@ function ga_render_navigation_tiles($user_id) {
         }, 3000);
     }
     
-    // 🎨 Add dynamic CSS animations with cache busting
+    // Add dynamic CSS animations with cache busting
     const enhancedStyles = document.createElement('style');
     enhancedStyles.setAttribute('data-version', 'v2-no-glow-' + Date.now());
     enhancedStyles.textContent = `
@@ -523,14 +523,14 @@ function ga_render_navigation_tiles($user_id) {
             to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
         }
         
-        /* 🎯 Enhanced focus states for accessibility */
+        /* Enhanced focus states for accessibility */
         .ga-nav-tile:focus {
             outline: 3px solid #aed604;
             outline-offset: 2px;
             box-shadow: none !important;
         }
         
-        /* 🌈 High contrast mode enhancements */
+        /* High contrast mode enhancements */
         @media (prefers-contrast: high) {
             .ga-nav-tile {
                 border-width: 2px !important;
@@ -543,7 +543,7 @@ function ga_render_navigation_tiles($user_id) {
             }
         }
         
-        /* 🎭 Reduced motion support */
+        /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
             .ga-nav-tile {
                 animation: none !important;
@@ -555,7 +555,7 @@ function ga_render_navigation_tiles($user_id) {
             }
         }
         
-        /* 🌟 Performance optimizations */
+        /* Performance optimizations */
         .ga-nav-tile {
             contain: layout style paint;
         }
@@ -568,7 +568,7 @@ function ga_render_navigation_tiles($user_id) {
 }
 
 /**
- * 🌿 HELPER: Get User Review Count
+ * HELPER: Get User Review Count
  */
 function ga_get_user_review_count($user_id) {
     $reviews = get_comments([
@@ -582,7 +582,7 @@ function ga_get_user_review_count($user_id) {
 }
 
 /**
- * 🌿 HELPER: Format Large Numbers (from header.php)
+ * HELPER: Format Large Numbers (from header.php)
  */
 if (!function_exists('ga_format_number')) {
     function ga_format_number($number) {
@@ -596,7 +596,7 @@ if (!function_exists('ga_format_number')) {
 }
 
 /**
- * 🎯 HELPER: Get Navigation Tile Data (for future customization)
+ * HELPER: Get Navigation Tile Data (for future customization)
  */
 function ga_get_tile_data() {
     return [

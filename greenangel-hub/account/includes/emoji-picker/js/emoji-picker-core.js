@@ -1,5 +1,5 @@
 /**
- * 🌟 GREEN ANGEL EMOJI IDENTITY PICKER - CORE FUNCTIONALITY WITH PROPER LOCKING
+ * GREEN ANGEL EMOJI IDENTITY PICKER - CORE FUNCTIONALITY WITH PROPER LOCKING
  * Handles main emoji picker interactions and animations
  * Mobile-first with premium LED effects
  * MODULAR DESIGN - Core features only
@@ -9,14 +9,14 @@
 (function() {
     'use strict';
     
-    // 🎯 Core State Management
+    // Core State Management
     let currentCategory = 'mystical';
     let selectedEmoji = null;
     let isLocked = false;
     let daysRemaining = 0;
     let previewMode = false;
     
-    // 🎨 Core DOM Elements
+    // Core DOM Elements
     const elements = {
         categoryTabs: null,
         emojiGrids: null,
@@ -29,7 +29,7 @@
         confirmModal: null
     };
     
-    // 🚀 Initialize when DOM is ready
+    // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🌟 Starting Emoji Identity Picker Core initialization with proper locking...');
         
@@ -412,7 +412,7 @@
     }
     
     /**
-     * ✨ Handle emoji selection animations
+     * ✨ SELECT EMOJI WITH GORGEOUS EFFECTS
      */
     function selectEmoji(emoji, element) {
         // Double-check lock status
@@ -1313,7 +1313,7 @@
         }, 500);
     }
     
-    // 🎯 Expose public API for external use
+    // Expose public API for external use
     window.EmojiIdentityPicker = {
         selectEmoji: selectEmoji,
         showCategory: showCategory,
@@ -1325,9 +1325,9 @@
         daysRemaining: daysRemaining
     };
     
-    // 🔧 DEBUG: Add manual trigger for testing
+    // DEBUG: Add manual trigger for testing
     window.debugEmojiPicker = function() {
-        console.log('🔍 Debug info:', {
+        console.log('Debug info:', {
             elements: elements,
             currentCategory: currentCategory,
             selectedEmoji: selectedEmoji,

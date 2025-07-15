@@ -1,5 +1,5 @@
 <?php 
-// 🌿 Green Angel Hub – Stock Check Module
+// Green Angel Hub – Stock Check Module
 // Quick-glance stock viewer for all your products!
 
 function greenangel_render_stock_check_tab() {

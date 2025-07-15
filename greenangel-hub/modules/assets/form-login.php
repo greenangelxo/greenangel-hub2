@@ -378,7 +378,7 @@ input[type="checkbox"] {
     font-weight: 600 !important;
 }
 
-/* Create Account button styling */
+/* Create Account Button - NOW WITH GORGEOUS BLUE! */
 #nm-show-register-button {
     background: #02a8d1 !important;
     color: #222222 !important;

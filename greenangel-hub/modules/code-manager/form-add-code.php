@@ -1,5 +1,5 @@
 <?php
-// 🌿 Add New Angel Code Form (Clean Version for Card Wrapper)
+// Add New Angel Code Form (Clean Version for Card Wrapper)
 function greenangel_render_add_code_form() {
     $action = admin_url('admin-post.php');
     ?>

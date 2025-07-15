@@ -1,0 +1,861 @@
+/**
+ * 🌈 MAINTENANCE FRONTEND - RAINBOW CHIC LED PARADISE
+ * Full electric fantasy matching Angel Hub aesthetic
+ */
+
+/* 🌌 Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    background: #111;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 🌌 Starfield Container with Electric Gradient */
+.starfield-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: radial-gradient(ellipse at center, 
+        #1a1a1a 0%, 
+        #0f0f0f 50%, 
+        #000 100%
+    );
+}
+
+.starfield-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ⚡ ELECTRIC FLOATING ORBS - CHIC LED STYLE */
+.floating-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(45deg, 
+        rgba(0, 255, 255, 0.15), 
+        rgba(255, 20, 147, 0.12),
+        rgba(174, 214, 4, 0.18),
+        rgba(255, 69, 0, 0.10)
+    );
+    background-size: 400% 400%;
+    animation: electric-orb-dance 12s ease-in-out infinite;
+    filter: blur(1px);
+    box-shadow: 
+        0 0 30px rgba(174, 214, 4, 0.2),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.orb-1 {
+    width: 80px;
+    height: 80px;
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 12s;
+}
+
+.orb-2 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 3s;
+    animation-duration: 15s;
+}
+
+.orb-3 {
+    width: 60px;
+    height: 60px;
+    bottom: 25%;
+    left: 20%;
+    animation-delay: 6s;
+    animation-duration: 10s;
+}
+
+.orb-4 {
+    width: 90px;
+    height: 90px;
+    top: 30%;
+    right: 25%;
+    animation-delay: 9s;
+    animation-duration: 14s;
+}
+
+@keyframes electric-orb-dance {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+        opacity: 0.4;
+        background-position: 0% 50%;
+    }
+    25% {
+        transform: translateY(-40px) translateX(30px) rotate(90deg) scale(1.2);
+        opacity: 0.8;
+        background-position: 25% 50%;
+    }
+    50% {
+        transform: translateY(-20px) translateX(-25px) rotate(180deg) scale(0.8);
+        opacity: 1;
+        background-position: 50% 50%;
+    }
+    75% {
+        transform: translateY(30px) translateX(35px) rotate(270deg) scale(1.4);
+        opacity: 0.6;
+        background-position: 75% 50%;
+    }
+}
+
+/* ✨ MAIN CONTENT CONTAINER */
+.maintenance-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+}
+
+/* 🌟 CHIC LOGO SECTION WITH ELECTRIC GLOW */
+.logo-section {
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+.angel-logo {
+    font-size: 5rem;
+    position: relative;
+    z-index: 2;
+    animation: chic-logo-glow 4s ease-in-out infinite alternate;
+    cursor: default;
+    user-select: none;
+    filter: drop-shadow(0 0 30px rgba(174, 214, 4, 0.5));
+}
+
+.logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, 
+        rgba(174, 214, 4, 0.2) 0%, 
+        rgba(0, 255, 255, 0.15) 30%,
+        rgba(255, 20, 147, 0.1) 60%,
+        transparent 80%
+    );
+    border-radius: 50%;
+    animation: chic-glow-pulse 6s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes chic-logo-glow {
+    0% {
+        text-shadow: 
+            0 0 30px rgba(174, 214, 4, 0.6),
+            0 0 50px rgba(174, 214, 4, 0.4),
+            0 0 70px rgba(174, 214, 4, 0.2);
+        transform: scale(1) rotate(0deg);
+    }
+    100% {
+        text-shadow: 
+            0 0 40px rgba(0, 255, 255, 0.8),
+            0 0 70px rgba(255, 20, 147, 0.5),
+            0 0 100px rgba(174, 214, 4, 0.3);
+        transform: scale(1.08) rotate(3deg);
+    }
+}
+
+@keyframes chic-glow-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 0.8;
+    }
+}
+
+/* 📝 CHIC CONTENT SECTION */
+.content-section {
+    max-width: 700px;
+    margin-bottom: 3rem;
+}
+
+.main-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    animation: chic-fade-in-up 1.2s ease-out;
+    line-height: 1.2;
+    background: linear-gradient(135deg, 
+        #00ffff 0%, 
+        #aed604 25%,
+        #ff1493 50%,
+        #ff4500 75%,
+        #00ffff 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: chic-title-flow 4s ease-in-out infinite, chic-fade-in-up 1.2s ease-out;
+}
+
+@keyframes chic-title-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.subtitle {
+    font-size: 1.4rem;
+    color: #ccc;
+    margin-bottom: 2.5rem;
+    animation: chic-fade-in-up 1.2s ease-out 0.3s both;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* 💤 CHIC SLEEP ANIMATION */
+.sleep-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 3rem 0;
+    animation: chic-fade-in-up 1.2s ease-out 0.6s both;
+}
+
+.zzz {
+    font-size: 2.5rem;
+    animation: chic-sleep-float 3s ease-in-out infinite;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.4));
+}
+
+.zzz:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.zzz:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes chic-sleep-float {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.5;
+        filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.3));
+    }
+    50% {
+        transform: translateY(-25px) scale(1.1);
+        opacity: 1;
+        filter: drop-shadow(0 0 20px rgba(174, 214, 4, 0.6));
+    }
+}
+
+/* 💬 CHIC MESSAGE CONTAINER WITH FLOATING GRADIENT */
+.message-container {
+    margin: 3rem 0;
+    animation: chic-fade-in-up 1.2s ease-out 0.9s both;
+}
+
+.custom-message {
+    background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 2.5rem;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ⚡ ELECTRIC FLOATING BORDER FOR MESSAGE */
+.custom-message::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 25px;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        #00ffff 0%,
+        #ff1493 16%,
+        #aed604 32%,
+        #ff4500 48%,
+        #9932cc 64%,
+        #ff69b4 80%,
+        #00ffff 100%
+    );
+    background-size: 400% 100%;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    animation: chic-message-border-flow 8s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes chic-message-border-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
+}
+
+/* 🌟 FLOATING SHIMMER OVERLAY */
+.custom-message::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 400%;
+    height: 400%;
+    background: linear-gradient(45deg, 
+        transparent 40%, 
+        rgba(174, 214, 4, 0.05) 45%, 
+        rgba(174, 214, 4, 0.12) 50%, 
+        rgba(174, 214, 4, 0.05) 55%, 
+        transparent 60%
+    );
+    transform: rotate(45deg);
+    animation: chic-message-shimmer 10s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes chic-message-shimmer {
+    0%, 100% { transform: rotate(45deg) translateX(-100%); opacity: 0; }
+    50% { transform: rotate(45deg) translateX(100%); opacity: 1; }
+}
+
+.message-text {
+    font-size: 1.3rem;
+    line-height: 1.7;
+    color: #f5f5f5;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+    font-weight: 500;
+}
+
+.eta-info {
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #aed604 0%, #00ffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.eta-time {
+    color: #fff;
+    font-weight: 700;
+}
+
+/* 🔄 CHIC LOADING SECTION */
+.loading-section {
+    margin: 3rem 0;
+    animation: chic-fade-in-up 1.2s ease-out 1.2s both;
+}
+
+.loading-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #00ffff 0%, #aed604 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #aed604 0%, #00ffff 100%);
+    animation: chic-dot-bounce 1.8s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(174, 214, 4, 0.4);
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes chic-dot-bounce {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+        box-shadow: 0 0 10px rgba(174, 214, 4, 0.3);
+    }
+    40% {
+        transform: scale(1.4);
+        opacity: 1;
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+}
+
+/* 🌈 CHIC BOTTOM SECTION */
+.bottom-section {
+    margin-top: auto;
+    padding-top: 3rem;
+    animation: chic-fade-in-up 1.2s ease-out 1.5s both;
+}
+
+.progress-container {
+    margin-bottom: 2rem;
+}
+
+.progress-bar {
+    width: 300px;
+    height: 8px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 4px;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, 
+        #00ffff 0%, 
+        #aed604 25%,
+        #ff1493 50%,
+        #ff4500 75%,
+        #00ffff 100%
+    );
+    background-size: 300% 100%;
+    border-radius: 4px;
+    animation: chic-progress-grow 12s ease-in-out infinite, chic-progress-flow 3s linear infinite;
+    position: relative;
+    box-shadow: 0 0 20px rgba(174, 214, 4, 0.4);
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: chic-progress-shine 2s ease-in-out infinite;
+}
+
+@keyframes chic-progress-grow {
+    0%, 100% { width: 0%; }
+    25% { width: 35%; }
+    50% { width: 65%; }
+    75% { width: 87%; }
+    90% { width: 92%; }
+}
+
+@keyframes chic-progress-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+@keyframes chic-progress-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+}
+
+.progress-text {
+    font-size: 1rem;
+    color: #bbb;
+    font-weight: 600;
+}
+
+#progress-percent {
+    background: linear-gradient(135deg, #aed604 0%, #00ffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.social-hint {
+    opacity: 0.9;
+}
+
+.social-hint p {
+    font-size: 1rem;
+    color: #888;
+    margin: 0;
+    font-weight: 500;
+}
+
+.brand-text {
+    background: linear-gradient(135deg, #aed604 0%, #00ffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* ✨ CHIC FADE IN ANIMATION */
+@keyframes chic-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 🎭 INTERACTIVE HOVER EFFECTS */
+.angel-logo:hover {
+    animation-duration: 1s;
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.custom-message:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.custom-message:hover::before {
+    animation-duration: 4s;
+    opacity: 0.8;
+}
+
+/* 📱 Mobile Responsive Design */
+@media (max-width: 480px) {
+    .maintenance-container {
+        padding: 15px;
+    }
+    
+    .angel-logo {
+        font-size: 3.5rem;
+    }
+    
+    .logo-glow {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .main-title {
+        font-size: 2.2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .custom-message {
+        padding: 2rem;
+        border-radius: 20px;
+    }
+    
+    .message-text {
+        font-size: 1.1rem;
+    }
+    
+    .zzz {
+        font-size: 2rem;
+    }
+    
+    .progress-bar {
+        width: 250px;
+    }
+    
+    .floating-orb {
+        display: none; /* Hide orbs on very small screens for performance */
+    }
+}
+
+/* 📱 Large mobile/small tablet (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+    .angel-logo {
+        font-size: 4rem;
+    }
+    
+    .main-title {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .orb-1, .orb-3 {
+        display: none; /* Show fewer orbs for performance */
+    }
+}
+
+/* 💻 Tablet styles (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .maintenance-container {
+        padding: 30px;
+    }
+    
+    .angel-logo {
+        font-size: 5.5rem;
+    }
+    
+    .main-title {
+        font-size: 3.2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .custom-message {
+        padding: 3rem;
+    }
+    
+    .message-text {
+        font-size: 1.4rem;
+    }
+}
+
+/* 🖥️ Desktop styles (1024px+) */
+@media (min-width: 1024px) {
+    .maintenance-container {
+        padding: 40px;
+    }
+    
+    .angel-logo {
+        font-size: 6rem;
+    }
+    
+    .main-title {
+        font-size: 3.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.6rem;
+    }
+    
+    .custom-message {
+        padding: 3.5rem;
+        border-radius: 30px;
+    }
+    
+    .message-text {
+        font-size: 1.5rem;
+    }
+    
+    .progress-bar {
+        width: 400px;
+    }
+    
+    /* Enhanced hover effects on desktop */
+    .custom-message:hover::after {
+        animation-duration: 4s;
+    }
+}
+
+/* 🖥️ Large desktop (1440px+) */
+@media (min-width: 1440px) {
+    .content-section {
+        max-width: 900px;
+    }
+    
+    .angel-logo {
+        font-size: 7rem;
+    }
+    
+    .main-title {
+        font-size: 4rem;
+    }
+    
+    .subtitle {
+        font-size: 1.7rem;
+    }
+    
+    .custom-message {
+        padding: 4rem;
+    }
+    
+    .message-text {
+        font-size: 1.6rem;
+    }
+}
+
+/* 🌟 Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .floating-orb {
+        display: none;
+    }
+    
+    .logo-glow {
+        display: none;
+    }
+}
+
+/* 🎨 High contrast mode support */
+@media (prefers-contrast: high) {
+    .custom-message {
+        background: rgba(0, 0, 0, 0.9);
+        border: 3px solid #aed604;
+    }
+    
+    .subtitle {
+        color: #ddd;
+    }
+    
+    .progress-text {
+        color: #fff;
+    }
+}
+
+/* 🌙 Dark mode (already default, but explicit) */
+@media (prefers-color-scheme: dark) {
+    /* Already optimized for dark mode */
+}
+
+/* ☀️ Light mode override (keep dark for magical effect) */
+@media (prefers-color-scheme: light) {
+    body {
+        background: #0a0a0a;
+    }
+}
+
+/* 🔥 Performance optimizations */
+.floating-orb,
+.logo-glow,
+.custom-message::before,
+.custom-message::after,
+.progress-fill::after {
+    will-change: transform, opacity;
+}
+
+.starfield-canvas {
+    will-change: transform;
+}
+
+/* 🎭 Special effects for interaction */
+.maintenance-container:hover .angel-logo {
+    animation-duration: 1.5s;
+}
+
+.maintenance-container:active .angel-logo {
+    transform: scale(0.98);
+}
+
+/* 🌈 Custom scrollbar (if content overflows) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #aed604 0%, #00ffff 100%);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(174, 214, 4, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #00ffff 0%, #aed604 100%);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+/* 🎯 Focus states for accessibility */
+.angel-logo:focus {
+    outline: 3px solid rgba(174, 214, 4, 0.5);
+    outline-offset: 5px;
+    border-radius: 10px;
+}
+
+/* 🌊 Subtle texture overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(174, 214, 4, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(0, 255, 255, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ✨ Final magical touches */
+.maintenance-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, 
+        transparent, 
+        rgba(174, 214, 4, 0.02), 
+        transparent,
+        rgba(0, 255, 255, 0.02),
+        transparent
+    );
+    animation: chic-cosmic-rotate 120s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes chic-cosmic-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

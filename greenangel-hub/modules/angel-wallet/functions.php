@@ -10,6 +10,7 @@ require_once plugin_dir_path(__FILE__) . '/includes/wallet-order-handler.php';
 require_once plugin_dir_path(__FILE__) . '/gateway.php';
 require_once plugin_dir_path(__FILE__) . '/includes/wallet-cart-validation.php';
 require_once plugin_dir_path(__FILE__) . '/includes/wallet-coupon-converter.php';
+require_once plugin_dir_path(__FILE__) . '/includes/wallet-shipping.php';
 
 /**
  * Angel Wallet Core Functions

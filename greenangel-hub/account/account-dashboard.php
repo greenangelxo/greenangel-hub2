@@ -1,9 +1,9 @@
 <?php
 /**
- * 🌿 GREEN ANGEL HUB v2.0 - MAIN DASHBOARD CONTROLLER
+ * GREEN ANGEL HUB v2.0 - MAIN DASHBOARD CONTROLLER
  * Beautiful modular dashboard with premium app-like interface
  * Completely refined with elegant, mobile-optimized components
- * ENHANCED: Full emoji picker integration! 🎭
+ * ENHANCED: Full emoji picker integration!
  * 
  * @package GreenAngelHub
  * @version 2.0.0
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// 🎨 Enqueue all dashboard styles and scripts
+// Enqueue all dashboard styles and scripts
 add_action('wp_enqueue_scripts', 'ga_enqueue_dashboard_assets');
 function ga_enqueue_dashboard_assets() {
     // Only load on pages with our shortcode
@@ -40,7 +40,7 @@ function ga_enqueue_dashboard_assets() {
     add_action('wp_head', 'ga_add_mobile_viewport_meta');
 }
 
-// 📱 Add mobile viewport meta for better mobile experience
+// Add mobile viewport meta for better mobile experience
 function ga_add_mobile_viewport_meta() {
     if (!ga_should_load_dashboard_assets()) {
         return;
@@ -52,7 +52,7 @@ function ga_add_mobile_viewport_meta() {
     echo '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">' . "\n";
 }
 
-// 📄 Include all component files
+// Include all component files
 function ga_load_dashboard_components() {
     $component_path = plugin_dir_path(__FILE__);
     
@@ -74,7 +74,7 @@ function ga_load_dashboard_components() {
     }
 }
 
-// 🌿 ESSENTIAL FUNCTIONS FROM ORIGINAL DASHBOARD
+// ESSENTIAL FUNCTIONS FROM ORIGINAL DASHBOARD
 function greenangel_get_wp_loyalty_points_safe($user_id) {
     global $wpdb;
     
@@ -205,7 +205,7 @@ function greenangel_get_main_angel_code() {
     return null;
 }
 
-// 🎯 Check if we should load dashboard assets
+// Check if we should load dashboard assets
 function ga_should_load_dashboard_assets() {
     global $post;
     
@@ -227,7 +227,7 @@ function ga_should_load_dashboard_assets() {
     return false;
 }
 
-// 🌿 Main Dashboard Shortcode
+// Main Dashboard Shortcode
 function greenangel_account_dashboard_shortcode($atts = []) {
     // Check if user is logged in
     if (!is_user_logged_in()) {
@@ -256,33 +256,33 @@ function greenangel_account_dashboard_shortcode($atts = []) {
         <div class="ga-container">
             
             <?php
-            // 🌟 Header Section (Profile Banner)
+            // Header Section (Profile Banner)
             if ($atts['show_header'] === 'true' && function_exists('ga_render_header_section')) {
                 echo ga_render_header_section($user_id);
             }
             
-            // 🔔 Smart Notifications (RIGHT AFTER HEADER - PERFECT POSITION!)
+            // Smart Notifications (positioned after header)
             if ($atts['show_notifications'] === 'true' && function_exists('ga_render_notifications_section')) {
                 echo ga_render_notifications_section($user_id);
             }
             
-            // 🎯 Navigation Tiles
+            // Navigation Tiles
             if ($atts['show_tiles'] === 'true' && function_exists('ga_render_navigation_tiles')) {
                 echo ga_render_navigation_tiles($user_id);
             }
             
-            // 🎁 Referral & Codes Section
+            // Referral & Codes Section
             if ($atts['show_referral'] === 'true' && function_exists('ga_render_referral_section')) {
                 echo ga_render_referral_section($user_id);
             }
             
-            // 📱 Activity Tabs (Orders | Halo Points | Wallet)
+            // Activity Tabs (Orders | Halo Points | Wallet)
             if ($atts['show_activity'] === 'true' && function_exists('ga_render_activity_section')) {
                 echo ga_render_activity_section($user_id);
             }
             ?>
             
-            <!-- 🌿 Footer Badge -->
+            <!-- Footer Badge -->
             <div class="ga-footer-badge">
                 <div class="ga-badge">
                     <span class="ga-badge-icon">🌿</span>
@@ -298,7 +298,7 @@ function greenangel_account_dashboard_shortcode($atts = []) {
     </div>
     
     <style>
-    /* 🌿 Footer Badge Styling */
+    /* Footer Badge Styling */
     .ga-footer-badge {
         text-align: center;
         margin-top: 2rem;
@@ -566,7 +566,7 @@ function ga_add_enhanced_back_button() {
     <?php
 }
 
-// 🎨 Add Dashboard Body Classes
+// Add Dashboard Body Classes
 add_filter('body_class', 'ga_add_dashboard_body_classes');
 function ga_add_dashboard_body_classes($classes) {
     if (ga_should_load_dashboard_assets()) {
@@ -595,7 +595,7 @@ function ga_dashboard_maintenance_notice() {
     }
 }
 
-// 🌟 Add Dashboard Admin Bar Menu (for admins)
+// Add Dashboard Admin Bar Menu (for admins)
 add_action('admin_bar_menu', 'ga_add_admin_bar_menu', 100);
 function ga_add_admin_bar_menu($wp_admin_bar) {
     if (!is_user_logged_in() || !current_user_can('manage_options')) {
@@ -604,7 +604,7 @@ function ga_add_admin_bar_menu($wp_admin_bar) {
     
     $wp_admin_bar->add_menu([
         'id' => 'green-angel-hub',
-        'title' => '🌿 Angel Hub',
+        'title' => 'Angel Hub',
         'href' => get_permalink(get_page_by_path('angel-hub')),
         'meta' => [
             'title' => 'Green Angel Hub Dashboard'
@@ -632,7 +632,7 @@ function ga_init_dashboard() {
 }
 
 /**
- * 🌿 ENHANCED HELPER FUNCTIONS
+ * ENHANCED HELPER FUNCTIONS
  */
 
 // Format currency for display
@@ -699,7 +699,7 @@ function ga_check_rate_limit($user_id, $action = 'general', $limit = 60, $window
     return true;
 }
 
-// 🎯 Performance: Preload critical resources
+// Performance: Preload critical resources
 add_action('wp_head', 'ga_preload_critical_resources', 1);
 function ga_preload_critical_resources() {
     if (!ga_should_load_dashboard_assets()) {
@@ -710,7 +710,7 @@ function ga_preload_critical_resources() {
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 }
 
-// 🌿 Clean up on plugin deactivation
+// Clean up on plugin deactivation
 register_deactivation_hook(__FILE__, 'ga_cleanup_dashboard');
 function ga_cleanup_dashboard() {
     // Clean up any transients or temporary data
@@ -721,7 +721,7 @@ function ga_cleanup_dashboard() {
 }
 
 /**
- * 🎭 EMOJI PICKER INTEGRATION FUNCTIONS - THE MAGIC HAPPENS HERE!
+ * EMOJI PICKER INTEGRATION FUNCTIONS - THE MAGIC HAPPENS HERE!
  */
 
 // 🔄 AJAX ENDPOINT TO REFRESH DASHBOARD AFTER EMOJI SELECTION
@@ -750,7 +750,7 @@ function handle_refresh_dashboard_identity() {
     ]);
 }
 
-// 🎯 ENHANCED EMOJI PICKER SUCCESS REDIRECT WITH DASHBOARD REFRESH
+// ENHANCED EMOJI PICKER SUCCESS REDIRECT WITH DASHBOARD REFRESH
 add_action('wp_head', 'ga_add_dashboard_refresh_script');
 function ga_add_dashboard_refresh_script() {
     if (!is_page('emoji-picker')) {
@@ -758,13 +758,13 @@ function ga_add_dashboard_refresh_script() {
     }
     ?>
     <script>
-    // 🎭 ENHANCED: Intercept emoji picker success to refresh dashboard
+    // ENHANCED: Intercept emoji picker success to refresh dashboard
     document.addEventListener('DOMContentLoaded', function() {
         // Override the success close function to refresh dashboard
         window.originalCloseSuccessCelebration = window.closeSuccessCelebration;
         
         window.closeSuccessCelebration = function() {
-            console.log('🎭 Enhanced success - refreshing dashboard identity...');
+            console.log('Enhanced success - refreshing dashboard identity...');
             
             // Call refresh endpoint before redirect
             const nonce = window.emojiPickerData?.nonce || window.emojiPickerNonce || '';
@@ -890,7 +890,7 @@ function ga_add_dashboard_identity_refresh_on_load() {
     }
     ?>
     <script>
-    // 🎭 Check for fresh identity on dashboard load
+    // Check for fresh identity on dashboard load
     document.addEventListener('DOMContentLoaded', function() {
         const freshIdentity = sessionStorage.getItem('freshIdentity');
         
@@ -901,7 +901,7 @@ function ga_add_dashboard_identity_refresh_on_load() {
                 
                 // Only use if less than 5 minutes old
                 if (age < 300000) {
-                    console.log('🎭 Found fresh identity, refreshing dashboard...', identity);
+                    console.log('Found fresh identity, refreshing dashboard...', identity);
                     
                     // Call the refresh function
                     if (window.refreshDashboardIdentity) {
@@ -927,7 +927,7 @@ function ga_add_dashboard_identity_refresh_on_load() {
     <?php
 }
 
-// 🎭 ADD ENHANCED IDENTITY CSS TO DASHBOARD PAGES
+// ADD ENHANCED IDENTITY CSS TO DASHBOARD PAGES
 add_action('wp_head', 'ga_add_enhanced_identity_css');
 function ga_add_enhanced_identity_css() {
     if (!ga_should_load_dashboard_assets()) {
@@ -935,7 +935,7 @@ function ga_add_enhanced_identity_css() {
     }
     ?>
     <style>
-    /* 🎭 ENHANCED IDENTITY SUCCESS ANIMATIONS */
+    /* ENHANCED IDENTITY SUCCESS ANIMATIONS */
     @keyframes identityUpdateSuccess {
         0% {
             opacity: 0;
@@ -981,7 +981,7 @@ function ga_add_enhanced_identity_css() {
         }
     }
     
-    /* 🎉 IDENTITY UPDATE CELEBRATION PARTICLES */
+    /* IDENTITY UPDATE CELEBRATION PARTICLES */
     @keyframes celebrationParticle {
         0% {
             opacity: 1;
@@ -1005,7 +1005,7 @@ function ga_add_enhanced_identity_css() {
         }
     }
     
-    /* 🌟 SMOOTH IDENTITY TRANSITIONS */
+    /* SMOOTH IDENTITY TRANSITIONS */
     .ga-avatar-glow {
         transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -1026,7 +1026,7 @@ function ga_add_enhanced_identity_css() {
         animation: identityUpdateSuccess 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
     }
     
-    /* 🎯 ENHANCED HOVER STATES FOR IDENTITY ELEMENTS */
+    /* ENHANCED HOVER STATES FOR IDENTITY ELEMENTS */
     .ga-avatar-link:hover .ga-avatar {
         transform: scale(1.08) rotate(2deg);
     }
@@ -1042,7 +1042,7 @@ function ga_add_enhanced_identity_css() {
         text-shadow: 0 0 8px rgba(174, 214, 4, 0.3);
     }
     
-    /* 📱 MOBILE OPTIMIZATIONS FOR IDENTITY */
+    /* MOBILE OPTIMIZATIONS FOR IDENTITY */
     @media (max-width: 767px) {
         .ga-identity-bio-display {
             font-size: 0.8rem;
@@ -1065,7 +1065,7 @@ function ga_add_enhanced_identity_css() {
         }
     }
     
-    /* 🎨 HIGH CONTRAST MODE SUPPORT */
+    /* HIGH CONTRAST MODE SUPPORT */
     @media (prefers-contrast: high) {
         .ga-identity-bio-display {
             border-width: 2px;
@@ -1083,7 +1083,7 @@ function ga_add_enhanced_identity_css() {
         }
     }
     
-    /* 🎭 REDUCED MOTION SUPPORT */
+    /* REDUCED MOTION SUPPORT */
     @media (prefers-reduced-motion: reduce) {
         .ga-identity-bio-display,
         .ga-identity-name-tag,

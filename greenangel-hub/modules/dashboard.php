@@ -177,11 +177,18 @@ function greenangel_render_dashboard_tab() {
             <span class="desc">View, credit and manage balances</span>
         </a>
 
-        <!-- 👥 Customers module -->
+        <!-- 👥 NEW: GORGEOUS CUSTOMERS MODULE! -->
         <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=customers'); ?>" class="dashboard-module">
             <span class="icon">👥</span>
             <span class="title">Customers</span>
             <span class="desc">Manage your Angels and their journeys</span>
+        </a>
+
+        <!-- 🌙 NEW: MAGICAL MAINTENANCE MODULE! -->
+        <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=maintenance'); ?>" class="dashboard-module">
+            <span class="icon">🌙</span>
+            <span class="title">Maintenance</span>
+            <span class="desc">Put your site to magical sleep</span>
         </a>
 
         <a href="<?php echo admin_url('admin.php?page=greenangel-hub&tab=tools'); ?>" class="dashboard-module">
