@@ -264,7 +264,7 @@ function greenangel_format_member_since($date) {
     }
 }
 
-// AJAX handler for wallet adjustments - USES YOUR EXISTING WALLET SYSTEM!
+// AJAX handler for wallet adjustments - SECURED WITH RATE LIMITING & VALIDATION
 add_action('wp_ajax_greenangel_adjust_wallet', 'greenangel_ajax_adjust_wallet');
 function greenangel_ajax_adjust_wallet() {
     // Verify nonce
@@ -277,27 +277,86 @@ function greenangel_ajax_adjust_wallet() {
         wp_die('Insufficient permissions');
     }
     
+    $admin_id = get_current_user_id();
+    
+    // Rate limiting - max 10 wallet adjustments per hour per admin
+    $rate_key = 'wallet_adjust_' . $admin_id;
+    $attempts = get_transient($rate_key) ?: 0;
+    if ($attempts >= 10) {
+        wp_send_json_error('Rate limit exceeded. Maximum 10 wallet adjustments per hour. Please try again later.');
+    }
+    set_transient($rate_key, $attempts + 1, HOUR_IN_SECONDS);
+    
     $customer_id = intval($_POST['customer_id']);
     $action = sanitize_text_field($_POST['action_type']); // 'add' or 'remove'
     $amount = floatval($_POST['amount']);
-    $reason = sanitize_text_field($_POST['reason']);
+    $reason = sanitize_textarea_field($_POST['reason']);
     
-    if ($customer_id <= 0 || $amount <= 0) {
-        wp_send_json_error('Invalid customer ID or amount');
+    // Enhanced validation
+    if ($customer_id <= 0) {
+        wp_send_json_error('Invalid customer ID');
+    }
+    
+    // Maximum adjustment validation - £0.01 to £1,000
+    if ($amount <= 0 || $amount > 1000) {
+        wp_send_json_error('Invalid amount. Must be between £0.01 and £1,000');
+    }
+    
+    // Validate customer exists
+    $customer = get_userdata($customer_id);
+    if (!$customer) {
+        wp_send_json_error('Customer not found');
+    }
+    
+    // Validate action type
+    if (!in_array($action, ['add', 'remove'], true)) {
+        wp_send_json_error('Invalid action type');
     }
     
     // Get current balance using YOUR existing function
     $current_balance = greenangel_get_wallet_balance($customer_id);
     
+    // Check if adjustment would exceed wallet cap
+    if ($action === 'add') {
+        $new_potential_balance = $current_balance + $amount;
+        if ($new_potential_balance > 50000) {
+            wp_send_json_error('Adjustment would exceed maximum wallet balance of £50,000');
+        }
+    }
+    
+    // Log the admin action BEFORE processing
+    greenangel_log_admin_wallet_action([
+        'admin_id' => $admin_id,
+        'customer_id' => $customer_id,
+        'action' => $action,
+        'amount' => $amount,
+        'reason' => $reason,
+        'current_balance' => $current_balance,
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+        'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? 'unknown', 0, 200),
+        'timestamp' => current_time('mysql')
+    ]);
+    
     // Use YOUR existing wallet functions!
     if ($action === 'add') {
-        $new_balance = greenangel_add_to_wallet($customer_id, $amount, $reason ?: 'Admin adjustment via customer module');
+        $new_balance = greenangel_add_to_wallet($customer_id, $amount, $reason ?: 'Admin adjustment via customer module', 'manual');
+        
+        // Send email notification for additions (top-ups)
+        if ($new_balance !== false && function_exists('greenangel_send_wallet_topup_email')) {
+            greenangel_send_wallet_topup_email($customer_id, $amount, $reason ?: 'Admin adjustment via customer module');
+        }
     } else {
         // For remove, we need to deduct but use manual type
-        $new_balance = greenangel_deduct_from_wallet($customer_id, $amount, null, $reason ?: 'Admin adjustment via customer module');
+        $new_balance = greenangel_deduct_from_wallet($customer_id, $amount, null, $reason ?: 'Admin adjustment via customer module', 'manual');
     }
     
     if ($new_balance !== false) {
+        
+        // Send email notification for large adjustments (over £100)
+        if ($amount >= 100) {
+            greenangel_notify_large_wallet_adjustment($admin_id, $customer_id, $action, $amount, $reason);
+        }
+        
         // Send success response
         wp_send_json_success([
             'new_balance' => $new_balance,
@@ -512,4 +571,77 @@ function greenangel_add_customers_tab($tabs) {
 
 // Handle the customers tab rendering (integrate with existing switch statement)
 add_action('greenangel_hub_render_tab_customers', 'greenangel_render_customers_tab');
+
+// WALLET SECURITY HELPER FUNCTIONS
+
+/**
+ * Log admin wallet actions for security audit trail
+ */
+function greenangel_log_admin_wallet_action($data) {
+    $existing_logs = get_option('greenangel_admin_wallet_logs', []);
+    $existing_logs[] = $data;
+    
+    // Keep only last 500 logs to prevent database bloat
+    if (count($existing_logs) > 500) {
+        $existing_logs = array_slice($existing_logs, -500);
+    }
+    
+    update_option('greenangel_admin_wallet_logs', $existing_logs);
+    
+    // Also log to error log for immediate visibility
+    error_log(sprintf(
+        'Green Angel Admin Wallet Action: %s %s %.2f for customer %d by admin %d | IP: %s | Reason: %s',
+        $data['action'],
+        $data['action'] === 'add' ? 'added' : 'removed',
+        $data['amount'],
+        $data['customer_id'],
+        $data['admin_id'],
+        $data['ip'],
+        $data['reason']
+    ));
+}
+
+/**
+ * Send email notification for large wallet adjustments
+ */
+function greenangel_notify_large_wallet_adjustment($admin_id, $customer_id, $action, $amount, $reason) {
+    $admin = get_userdata($admin_id);
+    $customer = get_userdata($customer_id);
+    
+    if (!$admin || !$customer) {
+        return false;
+    }
+    
+    $site_name = get_bloginfo('name');
+    $admin_email = get_option('admin_email');
+    
+    $subject = sprintf(
+        '[%s] Large Wallet Adjustment Alert - £%.2f',
+        $site_name,
+        $amount
+    );
+    
+    $message = sprintf(
+        "A large wallet adjustment has been made:\n\n" .
+        "Admin: %s (%s)\n" .
+        "Customer: %s (%s)\n" .
+        "Action: %s\n" .
+        "Amount: £%.2f\n" .
+        "Reason: %s\n" .
+        "Date: %s\n" .
+        "IP: %s\n\n" .
+        "Please review this adjustment in your admin dashboard.",
+        $admin->display_name,
+        $admin->user_email,
+        $customer->display_name,
+        $customer->user_email,
+        ucfirst($action),
+        $amount,
+        $reason ?: 'No reason provided',
+        current_time('mysql'),
+        $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+    );
+    
+    return wp_mail($admin_email, $subject, $message);
+}
 ?>

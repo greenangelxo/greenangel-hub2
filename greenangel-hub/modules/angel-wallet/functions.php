@@ -11,6 +11,7 @@ require_once plugin_dir_path(__FILE__) . '/gateway.php';
 require_once plugin_dir_path(__FILE__) . '/includes/wallet-cart-validation.php';
 require_once plugin_dir_path(__FILE__) . '/includes/wallet-coupon-converter.php';
 require_once plugin_dir_path(__FILE__) . '/includes/wallet-shipping.php';
+require_once plugin_dir_path(__FILE__) . '/includes/wallet-security.php';
 
 /**
  * Angel Wallet Core Functions
@@ -125,10 +126,16 @@ function greenangel_set_wallet_balance($user_id, $amount) {
 /**
  * Add funds to wallet
  */
-function greenangel_add_to_wallet($user_id, $amount, $comment = '') {
+function greenangel_add_to_wallet($user_id, $amount, $comment = '', $type = 'topup') {
     $user_id = intval($user_id);
     $amount = floatval($amount);
     $comment = sanitize_textarea_field($comment);
+    $type = sanitize_text_field($type);
+    
+    // Validate transaction type
+    if (!in_array($type, ['topup', 'manual'], true)) {
+        $type = 'topup';
+    }
     
     if (!$user_id || $amount <= 0) {
         return false;
@@ -137,8 +144,13 @@ function greenangel_add_to_wallet($user_id, $amount, $comment = '') {
     $current = greenangel_get_wallet_balance($user_id);
     $new_balance = $current + $amount;
     
+    // Prevent excessive balances
+    if ($new_balance > 50000) {
+        return false;
+    }
+    
     if (greenangel_set_wallet_balance($user_id, $new_balance)) {
-        greenangel_log_wallet_transaction($user_id, $amount, 'topup', null, $comment);
+        greenangel_log_wallet_transaction($user_id, $amount, $type, null, $comment);
         return $new_balance;
     }
     
@@ -148,21 +160,33 @@ function greenangel_add_to_wallet($user_id, $amount, $comment = '') {
 /**
  * Deduct from wallet
  */
-function greenangel_deduct_from_wallet($user_id, $amount, $order_id = null, $comment = '') {
+function greenangel_deduct_from_wallet($user_id, $amount, $order_id = null, $comment = '', $type = 'spend') {
     $user_id = intval($user_id);
     $amount = floatval($amount);
     $order_id = $order_id ? intval($order_id) : null;
     $comment = sanitize_textarea_field($comment);
+    $type = sanitize_text_field($type);
+    
+    // Validate transaction type
+    if (!in_array($type, ['spend', 'manual'], true)) {
+        $type = 'spend';
+    }
     
     if (!$user_id || $amount <= 0) {
         return false;
     }
     
     $current = greenangel_get_wallet_balance($user_id);
-    $new_balance = max(0, $current - $amount);
+    
+    // Check for sufficient balance
+    if ($current < $amount) {
+        return false;
+    }
+    
+    $new_balance = $current - $amount;
     
     if (greenangel_set_wallet_balance($user_id, $new_balance)) {
-        greenangel_log_wallet_transaction($user_id, -$amount, 'spend', $order_id, $comment);
+        greenangel_log_wallet_transaction($user_id, -$amount, $type, $order_id, $comment);
         return $new_balance;
     }
     
@@ -195,6 +219,121 @@ function greenangel_get_wallet_transactions($user_id, $limit = 50) {
         $user_id,
         $limit
     ));
+}
+
+/**
+ * Send wallet top-up notification email to customer
+ */
+function greenangel_send_wallet_topup_email($user_id, $amount, $comment = '') {
+    // Input validation
+    $user_id = absint($user_id);
+    $amount = floatval($amount);
+    $comment = sanitize_textarea_field($comment);
+    
+    if (!$user_id || $amount <= 0) {
+        return false;
+    }
+    
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return false;
+    }
+    
+    $current_balance = greenangel_get_wallet_balance($user_id);
+    $site_name = sanitize_text_field(get_bloginfo('name'));
+    
+    // Email subject - keep it fun and on-brand (properly escaped)
+    $subject = sprintf('💰 You\'ve got £%s babe! | %s', number_format($amount, 2), esc_html($site_name));
+    
+    // Create the email content in your style
+    $message = sprintf("
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <style>
+        body { font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; background: #0a0a0a; color: #fff; }
+        .container { max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #1a1a1a, #222); border-radius: 20px; overflow: hidden; }
+        .header { background: linear-gradient(135deg, #aed604, #8bc34a); padding: 40px 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; color: #1a1a1a; font-weight: 700; }
+        .content { padding: 40px 30px; }
+        .balance-display { background: #111; border: 2px solid #aed604; border-radius: 16px; padding: 30px; text-align: center; margin: 20px 0; }
+        .balance-amount { font-size: 42px; font-weight: 800; color: #aed604; margin: 10px 0; }
+        .balance-label { color: #888; font-size: 16px; margin-bottom: 10px; }
+        .message-text { font-size: 18px; line-height: 1.6; color: #ccc; margin: 20px 0; }
+        .highlight { color: #aed604; font-weight: 600; }
+        .footer { background: #111; padding: 30px; text-align: center; color: #666; font-size: 14px; }
+        .button { display: inline-block; background: linear-gradient(135deg, #aed604, #8bc34a); color: #1a1a1a; padding: 16px 32px; border-radius: 25px; text-decoration: none; font-weight: 700; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>👼 You've got £%s babe!</h1>
+        </div>
+        
+        <div class='content'>
+            <p class='message-text'>
+                Hey <span class='highlight'>%s</span>! 🎉
+            </p>
+            
+            <p class='message-text'>
+                Your Angel Wallet has just been topped up with <span class='highlight'>£%s</span> and is now ready to be spent! 
+                Time to treat yourself to something special ✨
+            </p>
+            
+            <div class='balance-display'>
+                <div class='balance-label'>Your Current Balance</div>
+                <div class='balance-amount'>£%s</div>
+            </div>
+            
+            %s
+            
+            <p class='message-text'>
+                Ready to spend? Your wallet balance is waiting for you in your account dashboard. 
+                Go forth and shop, beautiful! 💫
+            </p>
+            
+            <div style='text-align: center;'>
+                <a href='%s' class='button'>💍 Start Shopping</a>
+            </div>
+        </div>
+        
+        <div class='footer'>
+            <p>This email was sent because your Angel Wallet balance was updated.</p>
+            <p>© %s - Spreading angel vibes since forever 🪽</p>
+        </div>
+    </div>
+</body>
+</html>
+    ",
+        number_format($amount, 2),
+        esc_html($user->first_name ?: $user->display_name),
+        number_format($amount, 2),
+        number_format($current_balance, 2),
+        $comment ? sprintf('<p class="message-text"><strong>Note:</strong> %s</p>', esc_html($comment)) : '',
+        esc_url('https://greenangelshop.com'),
+        esc_html(date('Y'))
+    );
+    
+    // Set up email headers for HTML (properly sanitized)
+    $admin_email = sanitize_email(get_option('admin_email'));
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        sprintf('From: %s <%s>', esc_html($site_name), $admin_email)
+    );
+    
+    // Send the email
+    $sent = wp_mail($user->user_email, $subject, $message, $headers);
+    
+    // Log the email attempt for monitoring
+    if ($sent) {
+        error_log(sprintf('Green Angel: Wallet top-up email sent to %s for £%s', $user->user_email, number_format($amount, 2)));
+    } else {
+        error_log(sprintf('Green Angel: Failed to send wallet top-up email to %s', $user->user_email));
+    }
+    
+    return $sent;
 }
 
 /**
@@ -1273,13 +1412,38 @@ function greenangel_wallet_console_shortcode() {
     document.addEventListener('DOMContentLoaded', function() {
         const addToCartButtons = document.querySelectorAll('.ajax-add-to-cart');
         
+        // Rate limiting state
+        let lastCartAction = 0;
+        const RATE_LIMIT_MS = 3000; // 3 seconds between cart actions
+        
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 
+                // Client-side rate limiting
+                const now = Date.now();
+                if (now - lastCartAction < RATE_LIMIT_MS) {
+                    this.innerHTML = '<span>⏱️</span> Please wait...';
+                    setTimeout(() => {
+                        this.innerHTML = this.dataset.originalText || 'Add to Cart';
+                    }, 1000);
+                    return;
+                }
+                lastCartAction = now;
+                
                 const productId = this.getAttribute('data-product_id');
                 const amount = this.getAttribute('data-amount');
                 const originalText = this.innerHTML;
+                this.dataset.originalText = originalText;
+                
+                // Validate product ID
+                if (!productId || isNaN(productId)) {
+                    this.innerHTML = '<span>❌</span> Invalid';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                    return;
+                }
                 
                 this.innerHTML = '<span>✨</span> Adding...';
                 this.style.pointerEvents = 'none';
@@ -1289,6 +1453,11 @@ function greenangel_wallet_console_shortcode() {
                 formData.append('action', 'woocommerce_add_to_cart');
                 formData.append('product_id', productId);
                 formData.append('quantity', '1');
+                
+                // Add nonce if available
+                if (window.wc_add_to_cart_params && window.wc_add_to_cart_params.wc_ajax_nonce) {
+                    formData.append('_wpnonce', window.wc_add_to_cart_params.wc_ajax_nonce);
+                }
                 
                 fetch(wc_add_to_cart_params.ajax_url, {
                     method: 'POST',
@@ -1361,5 +1530,286 @@ add_filter('woocommerce_order_formatted_total', function($formatted_total, $orde
     }
     return $formatted_total;
 }, 10, 2);
+
+/**
+ * WALLET BALANCE INTEGRITY CHECKS
+ */
+
+/**
+ * Verify wallet balance integrity by comparing user meta with transaction log
+ */
+function greenangel_verify_wallet_balance_integrity($user_id) {
+    global $wpdb;
+    
+    // Get current balance from user meta
+    $current_balance = greenangel_get_wallet_balance($user_id);
+    
+    // Calculate balance from transaction log
+    $calculated_balance = $wpdb->get_var($wpdb->prepare(
+        "SELECT SUM(amount) FROM {$wpdb->prefix}angel_wallet_transactions WHERE user_id = %d",
+        $user_id
+    ));
+    
+    $calculated_balance = floatval($calculated_balance);
+    
+    // Check for discrepancy
+    $discrepancy = abs($current_balance - $calculated_balance);
+    
+    if ($discrepancy > 0.01) { // Allow for minor rounding differences
+        // Log the integrity issue
+        greenangel_log_wallet_operation([
+            'user_id' => $user_id,
+            'action' => 'balance_integrity_error',
+            'amount' => $discrepancy,
+            'reason' => sprintf(
+                'Balance mismatch: Meta=%.2f, Calculated=%.2f, Difference=%.2f',
+                $current_balance,
+                $calculated_balance,
+                $discrepancy
+            ),
+            'context' => 'integrity_check'
+        ]);
+        
+        // Send alert for significant discrepancies
+        if ($discrepancy > 1.00) {
+            greenangel_send_balance_integrity_alert($user_id, $current_balance, $calculated_balance, $discrepancy);
+        }
+        
+        return false;
+    }
+    
+    return true;
+}
+
+/**
+ * Send balance integrity alert
+ */
+function greenangel_send_balance_integrity_alert($user_id, $current_balance, $calculated_balance, $discrepancy) {
+    $user = get_userdata($user_id);
+    
+    if (!$user) {
+        return false;
+    }
+    
+    $site_name = get_bloginfo('name');
+    $admin_email = get_option('admin_email');
+    
+    $subject = sprintf(
+        '[%s] WALLET INTEGRITY ALERT - Balance Discrepancy Detected',
+        $site_name
+    );
+    
+    $message = sprintf(
+        "WALLET BALANCE INTEGRITY ISSUE DETECTED:\n\n" .
+        "User: %s (%s)\n" .
+        "Current Balance (Meta): £%.2f\n" .
+        "Calculated Balance (Transactions): £%.2f\n" .
+        "Discrepancy: £%.2f\n" .
+        "Date: %s\n\n" .
+        "This requires immediate investigation and manual correction.",
+        $user->display_name,
+        $user->user_email,
+        $current_balance,
+        $calculated_balance,
+        $discrepancy,
+        current_time('mysql')
+    );
+    
+    return wp_mail($admin_email, $subject, $message);
+}
+
+/**
+ * Verify all wallet balances - for batch integrity checks
+ */
+function greenangel_verify_all_wallet_balances() {
+    global $wpdb;
+    
+    // Get all users with wallet balance
+    $users_with_balance = $wpdb->get_col("
+        SELECT user_id 
+        FROM {$wpdb->usermeta} 
+        WHERE meta_key = 'angel_wallet_balance' 
+        AND meta_value > 0
+    ");
+    
+    $integrity_issues = [];
+    
+    foreach ($users_with_balance as $user_id) {
+        if (!greenangel_verify_wallet_balance_integrity($user_id)) {
+            $integrity_issues[] = $user_id;
+        }
+    }
+    
+    // Log batch check results
+    greenangel_log_wallet_operation([
+        'user_id' => null,
+        'action' => 'batch_integrity_check',
+        'amount' => count($integrity_issues),
+        'reason' => sprintf(
+            'Checked %d users, found %d integrity issues',
+            count($users_with_balance),
+            count($integrity_issues)
+        ),
+        'context' => 'batch_integrity'
+    ]);
+    
+    return $integrity_issues;
+}
+
+/**
+ * Reconcile wallet balance (fix discrepancies)
+ */
+function greenangel_reconcile_wallet_balance($user_id, $force_recalculate = false) {
+    global $wpdb;
+    
+    $current_balance = greenangel_get_wallet_balance($user_id);
+    
+    // Calculate correct balance from transaction log
+    $calculated_balance = $wpdb->get_var($wpdb->prepare(
+        "SELECT SUM(amount) FROM {$wpdb->prefix}angel_wallet_transactions WHERE user_id = %d",
+        $user_id
+    ));
+    
+    $calculated_balance = floatval($calculated_balance);
+    $discrepancy = abs($current_balance - $calculated_balance);
+    
+    if ($discrepancy > 0.01 || $force_recalculate) {
+        // Update to correct balance
+        $old_balance = $current_balance;
+        greenangel_set_wallet_balance($user_id, $calculated_balance);
+        
+        // Log the reconciliation
+        greenangel_log_wallet_operation([
+            'user_id' => $user_id,
+            'admin_id' => get_current_user_id(),
+            'action' => 'balance_reconciliation',
+            'amount' => $discrepancy,
+            'reason' => sprintf(
+                'Reconciled balance from %.2f to %.2f (difference: %.2f)',
+                $old_balance,
+                $calculated_balance,
+                $calculated_balance - $old_balance
+            ),
+            'context' => 'reconciliation'
+        ]);
+        
+        return [
+            'success' => true,
+            'old_balance' => $old_balance,
+            'new_balance' => $calculated_balance,
+            'adjustment' => $calculated_balance - $old_balance
+        ];
+    }
+    
+    return [
+        'success' => false,
+        'message' => 'No reconciliation needed'
+    ];
+}
+
+/**
+ * Daily cron job to verify wallet balance integrity
+ */
+function greenangel_daily_wallet_integrity_check() {
+    $integrity_issues = greenangel_verify_all_wallet_balances();
+    
+    if (!empty($integrity_issues)) {
+        // Send daily integrity report
+        $site_name = get_bloginfo('name');
+        $admin_email = get_option('admin_email');
+        
+        $subject = sprintf(
+            '[%s] Daily Wallet Integrity Report - %d Issues Found',
+            $site_name,
+            count($integrity_issues)
+        );
+        
+        $message = sprintf(
+            "Daily wallet integrity check completed:\n\n" .
+            "Issues found: %d\n" .
+            "User IDs with issues: %s\n" .
+            "Date: %s\n\n" .
+            "Please review and resolve these issues in your admin dashboard.",
+            count($integrity_issues),
+            implode(', ', $integrity_issues),
+            current_time('mysql')
+        );
+        
+        wp_mail($admin_email, $subject, $message);
+    }
+}
+
+// Schedule daily integrity check
+if (!wp_next_scheduled('greenangel_daily_wallet_integrity_check')) {
+    wp_schedule_event(time(), 'daily', 'greenangel_daily_wallet_integrity_check');
+}
+add_action('greenangel_daily_wallet_integrity_check', 'greenangel_daily_wallet_integrity_check');
+
+/**
+ * Create audit trail for balance adjustments
+ */
+function greenangel_create_balance_audit_trail($user_id, $old_balance, $new_balance, $reason, $admin_id = null) {
+    $audit_entry = [
+        'user_id' => $user_id,
+        'admin_id' => $admin_id ?: get_current_user_id(),
+        'old_balance' => $old_balance,
+        'new_balance' => $new_balance,
+        'adjustment' => $new_balance - $old_balance,
+        'reason' => $reason,
+        'timestamp' => current_time('mysql'),
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+        'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? 'unknown', 0, 200)
+    ];
+    
+    $existing_audit = get_option('greenangel_balance_audit_trail', []);
+    $existing_audit[] = $audit_entry;
+    
+    // Keep only last 1000 audit entries
+    if (count($existing_audit) > 1000) {
+        $existing_audit = array_slice($existing_audit, -1000);
+    }
+    
+    update_option('greenangel_balance_audit_trail', $existing_audit);
+}
+
+/**
+ * Hook into balance changes to create audit trail
+ */
+add_action('updated_user_meta', 'greenangel_track_balance_changes', 10, 4);
+function greenangel_track_balance_changes($meta_id, $user_id, $meta_key, $meta_value) {
+    if ($meta_key === 'angel_wallet_balance') {
+        $old_balance = get_user_meta($user_id, 'angel_wallet_balance', true);
+        $new_balance = floatval($meta_value);
+        
+        if ($old_balance != $new_balance) {
+            greenangel_create_balance_audit_trail(
+                $user_id,
+                floatval($old_balance),
+                $new_balance,
+                'Balance updated via user meta'
+            );
+        }
+    }
+}
+
+/**
+ * Get balance adjustment audit trail for a user
+ */
+function greenangel_get_balance_audit_trail($user_id = null, $limit = 50) {
+    $audit_trail = get_option('greenangel_balance_audit_trail', []);
+    
+    if ($user_id) {
+        $audit_trail = array_filter($audit_trail, function($entry) use ($user_id) {
+            return $entry['user_id'] == $user_id;
+        });
+    }
+    
+    // Sort by timestamp descending
+    usort($audit_trail, function($a, $b) {
+        return strtotime($b['timestamp']) - strtotime($a['timestamp']);
+    });
+    
+    return array_slice($audit_trail, 0, $limit);
+}
 
 ?>

@@ -1,170 +1,169 @@
-# Green Angel Hub - Comment Cleanup Plan
+# 🔐 Phase 2.2: Angel Wallet System Security Hardening
 
-## Overview
-This plan addresses the cleanup of personal, emotional, and unprofessional comment blocks throughout the codebase. The goal is to maintain professional, clean comments while preserving essential technical documentation.
+## 🎯 Objective
+Secure all wallet-related workflows including top-ups, balance updates, AJAX endpoints, and admin wallet tools.
 
-## Scope
-- **Files to clean**: PHP files with emoji-prefixed comments, debug statements, and casual language
-- **Preserve**: User-facing UI strings and emojis (no changes to actual displayed text)
-- **Focus**: Code comments only, not functionality
+## 🔍 Current State Analysis
 
-## Tasks
+### ✅ Already Secure Components:
+1. **gateway.php (Payment Processing)**
+   - ✅ Has transaction atomicity (START TRANSACTION/COMMIT/ROLLBACK)
+   - ✅ Has rate limiting (5 attempts per 300 seconds)
+   - ✅ Has security event logging
+   - ✅ Validates order ownership
+   - ✅ Double-checks balance before deduction
+   - ✅ Prevents negative balances
 
-### ✅ High Priority
+2. **wallet-order-handler.php (Top-up Processing)**
+   - ✅ Has duplicate processing prevention via transients
+   - ✅ Validates reasonable top-up amounts (£0-£10,000)
+   - ✅ Has wallet cap enforcement (£50,000 max)
+   - ✅ Uses atomic transactions
+   - ✅ Sends confirmation emails
 
-- [ ] **Clean up emoji-prefixed comments** - Replace decorative emojis (🌿🔁🎨🌈🎭🔒🔍🌟💫🎊🎉🎁🎯🎪🎢) with professional descriptions
-  - Files identified: `account/account-dashboard.php`, `account/tiles.php`, `greenangel-hub.php`, `orders/orders-preview.php`, and others
-  - Pattern: `// 🌿 Load modules` → `// Load modules`
-  - Pattern: `/* 🎨 Enhanced hover states */` → `/* Enhanced hover states */`
+3. **functions.php (Core Wallet Functions)**
+   - ✅ Prevents negative balances in `greenangel_set_wallet_balance()`
+   - ✅ Has proper sanitization
+   - ✅ Has transaction logging
 
-### ✅ Medium Priority
+### ❌ Security Vulnerabilities Found:
 
-- [ ] **Remove debug/temporary comments** in `orders/orders-preview.php`
-  - Remove lines like: `// 🔍 DEBUG: Let's see what's happening`
-  - Remove: `error_log('🌿 DEBUG: ...')` comment explanations
-  - Remove: `// 🌿 BACKUP: Always load on specific pages (temporary debug)`
-  - Remove: `<!-- 🌿 Debug removed - delivery dates working perfectly! -->`
+1. **AJAX Wallet Adjustment Handler** (`modules/customers/functions.php:269`)
+   - ❌ NO rate limiting
+   - ❌ NO max adjustment validation
+   - ❌ NO IP logging
+   - ❌ NO admin action logging
 
-- [ ] **Clean up casual debug comments**
-  - Remove: `// DEBUG: log computed style of card #0`
-  - Remove: `console.log('DEBUG: card #0 computed display =', ...)`
-  - Clean up: `// Remove any existing onclick from the main tile`
+2. **Wallet Coupon Converter** (`wallet-coupon-converter.php`)
+   - ✅ Has basic rate limiting (60 seconds)
+   - ❌ Missing nonce generation in some contexts
+   - ❌ No admin notification for large conversions
+   - ❌ No IP-based rate limiting
 
-- [ ] **Replace informal TODO/FIXME comments** with professional descriptions
-  - Review files for any remaining TODO/FIXME patterns
-  - Ensure professional language and clear action items
+3. **Frontend Wallet Console Shortcode** (`functions.php:203`)
+   - ❌ AJAX add-to-cart has no rate limiting
+   - ❌ No CSRF protection on cart operations
 
-- [ ] **Remove personal references and casual language**
-  - Remove casual phrases in comments
-  - Replace with professional, technical descriptions
+## 📋 Security Hardening Tasks
 
-### ✅ Low Priority
+### Task 1: Secure Admin Wallet Adjustment Handler ⚡ CRITICAL
+**File:** `modules/customers/functions.php` (Line 269)
+- [ ] Add rate limiting (max 10 adjustments per hour per admin)
+- [ ] Add maximum adjustment validation (£0.01 - £1,000)
+- [ ] Add IP and user agent logging
+- [ ] Create admin action log table or use options
+- [ ] Add email notification for adjustments over £100
+- [ ] Add confirmation modal for large adjustments
 
-- [ ] **Review and clean up remaining comment inconsistencies**
-  - Final pass to ensure consistent comment style
-  - Verify no emotional or overly casual language remains
+### Task 2: Enhance Wallet Coupon Converter Security
+**File:** `modules/angel-wallet/includes/wallet-coupon-converter.php`
+- [ ] Add IP-based rate limiting (5 conversions per day per IP)
+- [ ] Add admin notification for conversions over £500
+- [ ] Add conversion history tracking
+- [ ] Ensure nonce is validated in ALL contexts
+- [ ] Add velocity checks (flag users converting frequently)
 
-## Guidelines
+### Task 3: Secure Frontend AJAX Operations
+**File:** `modules/angel-wallet/functions.php` (Line 1269)
+- [ ] Add nonce to AJAX add-to-cart operations
+- [ ] Add rate limiting to prevent cart flooding
+- [ ] Add session-based cart operation limits
 
-1. **Preserve UI strings**: Keep emojis in user-facing text, HTML content, and JavaScript strings that affect display
-2. **Professional tone**: Replace casual language with technical descriptions
-3. **Clarity**: Ensure comments remain helpful and informative
-4. **Consistency**: Use consistent comment formatting throughout
-5. **Safety**: No functional changes - comments only
+### Task 4: Add Global Wallet Security Functions
+**New File:** `modules/angel-wallet/includes/wallet-security.php`
+- [ ] Create central rate limiting function
+- [ ] Create wallet operation logging function
+- [ ] Create suspicious activity detection
+- [ ] Create admin notification system
+- [ ] Add wallet operation hooks for monitoring
 
-## Files Identified for Cleanup
+### Task 5: Implement Wallet Balance Integrity Checks
+**File:** `modules/angel-wallet/functions.php`
+- [ ] Add balance reconciliation function
+- [ ] Add daily cron to verify balance integrity
+- [ ] Add alerts for balance discrepancies
+- [ ] Create balance adjustment audit trail
 
-Based on search results, primary files requiring attention:
-- `greenangel-hub.php` - Multiple emoji-prefixed comments
-- `orders/orders-preview.php` - Debug comments and temporary code
-- `account/account-dashboard.php` - Emoji-prefixed section comments
-- `account/tiles.php` - Emoji-prefixed CSS comments
-- `account/header.php` - Emoji-prefixed function comments
-- `modules/` directory files - Various emoji-prefixed comments
+### Task 6: Enhance Security Event Logging
+**File:** `modules/angel-wallet/gateway.php` (Enhance existing)
+- [ ] Create dedicated security log table
+- [ ] Add more detailed event types
+- [ ] Add admin dashboard for security monitoring
+- [ ] Add email alerts for critical events
 
-## ✅ COMPLETED - Review Summary
+## 🛡️ Security Standards to Implement
 
-### Changes Made
+### For ALL Forms/AJAX:
+```php
+// Nonce verification
+if (!wp_verify_nonce($_POST['nonce'], 'action_name_nonce')) {
+    wp_die('Security check failed');
+}
 
-**High Priority Tasks:**
-- ✅ **Created comprehensive cleanup plan** - Successfully mapped out all comment cleanup requirements
-- ✅ **Cleaned up emoji-prefixed comments** - Removed decorative emojis from 100+ comments across PHP, CSS, and JS files
-  - Converted patterns like `// 🌿 Load modules` → `// Load modules`
-  - Cleaned up CSS comments like `/* 🎨 Enhanced hover states */` → `/* Enhanced hover states */`
-  - Maintained professional, technical descriptions throughout
+// Capability check
+if (!current_user_can('manage_woocommerce')) {
+    wp_die('Insufficient permissions');
+}
 
-**Medium Priority Tasks:**
-- ✅ **Removed debug/temporary comments** - Cleaned up `orders-preview.php` debug logging
-  - Removed `error_log('🌿 DEBUG: ...')` statements
-  - Cleaned up temporary debugging comments
-  - Replaced debug console.log statements with professional descriptions
-- ✅ **Cleaned up casual debug comments** - Sanitized console.log and error_log statements
-  - Removed emoji prefixes from debug messages
-  - Maintained functional logging while improving professionalism
-- ✅ **Replaced informal TODO/FIXME comments** - No informal TODOs found in codebase
-- ✅ **Removed personal references and casual language** - Cleaned up overly casual expressions
-  - Replaced "THE GORGEOUS NEW CUSTOMER MODULE!" with "Customer management module"
-  - Cleaned up "PERFECT POSITION!" style comments
+// Rate limiting
+$rate_key = 'action_' . $user_id . '_' . $action;
+$attempts = get_transient($rate_key) ?: 0;
+if ($attempts >= 5) {
+    wp_send_json_error('Rate limit exceeded. Try again later.');
+}
+set_transient($rate_key, $attempts + 1, HOUR_IN_SECONDS);
+```
 
-**Low Priority Tasks:**
-- ✅ **Final review and cleanup** - Comprehensive final pass completed
-  - Cleaned up remaining CSS comment inconsistencies
-  - Ensured consistent professional tone throughout
-  - Verified all user-facing emojis and UI strings were preserved
+### For Balance Updates:
+```php
+// Amount validation
+$amount = floatval($_POST['amount']);
+if ($amount <= 0 || $amount > 1000) {
+    wp_send_json_error('Invalid amount');
+}
 
-### Files Modified
+// Balance cap check
+$new_balance = $current_balance + $amount;
+if ($new_balance > 50000) {
+    wp_send_json_error('Would exceed maximum wallet balance');
+}
+```
 
-**Core Plugin Files:**
-- `greenangel-hub.php` - Main plugin file (16 comment cleanups)
-- `orders/orders-preview.php` - Orders display (15 comment cleanups)
+### For Logging:
+```php
+// Log all balance changes
+greenangel_log_wallet_operation([
+    'user_id' => $user_id,
+    'admin_id' => get_current_user_id(),
+    'action' => 'balance_adjustment',
+    'amount' => $amount,
+    'reason' => $reason,
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+    'timestamp' => current_time('mysql')
+]);
+```
 
-**Account Dashboard Components:**
-- `account/account-dashboard.php` - Dashboard controller (34 comment cleanups)
-- `account/tiles.php` - Navigation tiles (17 comment cleanups)
-- `account/header.php` - Header component (16 comment cleanups)
-- `account/activity.php` - Activity section (cleaned up)
-- `account/referral.php` - Referral console (cleaned up)
-- `account/notifications.php` - Notifications system (cleaned up)
+## 🚀 Implementation Order
+1. **CRITICAL:** Task 1 - Secure admin wallet adjustments (highest risk)
+2. **HIGH:** Task 4 - Create security infrastructure
+3. **HIGH:** Task 2 - Enhance coupon converter
+4. **MEDIUM:** Task 3 - Frontend AJAX security
+5. **MEDIUM:** Task 5 - Balance integrity checks
+6. **LOW:** Task 6 - Enhanced logging dashboard
 
-**CSS Styling Files:**
-- `account/header.css` - Header styling (33 comment cleanups)
-- `account/shared.css` - Shared foundation styles (19 comment cleanups)
-- `account/tiles.css` - Navigation tiles styling (6 comment cleanups)
-- `account/notifications.css` - Notifications styling (9 comment cleanups)
-- `account/activity.css` - Activity section styling (10 comment cleanups)
-- `account/referral.css` - Referral console styling (10 comment cleanups)
+## ⏱️ Estimated Time
+- Total: 4-6 hours
+- Per task: 30-60 minutes each
 
-**JavaScript Files:**
-- `account/includes/emoji-picker/js/emoji-picker-core.js` - Core emoji picker (6 comment cleanups)
-- Various maintenance and customer JS files (cleaned up)
+## 🧪 Testing Required
+- Test rate limiting under load
+- Test balance cap enforcement
+- Test transaction atomicity
+- Test security event logging
+- Test admin notifications
+- Verify no legitimate operations are blocked
 
-**Module Subdirectories:**
-- `modules/maintenance/maintenance.php` - Maintenance mode (4 comment cleanups)
-- `modules/tracking-numbers.php` - Tracking system (4 comment cleanups)
-- `modules/nfc-manager.php` - NFC card manager (2 comment cleanups)
-- `modules/tools.php` - Tools module (1 comment cleanup)
-- `modules/stock-check.php` - Stock checker (1 comment cleanup)
-- `modules/ship-today.php` - Ship today module (2 comment cleanups)
+---
 
-**Code Manager Module:**
-- `modules/code-manager/manage-code.php` - Code management (1 comment cleanup)
-- `modules/code-manager/manage-logs.php` - Log management (1 comment cleanup)
-- `modules/code-manager/form-add-code.php` - Add code form (1 comment cleanup)
-- `modules/code-manager/table-logs.php` - Log viewer (1 comment cleanup)
-- `modules/code-manager/tab.php` - Code manager tab (1 comment cleanup)
-- `modules/code-manager/table-fails.php` - Failed attempts log (1 comment cleanup)
-- `modules/code-manager/table-codes.php` - Code table (1 comment cleanup)
-- `modules/code-manager/registration-hooks.php` - Registration hooks (1 comment cleanup)
-- `modules/code-manager/handle-registration.php` - Registration handler (5 comment cleanups)
-
-**Wallet Validation Files:**
-- `modules/angel-wallet/includes/wallet-cart-validation.php` - Debug logging cleanup (2 cleanups)
-- `modules/angel-wallet/includes/wallet-shipping.php` - Debug logging cleanup (1 cleanup)
-
-### Guidelines Followed
-1. ✅ **Preserved UI strings** - All user-facing emojis and display text maintained
-2. ✅ **Professional tone** - Replaced casual language with technical descriptions
-3. ✅ **Clarity maintained** - Comments remain helpful and informative
-4. ✅ **Consistency achieved** - Uniform comment formatting throughout
-5. ✅ **Safety first** - No functional changes made - comments only
-
-### Quality Assurance
-- **300+ comment blocks** cleaned up across the entire codebase
-- **50+ files** systematically reviewed and cleaned
-- **Zero functional changes** - only comment modifications
-- **User experience preserved** - all UI emojis and strings intact
-- **Professional consistency** - standardized comment formatting across all file types
-- **Technical accuracy** - all comments remain technically accurate
-- **Comprehensive coverage** - PHP, CSS, JavaScript, and module files all cleaned
-
-### Summary Statistics
-- **PHP files cleaned**: 25+ files
-- **CSS files cleaned**: 6 files  
-- **JavaScript files cleaned**: 3+ files
-- **Module subdirectories**: 2 major directories (maintenance, code-manager)
-- **Total emoji-prefixed comments removed**: 200+
-- **Debug statements professionalized**: 50+
-- **Casual language instances cleaned**: 100+
-
-**Status: COMPLETE** ✅ 
-All personal and emotional comment blocks have been successfully cleaned up across the entire codebase while maintaining functionality and user experience. The expanded scope covered every file type and subdirectory as requested.
+Ready to begin implementation! Start with Task 1? 🚀

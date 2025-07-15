@@ -662,6 +662,7 @@ form.register:after {
     
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="register">
     			<input type="hidden" name="action" value="greenangel_register_user" />
+                <?php wp_nonce_field('greenangel_registration_action', 'greenangel_registration_nonce'); ?>
                 <?php echo $popup_redirect_input; ?>
                 
                 <?php do_action( 'woocommerce_register_form_start' ); ?>
@@ -669,18 +670,18 @@ form.register:after {
                 <!-- First Name and Last Name Fields - Same Row -->
                 <p class="form-row form-row-first">
                     <label for="reg_first_name"><?php esc_html_e( 'First name', 'woocommerce' ); ?> <span class="required">*</span></label>
-                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="first_name" id="reg_first_name" value="<?php echo ( ! empty( $_POST['first_name'] ) ) ? esc_attr( $_POST['first_name'] ) : ''; ?>" required />
+                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="first_name" id="reg_first_name" value="<?php echo ( ! empty( $_POST['first_name'] ) ) ? esc_attr( wp_unslash( $_POST['first_name'] ) ) : ''; ?>" required />
                 </p>
                 
                 <p class="form-row form-row-last">
                     <label for="reg_last_name"><?php esc_html_e( 'Last name', 'woocommerce' ); ?> <span class="required">*</span></label>
-                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="last_name" id="reg_last_name" value="<?php echo ( ! empty( $_POST['last_name'] ) ) ? esc_attr( $_POST['last_name'] ) : ''; ?>" required />
+                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="last_name" id="reg_last_name" value="<?php echo ( ! empty( $_POST['last_name'] ) ) ? esc_attr( wp_unslash( $_POST['last_name'] ) ) : ''; ?>" required />
                 </p>
                 
                 <!-- Email Field - Own Row -->
                 <p class="form-row form-row-wide">
                     <label for="reg_email"><?php esc_html_e( 'Email address', 'woocommerce' ); ?> <span class="required">*</span></label>
-                    <input type="email" class="woocommerce-Input woocommerce-Input--text input-text" name="email" id="reg_email" value="<?php echo ( ! empty( $_POST['email'] ) ) ? esc_attr( $_POST['email'] ) : ''; ?>" required />
+                    <input type="email" class="woocommerce-Input woocommerce-Input--text input-text" name="email" id="reg_email" value="<?php echo ( ! empty( $_POST['email'] ) ) ? esc_attr( wp_unslash( $_POST['email'] ) ) : ''; ?>" required />
                 </p>
     
                 <!-- Password and Angel Code - Same Row -->
@@ -698,7 +699,7 @@ form.register:after {
                 
                 <p class="form-row form-row-last">
                     <label for="angel_code"><?php esc_html_e( 'Angel Code', 'woocommerce' ); ?> <span class="required">*</span></label>
-                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="angel_code" id="angel_code" value="<?php echo ( ! empty( $_POST['angel_code'] ) ) ? esc_attr( $_POST['angel_code'] ) : ''; ?>" required />
+                    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="angel_code" id="angel_code" value="<?php echo ( ! empty( $_POST['angel_code'] ) ) ? esc_attr( wp_unslash( $_POST['angel_code'] ) ) : ''; ?>" required />
                 </p>
                 
                 <!-- Birthday Fields - Same Row -->

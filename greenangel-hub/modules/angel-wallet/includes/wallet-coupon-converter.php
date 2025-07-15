@@ -34,13 +34,37 @@ function angel_handle_convert_to_coupon() {
         return;
     }
     
-    // Rate limiting - prevent spam conversions
+    // User-based rate limiting - prevent spam conversions
     $rate_limit_key = 'angel_coupon_convert_' . $user_id;
     if (get_transient($rate_limit_key)) {
         wp_send_json_error(['message' => 'Please wait before converting another coupon']);
         return;
     }
     set_transient($rate_limit_key, true, 60); // 1 minute cooldown
+    
+    // IP-based rate limiting - max 5 conversions per day per IP
+    $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $ip_rate_key = 'angel_coupon_convert_ip_' . md5($ip_address);
+    $ip_attempts = get_transient($ip_rate_key) ?: 0;
+    if ($ip_attempts >= 5) {
+        wp_send_json_error(['message' => 'Daily conversion limit reached. Please try again tomorrow.']);
+        return;
+    }
+    set_transient($ip_rate_key, $ip_attempts + 1, DAY_IN_SECONDS);
+    
+    // Velocity check - flag users converting frequently
+    $velocity_key = 'angel_coupon_velocity_' . $user_id;
+    $recent_conversions = get_transient($velocity_key) ?: 0;
+    if ($recent_conversions >= 3) {
+        // Log suspicious activity
+        error_log(sprintf(
+            'Green Angel Suspicious Activity: User %d has converted %d coupons in 24 hours | IP: %s',
+            $user_id,
+            $recent_conversions + 1,
+            $ip_address
+        ));
+    }
+    set_transient($velocity_key, $recent_conversions + 1, DAY_IN_SECONDS);
     
     // Get current balance
     $current_balance = greenangel_get_wallet_balance($user_id);
@@ -74,7 +98,7 @@ function angel_handle_convert_to_coupon() {
         // Zero out the wallet balance
         greenangel_set_wallet_balance($user_id, 0);
         
-        // Log the conversion transaction (FIXED)
+        // Log the conversion transaction
         greenangel_log_wallet_transaction(
             $user_id, 
             -$current_balance, 
@@ -82,6 +106,21 @@ function angel_handle_convert_to_coupon() {
             null, 
             "Converted to coupon: " . $coupon_code . " (£" . number_format($current_balance, 2) . ")"
         );
+        
+        // Log conversion history for security tracking
+        angel_log_coupon_conversion([
+            'user_id' => $user_id,
+            'coupon_code' => $coupon_code,
+            'amount' => $current_balance,
+            'ip' => $ip_address,
+            'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? 'unknown', 0, 200),
+            'timestamp' => current_time('mysql')
+        ]);
+        
+        // Send admin notification for large conversions (over £500)
+        if ($current_balance >= 500) {
+            angel_notify_large_coupon_conversion($user_id, $coupon_code, $current_balance);
+        }
         
         // Send success response with coupon details
         wp_send_json_success([
@@ -95,6 +134,67 @@ function angel_handle_convert_to_coupon() {
         error_log('Angel Wallet coupon conversion error: ' . $e->getMessage());
         wp_send_json_error(['message' => 'Conversion failed. Please try again.']);
     }
+}
+
+/**
+ * Generate a descriptive summary for wallet coupon conversion
+ */
+function angel_generate_wallet_coupon_description($user_id, $amount) {
+    global $wpdb;
+    
+    // Input validation
+    $user_id = absint($user_id);
+    $amount = floatval($amount);
+    
+    if (!$user_id || $amount <= 0) {
+        return '';
+    }
+    
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return '';
+    }
+    
+    $description = sprintf(
+        "Wallet Balance Conversion - £%s converted from Angel Wallet balance on %s\n\n",
+        number_format($amount, 2),
+        current_time('d/m/Y \a\t H:i')
+    );
+    
+    $description .= sprintf(
+        "Customer: %s (%s)\n",
+        sanitize_text_field($user->display_name),
+        sanitize_email($user->user_email)
+    );
+    
+    // Get recent wallet transactions to show what contributed to the balance
+    $recent_transactions = $wpdb->get_results($wpdb->prepare(
+        "SELECT amount, type, comment, timestamp FROM {$wpdb->prefix}angel_wallet_transactions 
+         WHERE user_id = %d AND amount > 0 
+         ORDER BY timestamp DESC LIMIT 5",
+        $user_id
+    ));
+    
+    if ($recent_transactions) {
+        $description .= "\nRecent Balance Sources:\n";
+        foreach ($recent_transactions as $transaction) {
+            $type_label = sanitize_text_field(ucfirst($transaction->type));
+            $date = date('d/m/Y', strtotime($transaction->timestamp));
+            $comment = $transaction->comment ? ' - ' . sanitize_text_field($transaction->comment) : '';
+            
+            $description .= sprintf(
+                "• £%s (%s) on %s%s\n",
+                number_format($transaction->amount, 2),
+                $type_label,
+                $date,
+                $comment
+            );
+        }
+    }
+    
+    $description .= "\nThis coupon was automatically generated from Angel Wallet balance conversion.";
+    
+    return $description;
 }
 
 /**
@@ -128,10 +228,14 @@ function angel_create_wallet_coupon($user_id, $amount) {
         }
     }
     
+    // Generate descriptive content for the coupon
+    $coupon_description = angel_generate_wallet_coupon_description($user_id, $amount);
+    
     // Create the coupon post
     $coupon_id = wp_insert_post([
         'post_title' => $coupon_code,
-        'post_content' => '',
+        'post_content' => $coupon_description,
+        'post_excerpt' => sprintf('Wallet conversion: £%s from %s', number_format($amount, 2), sanitize_text_field($user->display_name)),
         'post_status' => 'publish',
         'post_author' => 1,
         'post_type' => 'shop_coupon'
@@ -162,6 +266,11 @@ function angel_create_wallet_coupon($user_id, $amount) {
     update_post_meta($coupon_id, '_angel_wallet_user_id', $user_id);
     update_post_meta($coupon_id, '_angel_wallet_original_amount', $amount);
     update_post_meta($coupon_id, '_angel_wallet_converted_date', current_time('mysql'));
+    
+    // Additional tracking meta for admin purposes
+    update_post_meta($coupon_id, '_angel_wallet_customer_name', sanitize_text_field($user->display_name));
+    update_post_meta($coupon_id, '_angel_wallet_customer_email', sanitize_email($user->user_email));
+    update_post_meta($coupon_id, '_angel_wallet_conversion_ip', sanitize_text_field($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
     
     return $coupon_code;
 }
@@ -965,5 +1074,67 @@ function angel_track_wallet_coupon_usage($coupon_code) {
             }
         }
     }
+}
+
+/**
+ * Log coupon conversion for security tracking
+ */
+function angel_log_coupon_conversion($data) {
+    $existing_logs = get_option('angel_coupon_conversion_logs', []);
+    $existing_logs[] = $data;
+    
+    // Keep only last 500 conversions to prevent database bloat
+    if (count($existing_logs) > 500) {
+        $existing_logs = array_slice($existing_logs, -500);
+    }
+    
+    update_option('angel_coupon_conversion_logs', $existing_logs);
+    
+    // Also log to error log for monitoring
+    error_log(sprintf(
+        'Green Angel Coupon Conversion: User %d converted £%.2f to coupon %s | IP: %s',
+        $data['user_id'],
+        $data['amount'],
+        $data['coupon_code'],
+        $data['ip']
+    ));
+}
+
+/**
+ * Send admin notification for large coupon conversions
+ */
+function angel_notify_large_coupon_conversion($user_id, $coupon_code, $amount) {
+    $user = get_userdata($user_id);
+    
+    if (!$user) {
+        return false;
+    }
+    
+    $site_name = get_bloginfo('name');
+    $admin_email = get_option('admin_email');
+    
+    $subject = sprintf(
+        '[%s] Large Wallet Coupon Conversion Alert - £%.2f',
+        $site_name,
+        $amount
+    );
+    
+    $message = sprintf(
+        "A large wallet-to-coupon conversion has been made:\n\n" .
+        "Customer: %s (%s)\n" .
+        "Amount: £%.2f\n" .
+        "Coupon Code: %s\n" .
+        "Date: %s\n" .
+        "IP: %s\n\n" .
+        "Please review this conversion in your admin dashboard.",
+        $user->display_name,
+        $user->user_email,
+        $amount,
+        $coupon_code,
+        current_time('mysql'),
+        $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+    );
+    
+    return wp_mail($admin_email, $subject, $message);
 }
 ?>

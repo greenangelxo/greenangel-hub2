@@ -7,19 +7,45 @@ $GLOBALS['greenangel_verified_code'] = null;
  */
 function greenangel_validate_angel_code($email, $angel_code) {
     global $wpdb;
-    $angel_code = sanitize_text_field($angel_code);
-    $table      = $wpdb->prefix . 'greenangel_codes';
+    
+    // Security: Enhanced input validation
+    $angel_code = sanitize_text_field(trim($angel_code));
+    $email = sanitize_email($email);
+    
+    if (empty($angel_code) || empty($email)) {
+        return false;
+    }
+    
+    // Validate angel code format
+    if (!preg_match('/^[a-zA-Z0-9]+$/', $angel_code)) {
+        return false;
+    }
+    
+    $table = $wpdb->prefix . 'greenangel_codes';
+    
+    // Security: Check table exists
+    if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table)) !== $table) {
+        error_log("❌ Angel codes table missing during validation");
+        return false;
+    }
+    
     $code = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM $table WHERE code = %s AND active = 1 AND (expires_at IS NULL OR expires_at > NOW()) LIMIT 1",
+        "SELECT id, code, active, expires_at FROM $table WHERE code = %s AND active = 1 AND (expires_at IS NULL OR expires_at > NOW()) LIMIT 1",
         $angel_code
     ));
+    
     if (!$code) {
-        $wpdb->insert($wpdb->prefix . 'greenangel_failed_code_attempts', [
+        // Security: Enhanced failed attempt logging
+        $failed_table = $wpdb->prefix . 'greenangel_failed_code_attempts';
+        $user_agent = substr(sanitize_text_field($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255);
+        
+        $wpdb->insert($failed_table, [
             'email'      => $email,
             'code_tried' => $angel_code,
             'ip_address' => $_SERVER['REMOTE_ADDR'],
             'timestamp'  => current_time('mysql'),
         ]);
+        
         return false;
     }
     return true;

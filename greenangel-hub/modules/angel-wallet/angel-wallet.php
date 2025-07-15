@@ -47,33 +47,24 @@ add_action('admin_post_greenangel_update_wallet', function() {
     }
     set_transient($transient_key, true, 5);
 
-    $current = greenangel_get_wallet_balance($user_id);
-    $new = $current + $amount;
-
-    // Prevent negative balances
-    if ($new < 0) {
-        wp_die('Insufficient balance for deduction.', 'Insufficient Funds', array('response' => 400));
-    }
-
-    // Prevent excessive balances
-    if ($new > 50000) {
-        wp_die('Balance would exceed maximum limit.', 'Limit Exceeded', array('response' => 400));
-    }
-
-    update_user_meta($user_id, 'angel_wallet_balance', $new);
-
-    global $wpdb;
-    $result = $wpdb->insert($wpdb->prefix . 'angel_wallet_transactions', [
-        'user_id' => $user_id,
-        'order_id' => null,
-        'amount' => $amount,
-        'type' => 'manual',
-        'comment' => $comment,
-        'timestamp' => current_time('mysql'),
-    ]);
-
-    if ($result === false) {
-        wp_die('Database error occurred.', 'Database Error', array('response' => 500));
+    // Use proper wallet functions to maintain integrity
+    if ($action === 'add') {
+        // Add to wallet with manual type
+        $result = greenangel_add_to_wallet($user_id, $amount, $comment, 'manual');
+        if ($result === false) {
+            wp_die('Failed to add funds to wallet or amount exceeds limit.', 'Wallet Error', array('response' => 500));
+        }
+        
+        // Send email notification for additions (top-ups)
+        if (function_exists('greenangel_send_wallet_topup_email')) {
+            greenangel_send_wallet_topup_email($user_id, $amount, $comment);
+        }
+    } else {
+        // Deduct from wallet with manual type
+        $result = greenangel_deduct_from_wallet($user_id, $amount, null, $comment, 'manual');
+        if ($result === false) {
+            wp_die('Failed to deduct from wallet or insufficient balance.', 'Wallet Error', array('response' => 500));
+        }
     }
 
     $message = $action === 'deduct' ? 'deducted' : 'added';
