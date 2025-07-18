@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Narrator Test</title>
+    <link rel="stylesheet" href="assets/css/emoji-narrator.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(147, 51, 234, 0.4);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0px);
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .narrator-test-area {
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .step-avatar {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+            margin: 0 auto 20px;
+            animation: avatarFadeIn 1s ease-out 0.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Emoji Narrator Test Lab</h1>
+        
+        <div class="narrator-test-area">
+            <div class="step-avatar">
+                <div class="narrator-container" id="narrator-container">
+                    <!-- Narrator will be created here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-btn" onclick="testBasicAnimation()">Basic Animation</button>
+            <button class="test-btn" onclick="testSpeech()">Speech Test</button>
+            <button class="test-btn" onclick="testScript()">Run Script</button>
+            <button class="test-btn" onclick="testMoods()">Test Moods</button>
+            <button class="test-btn" onclick="testBootSequence()">Boot Sequence</button>
+            <button class="test-btn" onclick="testGreeting()">Greeting</button>
+            <button class="test-btn" onclick="testNameGenerator()">Name Generator</button>
+            <button class="test-btn" onclick="testTribeSorting()">Tribe Sorting</button>
+            <button class="test-btn" onclick="testFinalBlessing()">Final Blessing</button>
+            <button class="test-btn" onclick="stopNarrator()">Stop</button>
+            <button class="test-btn" onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <div class="status" id="status-log">
+            <strong>Narrator Test Lab Ready!</strong><br>
+            Click the buttons above to test different narrator features.<br>
+            <em>Loading narrator components...</em>
+        </div>
+    </div>
+
+    <!-- Load the narrator scripts -->
+    <script src="assets/js/emoji-narrator.js"></script>
+    <script src="assets/js/narrator-scripts.js"></script>
+    
+    <script>
+        let narrator = null;
+        let statusLog = document.getElementById('status-log');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            statusLog.innerHTML += `<br>[${timestamp}] ${message}`;
+            statusLog.scrollTop = statusLog.scrollHeight;
+        }
+        
+        function clearLog() {
+            statusLog.innerHTML = '<strong>Log cleared!</strong>';
+        }
+        
+        // Initialize narrator when everything loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                try {
+                    const container = document.getElementById('narrator-container');
+                    narrator = new EmojiNarrator({ container: container });
+                    narrator.setRestingMode(); // Start in resting mode
+                    log('✅ Narrator initialized successfully!');
+                    log('🎭 Ready for testing...');
+                    log('😴 Narrator is now in resting mode');
+                } catch (error) {
+                    log('❌ Error initializing narrator: ' + error.message);
+                }
+            }, 100);
+        });
+        
+        function testBasicAnimation() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🎬 Testing basic animation...');
+            narrator.startAnimation(['😊', '😄', '🤗', '😁'], 500);
+        }
+        
+        function testSpeech() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('💬 Testing speech bubble...');
+            narrator.speak('Hello there! This is a test of the speech system! 👋', 3000);
+        }
+        
+        async function testScript() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('📜 Testing script execution...');
+            const testScript = [
+                {
+                    frames: ['😴', '😪', '😌'],
+                    speed: 400,
+                    text: 'Waking up...',
+                    duration: 2000
+                },
+                {
+                    frames: ['😊', '😄', '🤗'],
+                    speed: 300,
+                    text: 'Hello! Nice to meet you!',
+                    duration: 2500
+                },
+                {
+                    frames: ['🎉', '🥳', '✨'],
+                    speed: 200,
+                    text: 'Script test complete!',
+                    duration: 2000
+                }
+            ];
+            
+            await narrator.runScript(testScript);
+            log('✅ Script execution completed!');
+        }
+        
+        function testMoods() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🎭 Testing mood animations...');
+            const moods = ['sleeping', 'greeting', 'excited', 'shocked', 'calm', 'heartfelt', 'celebration'];
+            let currentMood = 0;
+            
+            function nextMood() {
+                if (currentMood < moods.length) {
+                    const mood = moods[currentMood];
+                    const set = EmojiNarrator.getAnimationSet(mood);
+                    narrator.startAnimation(set.frames, set.speed);
+                    log(`🎨 Mood: ${mood}`);
+                    currentMood++;
+                    setTimeout(nextMood, 2000);
+                } else {
+                    log('✅ All moods tested!');
+                }
+            }
+            
+            nextMood();
+        }
+        
+        async function testBootSequence() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🚀 Testing boot sequence...');
+            const bootScript = NarratorScripts.getScript('boot');
+            await narrator.runScript(bootScript);
+            log('✅ Boot sequence completed!');
+        }
+        
+        async function testGreeting() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('👋 Testing greeting sequence...');
+            const greetingScript = NarratorScripts.getScript('greeting');
+            await narrator.runScript(greetingScript);
+            log('✅ Greeting sequence completed!');
+        }
+        
+        async function testNameGenerator() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🎲 Testing name generator dialogue...');
+            const script = NarratorScripts.getScript('angelIdentity');
+            await narrator.runScript(script);
+            log('✅ Name generator dialogue completed!');
+        }
+        
+        async function testTribeSorting() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🔮 Testing tribe sorting dialogue...');
+            const script = NarratorScripts.getScript('tribeSorting');
+            await narrator.runScript(script);
+            log('✅ Tribe sorting dialogue completed!');
+        }
+        
+        async function testFinalBlessing() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('💫 Testing final blessing dialogue...');
+            const script = NarratorScripts.getScript('finalBlessing');
+            await narrator.runScript(script);
+            log('✅ Final blessing dialogue completed!');
+        }
+        
+        function stopNarrator() {
+            if (!narrator) return log('❌ Narrator not initialized');
+            
+            log('🛑 Stopping narrator...');
+            narrator.stopAnimation();
+            narrator.hideSpeech();
+            narrator.setStatic('😊');
+            log('✅ Narrator stopped!');
+        }
+        
+        // Add some debug info
+        window.addEventListener('load', () => {
+            log('🌟 Page loaded completely!');
+            log('📋 Available classes: ' + (typeof EmojiNarrator !== 'undefined' ? 'EmojiNarrator ✅' : 'EmojiNarrator ❌'));
+            log('📋 Available scripts: ' + (typeof NarratorScripts !== 'undefined' ? 'NarratorScripts ✅' : 'NarratorScripts ❌'));
+        });
+    </script>
+</body>
+</html>

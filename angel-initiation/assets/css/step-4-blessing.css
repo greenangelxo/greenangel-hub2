@@ -1,0 +1,525 @@
+/* Step 4: Final Blessing Styles */
+
+.blessing-content {
+    text-align: center;
+    margin: 30px 0;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(34, 34, 34, 0.9), rgba(21, 21, 21, 0.9));
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.blessing-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(174, 214, 4, 0.05), 
+        rgba(16, 185, 129, 0.05),
+        rgba(59, 130, 246, 0.05),
+        rgba(147, 51, 234, 0.05)
+    );
+    animation: blessingShimmer 8s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes blessingShimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.angel-summary {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: rgba(21, 21, 21, 0.6);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+.angel-summary::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(45deg, 
+        var(--angel-green), 
+        var(--angel-teal), 
+        var(--angel-blue), 
+        var(--angel-purple), 
+        var(--angel-green)
+    );
+    background-size: 300% 300%;
+    border-radius: 16px;
+    animation: summaryBorder 6s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes summaryBorder {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    animation: summaryReveal 0.8s ease-out;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.summary-item:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.summary-item:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes summaryReveal {
+    0% { 
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.summary-label {
+    font-size: 16px;
+    color: var(--angel-gray);
+    font-weight: 500;
+}
+
+.summary-value {
+    font-size: 18px;
+    color: var(--angel-white);
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--angel-green), var(--angel-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: right;
+}
+
+.summary-value.loading {
+    background: linear-gradient(45deg, var(--angel-gray), var(--angel-white));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.blessing-reward {
+    margin: 40px 0;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(174, 214, 4, 0.1));
+    border-radius: 20px;
+    border: 2px solid rgba(245, 158, 11, 0.3);
+    position: relative;
+    animation: rewardEntrance 1s ease-out;
+}
+
+@keyframes rewardEntrance {
+    0% { 
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.blessing-reward::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        var(--angel-gold), 
+        var(--angel-green), 
+        var(--angel-teal), 
+        var(--angel-blue), 
+        var(--angel-gold)
+    );
+    background-size: 300% 300%;
+    border-radius: 20px;
+    animation: rewardGlow 4s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes rewardGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.reward-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: rewardBounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5));
+}
+
+@keyframes rewardBounce {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.reward-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--angel-white);
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    animation: rewardShimmer 3s ease-in-out infinite;
+}
+
+@keyframes rewardShimmer {
+    0%, 100% { text-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+    50% { text-shadow: 0 0 30px rgba(174, 214, 4, 0.8); }
+}
+
+.reward-subtext {
+    font-size: 16px;
+    color: var(--angel-gray);
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.reward-details {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(21, 21, 21, 0.5);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reward-details.visible {
+    display: block;
+    animation: detailsSlideIn 0.5s ease-out;
+}
+
+@keyframes detailsSlideIn {
+    0% { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reward-code {
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--angel-green);
+    background: rgba(21, 21, 21, 0.8);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--angel-green);
+    margin: 10px 0;
+    animation: codeGlow 2s ease-in-out infinite;
+}
+
+@keyframes codeGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(174, 214, 4, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(174, 214, 4, 0.5); }
+}
+
+.blessing-sparkles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.blessing-sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--angel-gold);
+    border-radius: 50%;
+    animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+    0%, 100% { 
+        opacity: 0;
+        transform: translateY(20px) scale(0);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+    }
+}
+
+.blessing-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(
+        circle,
+        rgba(174, 214, 4, 0.1) 0%,
+        rgba(16, 185, 129, 0.05) 50%,
+        transparent 100%
+    );
+    border-radius: 50%;
+    animation: auraExpand 4s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes auraExpand {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.3;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+/* Completion Button */
+#complete-initiation-btn {
+    background: linear-gradient(135deg, var(--angel-gold), var(--angel-green));
+    font-size: 18px;
+    padding: 20px 30px;
+    position: relative;
+    overflow: hidden;
+    animation: completionReady 3s ease-in-out infinite;
+}
+
+@keyframes completionReady {
+    0%, 100% { 
+        box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+        transform: translateY(0);
+    }
+    50% { 
+        box-shadow: 0 0 40px rgba(174, 214, 4, 0.6);
+        transform: translateY(-2px);
+    }
+}
+
+#complete-initiation-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255, 255, 255, 0.2) 90deg,
+        transparent 180deg,
+        rgba(255, 255, 255, 0.2) 270deg,
+        transparent 360deg
+    );
+    animation: completionSpin 5s linear infinite;
+    z-index: -1;
+}
+
+@keyframes completionSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#complete-initiation-btn.completing {
+    background: linear-gradient(135deg, var(--angel-teal), var(--angel-green));
+    animation: completionProcess 2s ease-in-out infinite;
+}
+
+@keyframes completionProcess {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Angel Transformation Effect */
+.angel-transformation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at center,
+        rgba(174, 214, 4, 0.1) 0%,
+        rgba(16, 185, 129, 0.05) 30%,
+        rgba(59, 130, 246, 0.03) 60%,
+        transparent 100%
+    );
+    opacity: 0;
+    animation: transformationWave 3s ease-out;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+@keyframes transformationWave {
+    0% { 
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1.5);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(3);
+    }
+}
+
+/* Blessing Completion State */
+.blessing-complete {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(174, 214, 4, 0.1));
+    border-color: var(--angel-green);
+    animation: completionGlow 2s ease-in-out infinite;
+}
+
+@keyframes completionGlow {
+    0%, 100% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(174, 214, 4, 0.5); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .blessing-content {
+        padding: 20px;
+    }
+    
+    .angel-summary {
+        padding: 20px;
+    }
+    
+    .blessing-reward {
+        padding: 25px;
+    }
+    
+    .reward-icon {
+        font-size: 48px;
+    }
+    
+    .reward-text {
+        font-size: 24px;
+    }
+    
+    .summary-item {
+        padding: 12px 0;
+    }
+    
+    .summary-label {
+        font-size: 14px;
+    }
+    
+    .summary-value {
+        font-size: 16px;
+    }
+    
+    #complete-initiation-btn {
+        font-size: 16px;
+        padding: 16px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .blessing-content {
+        padding: 15px;
+    }
+    
+    .angel-summary {
+        padding: 15px;
+    }
+    
+    .blessing-reward {
+        padding: 20px;
+    }
+    
+    .reward-icon {
+        font-size: 40px;
+    }
+    
+    .reward-text {
+        font-size: 20px;
+    }
+    
+    .summary-item {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    .summary-value {
+        text-align: center;
+    }
+    
+    #complete-initiation-btn {
+        font-size: 14px;
+        padding: 14px 20px;
+    }
+}
+
+/* Success Animation */
+.blessing-success {
+    animation: blessingSuccess 2s ease-out;
+}
+
+@keyframes blessingSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Floating Elements */
+.floating-blessing {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    animation: floatUpBlessing 4s ease-out forwards;
+}
+
+@keyframes floatUpBlessing {
+    0% { 
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}

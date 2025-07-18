@@ -1,0 +1,461 @@
+/* Step 3: DOB Ritual Styles */
+
+.dob-form-container {
+    position: relative;
+    text-align: center;
+    margin: 30px 0;
+    padding: 40px 20px;
+    background: rgba(21, 21, 21, 0.8);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.zodiac-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 25% 75%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+    animation: zodiacShift 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes zodiacShift {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(1deg) scale(1.02); }
+    50% { transform: rotate(2deg) scale(1.05); }
+    75% { transform: rotate(1deg) scale(1.02); }
+}
+
+.constellation {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--angel-white);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--angel-white);
+    animation: constellationTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes constellationTwinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.constellation::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: constellationGlow 4s ease-in-out infinite;
+}
+
+@keyframes constellationGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+}
+
+.constellation-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: lineFlicker 5s ease-in-out infinite;
+}
+
+@keyframes lineFlicker {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+}
+
+.dob-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: 30px 0;
+    position: relative;
+    z-index: 10;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group label {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--angel-white);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.cosmic-select {
+    background: linear-gradient(135deg, var(--angel-dark), var(--angel-black));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 16px;
+    color: var(--angel-white);
+    min-width: 200px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cosmic-select:hover {
+    border-color: var(--angel-green);
+    box-shadow: 0 0 20px rgba(174, 214, 4, 0.3);
+    transform: translateY(-2px);
+}
+
+.cosmic-select:focus {
+    outline: none;
+    border-color: var(--angel-blue);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, var(--angel-dark), var(--angel-purple));
+}
+
+.cosmic-select option {
+    background: var(--angel-dark);
+    color: var(--angel-white);
+    padding: 10px;
+}
+
+.cosmic-select option:hover {
+    background: var(--angel-purple);
+}
+
+.cosmic-select.selected {
+    border-color: var(--angel-teal);
+    background: linear-gradient(135deg, var(--angel-dark), var(--angel-teal));
+    animation: selectedGlow 2s ease-in-out infinite;
+}
+
+@keyframes selectedGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+}
+
+.zodiac-message {
+    font-size: 18px;
+    color: var(--angel-gray);
+    margin: 30px 0;
+    font-style: italic;
+    text-align: center;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+}
+
+.zodiac-message.active {
+    color: var(--angel-white);
+    animation: messageShimmer 2s ease-in-out infinite;
+}
+
+@keyframes messageShimmer {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+.zodiac-message::before {
+    content: '🌙';
+    position: absolute;
+    left: -30px;
+    animation: moonPhase 4s ease-in-out infinite;
+}
+
+.zodiac-message::after {
+    content: '🌟';
+    position: absolute;
+    right: -30px;
+    animation: starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes moonPhase {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Zodiac Sign Detection */
+.zodiac-sign {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.zodiac-sign.visible {
+    opacity: 1;
+    animation: zodiacReveal 1s ease-out;
+}
+
+@keyframes zodiacReveal {
+    0% { transform: scale(0) rotate(-90deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Cosmic Alignment Effect */
+.cosmic-alignment {
+    position: relative;
+    overflow: visible;
+}
+
+.cosmic-alignment::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(174, 214, 4, 0.2) 90deg,
+        transparent 180deg,
+        rgba(147, 51, 234, 0.2) 270deg,
+        transparent 360deg
+    );
+    border-radius: 25px;
+    animation: cosmicRotation 10s linear infinite;
+    z-index: -1;
+}
+
+@keyframes cosmicRotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Birth Chart Visualization */
+.birth-chart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1;
+}
+
+.birth-chart.visible {
+    opacity: 1;
+    animation: chartRotate 20s linear infinite;
+}
+
+@keyframes chartRotate {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.birth-chart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: var(--angel-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--angel-gold);
+}
+
+/* Planetary Positions */
+.planet {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: planetOrbit 15s linear infinite;
+}
+
+.planet.mercury {
+    background: #8c7853;
+    top: 20%;
+    left: 70%;
+}
+
+.planet.venus {
+    background: #ffc649;
+    top: 40%;
+    left: 85%;
+}
+
+.planet.mars {
+    background: #cd5c5c;
+    top: 80%;
+    left: 60%;
+}
+
+.planet.jupiter {
+    background: #d8ca9d;
+    top: 70%;
+    left: 20%;
+}
+
+@keyframes planetOrbit {
+    0% { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
+}
+
+/* Alignment Button State */
+#align-cosmos-btn {
+    background: linear-gradient(135deg, var(--angel-purple), var(--angel-blue));
+    position: relative;
+    overflow: hidden;
+}
+
+#align-cosmos-btn.can-align {
+    background: linear-gradient(135deg, var(--angel-gold), var(--angel-green));
+    animation: alignmentReady 2s ease-in-out infinite;
+}
+
+@keyframes alignmentReady {
+    0%, 100% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.4); }
+    50% { box-shadow: 0 0 35px rgba(174, 214, 4, 0.6); }
+}
+
+#align-cosmos-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255, 255, 255, 0.1) 90deg,
+        transparent 180deg,
+        rgba(255, 255, 255, 0.1) 270deg,
+        transparent 360deg
+    );
+    animation: buttonCosmicSpin 3s linear infinite;
+    z-index: -1;
+}
+
+@keyframes buttonCosmicSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dob-form-container {
+        padding: 30px 15px;
+    }
+    
+    .cosmic-select {
+        min-width: 180px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .input-group label {
+        font-size: 16px;
+    }
+    
+    .zodiac-message {
+        font-size: 16px;
+    }
+    
+    .birth-chart {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dob-form-container {
+        padding: 25px 10px;
+    }
+    
+    .cosmic-select {
+        min-width: 160px;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .input-group label {
+        font-size: 14px;
+    }
+    
+    .zodiac-message {
+        font-size: 14px;
+    }
+    
+    .zodiac-message::before,
+    .zodiac-message::after {
+        display: none;
+    }
+    
+    .birth-chart {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* Success State */
+.dob-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(174, 214, 4, 0.1));
+    border-color: var(--angel-green);
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(174, 214, 4, 0.5); }
+}
+
+/* Cosmic Validation */
+.cosmic-validation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    color: var(--angel-green);
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 100;
+}
+
+.cosmic-validation.visible {
+    opacity: 1;
+    animation: validationPulse 2s ease-in-out infinite;
+}
+
+@keyframes validationPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
